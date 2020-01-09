@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from collections import OrderedDict
+from collections.abc import OrderedDict
 from functools import wraps
 from six import iteritems
 
