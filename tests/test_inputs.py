@@ -8,7 +8,7 @@ import pytest
 from datetime import date, datetime
 from six import text_type
 
-from flask_restplus import inputs
+from flask_restx import inputs
 
 
 class Iso8601DateTest(object):

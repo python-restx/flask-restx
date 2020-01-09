@@ -1,7 +1,7 @@
 Contributing
 ============
 
-flask-restplus is open-source and very open to contributions. 
+flask-restx is open-source and very open to contributions. 
 
 If you're part of a corporation with an NDA, and you may require updating the license. 
 See Updating Copyright below
@@ -14,7 +14,7 @@ to submit reports on the `official bugtracker`_.
 
 Provide as much informations as possible to specify the issues:
 
-- the flask-restplus version used
+- the flask-restx version used
 - a stacktrace
 - installed applications list
 - a code sample to reproduce the issue
@@ -26,7 +26,7 @@ Submitting patches (bugfix, features, ...)
 
 If you want to contribute some code:
 
-1. fork the `official flask-restplus repository`_
+1. fork the `official flask-restx repository`_
 2. Ensure an issue is opened for your feature or bug
 3. create a branch with an explicit name (like ``my-new-feature`` or ``issue-XX``)
 4. do your work in it
@@ -44,7 +44,7 @@ There are some rules to follow:
 - your code should be mostly PEP8 compatible with a 120 characters line length
 - your contribution should support both Python 2 and 3 (use ``tox`` to test)
 
-You need to install some dependencies to develop on flask-restplus:
+You need to install some dependencies to develop on flask-restx:
 
 .. code-block:: console
 
@@ -76,13 +76,13 @@ and ensure the documentation is generating.
 
     $ tox
 
-You also need to ensure your code is compliant with the flask-restplus coding standards:
+You also need to ensure your code is compliant with the flask-restx coding standards:
 
 .. code-block:: console
 
     $ inv qa
 
-To ensure everything is fine before commiting, you can launch the all in one command:
+To ensure everything is fine before committing, you can launch the all in one command:
 
 .. code-block:: console
 
@@ -91,8 +91,8 @@ To ensure everything is fine before commiting, you can launch the all in one com
 It will ensure the code meet the coding conventions, runs on every version on python
 and the documentation is properly generating.
 
-.. _official flask-restplus repository: https://github.com/noirbizarre/flask-restplus
-.. _official bugtracker: https://github.com/noirbizarre/flask-restplus/issues
+.. _official flask-restx repository: https://github.com/python-restx/flask-restx
+.. _official bugtracker: https://github.com/python-restx/flask-restx/issues
 
 Running a local Swagger Server
 ------------------------------

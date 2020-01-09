@@ -3,10 +3,10 @@
 Quick start
 ===========
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
 This guide assumes you have a working understanding of `Flask <http://flask.pocoo.org>`_,
-and that you have already installed both Flask and Flask-RESTPlus.
+and that you have already installed both Flask and Flask-RESTX.
 If not, then follow the steps in the :ref:`installation` section.
 
 
@@ -18,7 +18,7 @@ As every other extension, you can initialize it with an application object:
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     api = Api(app)
@@ -28,7 +28,7 @@ or lazily with the factory pattern:
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     api = Api()
 
@@ -39,12 +39,12 @@ or lazily with the factory pattern:
 A Minimal API
 -------------
 
-A minimal Flask-RESTPlus API looks like this:
+A minimal Flask-RESTX API looks like this:
 
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Resource, Api
+    from flask_restx import Resource, Api
 
     app = Flask(__name__)
     api = Api(app)
@@ -88,7 +88,7 @@ See :ref:`swaggerui` for a complete documentation on the automatic documentation
 
 Resourceful Routing
 -------------------
-The main building block provided by Flask-RESTPlus are resources.
+The main building block provided by Flask-RESTX are resources.
 Resources are built on top of :ref:`Flask pluggable views <flask:views>`,
 giving you easy access to multiple HTTP methods just by defining methods on your resource.
 A basic CRUD resource for a todo application (of course) looks like this:
@@ -96,7 +96,7 @@ A basic CRUD resource for a todo application (of course) looks like this:
 .. code-block:: python
 
     from flask import Flask, request
-    from flask_restplus import Resource, Api
+    from flask_restx import Resource, Api
 
     app = Flask(__name__)
     api = Api(app)
@@ -143,10 +143,10 @@ Or from python if you have the `Requests <http://docs.python-requests.org/>`_ li
     >>> get('http://localhost:5000/todo2').json()
     {u'todo2': u'Change my brakepads'}
 
-Flask-RESTPlus understands multiple kinds of return values from view methods.
+Flask-RESTX understands multiple kinds of return values from view methods.
 Similar to Flask, you can return any iterable and it will be converted into a response,
 including raw Flask response objects.
-Flask-RESTPlus also support setting the response code and response headers using multiple return values,
+Flask-RESTX also support setting the response code and response headers using multiple return values,
 as shown below:
 
 .. code-block:: python
@@ -200,7 +200,7 @@ You can also match parts of the path as variables to your resource methods.
 .. note ::
 
     If a request does not match any of your application's endpoints,
-    Flask-RESTPlus will return a 404 error message with suggestions of other
+    Flask-RESTX will return a 404 error message with suggestions of other
     endpoints that closely match the requested endpoint.
     This can be disabled by setting ``ERROR_404_HELP`` to ``False`` in your application config.
 
@@ -210,12 +210,12 @@ Argument Parsing
 
 While Flask provides easy access to request data (i.e. querystring or POST form encoded data),
 it's still a pain to validate form data.
-Flask-RESTPlus has built-in support for request data validation
+Flask-RESTX has built-in support for request data validation
 using a library similar to :mod:`python:argparse`.
 
 .. code-block:: python
 
-    from flask_restplus import reqparse
+    from flask_restx import reqparse
 
     parser = reqparse.RequestParser()
     parser.add_argument('rate', type=int, help='Rate to charge for this resource')
@@ -228,7 +228,7 @@ using a library similar to :mod:`python:argparse`.
 
 Using the :class:`~reqparse.RequestParser` class also gives you sane error messages for free.
 If an argument fails to pass validation,
-Flask-RESTPlus will respond with a 400 Bad Request and a response highlighting the error.
+Flask-RESTX will respond with a 400 Bad Request and a response highlighting the error.
 
 .. code-block:: console
 
@@ -253,7 +253,7 @@ Data Formatting
 By default, all fields in your return iterable will be rendered as-is.
 While this works great when you're just dealing with Python data structures,
 it can become very frustrating when working with objects.
-To solve this problem, Flask-RESTPlus provides the :mod:`fields` module and the
+To solve this problem, Flask-RESTX provides the :mod:`fields` module and the
 :meth:`marshal_with` decorator.
 Similar to the Django ORM and WTForm,
 you use the ``fields`` module to describe the structure of your response.
@@ -261,7 +261,7 @@ you use the ``fields`` module to describe the structure of your response.
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import fields, Api, Resource
+    from flask_restx import fields, Api, Resource
 
     app = Flask(__name__)
     api = Api(app)

@@ -5,7 +5,7 @@ import pytest
 
 from jsonschema import ValidationError
 
-from flask_restplus import errors, schemas
+from flask_restx import errors, schemas
 
 
 class SchemasTest:

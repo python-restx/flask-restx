@@ -1,7 +1,7 @@
 Fields masks
 ============
 
-Flask-Restplus support partial object fetching (aka. fields mask)
+Flask-RESTX support partial object fetching (aka. fields mask)
 by supplying a custom header in the request.
 
 By default the header is ``X-Fields``

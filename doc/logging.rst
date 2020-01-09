@@ -1,7 +1,7 @@
 Logging
 ===============
 
-Flask-RESTPlus extends `Flask's logging <https://flask.palletsprojects.com/en/1.1.x/logging/>`_
+Flask-RESTX extends `Flask's logging <https://flask.palletsprojects.com/en/1.1.x/logging/>`_
 by providing each ``API`` and ``Namespace`` it's own standard Python :class:`logging.Logger` instance.
 This allows separation of logging on a per namespace basis to allow more fine-grained detail and configuration.
 
@@ -13,7 +13,7 @@ By default, these loggers inherit configuration from the Flask application objec
 
     import flask
 
-    from flask_restplus import Api, Resource
+    from flask_restx import Api, Resource
 
     # configure root logger
     logging.basicConfig(level=logging.INFO)

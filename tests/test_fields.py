@@ -14,7 +14,7 @@ import pytz
 import pytest
 
 from flask import Blueprint
-from flask_restplus import fields, Api
+from flask_restx import fields, Api
 
 
 class FieldTestCase(object):
@@ -1183,7 +1183,7 @@ class PolymorphTest(FieldTestCase):
 
     def test_polymorph_field_does_not_have_ambiguous_mappings(self, api):
         """
-        Regression test for https://github.com/noirbizarre/flask-restplus/pull/691
+        Regression test for https://github.com/noirbizarre/flask-restx/pull/691
         """
         parent = api.model('Parent', {
             'name': fields.String,

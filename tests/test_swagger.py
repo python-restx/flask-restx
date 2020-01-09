@@ -8,9 +8,9 @@ from textwrap import dedent
 from flask import url_for, Blueprint
 from werkzeug.datastructures import FileStorage
 
-import flask_restplus as restplus
+import flask_restx as restx
 
-from flask_restplus import inputs
+from flask_restx import inputs
 
 
 class SwaggerTest(object):
@@ -45,7 +45,7 @@ class SwaggerTest(object):
         assert 'application/xml' in data['produces']
 
     def test_specs_endpoint_info(self, app, client):
-        api = restplus.Api(version='1.0',
+        api = restx.Api(version='1.0',
             title='My API',
             description='This is a testing API',
             terms_url='http://somewhere.com/terms/',
@@ -79,7 +79,7 @@ class SwaggerTest(object):
         }
 
     def test_specs_endpoint_info_delayed(self, app, client):
-        api = restplus.Api(version='1.0')
+        api = restx.Api(version='1.0')
         api.init_app(app,
             title='My API',
             description='This is a testing API',
@@ -114,7 +114,7 @@ class SwaggerTest(object):
         }
 
     def test_specs_endpoint_info_callable(self, app, client):
-        api = restplus.Api(version=lambda: '1.0',
+        api = restx.Api(version=lambda: '1.0',
             title=lambda: 'My API',
             description=lambda: 'This is a testing API',
             terms_url=lambda: 'http://somewhere.com/terms/',
@@ -148,43 +148,43 @@ class SwaggerTest(object):
         }
 
     def test_specs_endpoint_no_host(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
 
         data = client.get_specs('')
         assert 'host' not in data
         assert data['basePath'] == '/'
 
-    @pytest.mark.options(server_name='api.restplus.org')
+    @pytest.mark.options(server_name='api.restx.org')
     def test_specs_endpoint_host(self, app, client):
-        # app.config['SERVER_NAME'] = 'api.restplus.org'
-        restplus.Api(app)
+        # app.config['SERVER_NAME'] = 'api.restx.org'
+        restx.Api(app)
 
         data = client.get_specs('')
-        assert data['host'] == 'api.restplus.org'
+        assert data['host'] == 'api.restx.org'
         assert data['basePath'] == '/'
 
-    @pytest.mark.options(server_name='api.restplus.org')
+    @pytest.mark.options(server_name='api.restx.org')
     def test_specs_endpoint_host_with_url_prefix(self, app, client):
         blueprint = Blueprint('api', __name__, url_prefix='/api/1')
-        restplus.Api(blueprint)
+        restx.Api(blueprint)
         app.register_blueprint(blueprint)
 
         data = client.get_specs('/api/1')
-        assert data['host'] == 'api.restplus.org'
+        assert data['host'] == 'api.restx.org'
         assert data['basePath'] == '/api/1'
 
-    @pytest.mark.options(server_name='restplus.org')
+    @pytest.mark.options(server_name='restx.org')
     def test_specs_endpoint_host_and_subdomain(self, app, client):
         blueprint = Blueprint('api', __name__, subdomain='api')
-        restplus.Api(blueprint)
+        restx.Api(blueprint)
         app.register_blueprint(blueprint)
 
-        data = client.get_specs(base_url='http://api.restplus.org')
-        assert data['host'] == 'api.restplus.org'
+        data = client.get_specs(base_url='http://api.restx.org')
+        assert data['host'] == 'api.restx.org'
         assert data['basePath'] == '/'
 
     def test_specs_endpoint_tags_short(self, app, client):
-        restplus.Api(app, tags=['tag-1', 'tag-2', 'tag-3'])
+        restx.Api(app, tags=['tag-1', 'tag-2', 'tag-3'])
 
         data = client.get_specs('')
         assert data['tags'] == [
@@ -194,7 +194,7 @@ class SwaggerTest(object):
         ]
 
     def test_specs_endpoint_tags_tuple(self, app, client):
-        restplus.Api(app, tags=[
+        restx.Api(app, tags=[
             ('tag-1', 'Tag 1'),
             ('tag-2', 'Tag 2'),
             ('tag-3', 'Tag 3'),
@@ -208,7 +208,7 @@ class SwaggerTest(object):
         ]
 
     def test_specs_endpoint_tags_dict(self, app, client):
-        restplus.Api(app, tags=[
+        restx.Api(app, tags=[
             {'name': 'tag-1', 'description': 'Tag 1'},
             {'name': 'tag-2', 'description': 'Tag 2'},
             {'name': 'tag-3', 'description': 'Tag 3'},
@@ -229,7 +229,7 @@ class SwaggerTest(object):
         assert data['tags'] == [{'name': 'ns'}, {'name': 'tag'}]
 
     def test_specs_endpoint_invalid_tags(self, app, client):
-        api = restplus.Api(app, tags=[
+        api = restx.Api(app, tags=[
             {'description': 'Tag 1'}
         ])
 
@@ -238,15 +238,15 @@ class SwaggerTest(object):
         assert list(api.__schema__.keys()) == ['error']
 
     def test_specs_endpoint_default_ns_with_resources(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
         data = client.get_specs('')
         assert data['tags'] == []
 
     def test_specs_endpoint_default_ns_without_resources(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -256,12 +256,12 @@ class SwaggerTest(object):
         ]
 
     def test_specs_endpoint_default_ns_with_specified_ns(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('ns', 'Test namespace')
 
         @ns.route('/test2', endpoint='test2')
         @api.route('/test', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -272,11 +272,11 @@ class SwaggerTest(object):
         ]
 
     def test_specs_endpoint_specified_ns_without_default_ns(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('ns', 'Test namespace')
 
         @ns.route('/', endpoint='test2')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -286,11 +286,11 @@ class SwaggerTest(object):
         ]
 
     def test_specs_endpoint_namespace_without_description(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('ns')
 
         @ns.route('/test', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -298,23 +298,23 @@ class SwaggerTest(object):
         assert data['tags'] == [{'name': 'ns'}]
 
     def test_specs_endpoint_namespace_all_resources_hidden(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('ns')
 
         @ns.route('/test', endpoint='test', doc=False)
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
         @ns.route('/test2', endpoint='test2')
         @ns.hide
-        class TestResource2(restplus.Resource):
+        class TestResource2(restx.Resource):
             def get(self):
                 return {}
 
         @ns.route('/test3', endpoint='test3')
         @ns.doc(False)
-        class TestResource3(restplus.Resource):
+        class TestResource3(restx.Resource):
             def get(self):
                 return {}
 
@@ -329,7 +329,7 @@ class SwaggerTest(object):
                 'name': 'X-API'
             }
         }
-        restplus.Api(app, authorizations=authorizations)
+        restx.Api(app, authorizations=authorizations)
 
         data = client.get_specs()
 
@@ -341,7 +341,7 @@ class SwaggerTest(object):
         ns = api.namespace('ns', 'Test namespace')
 
         @ns.route('/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -368,7 +368,7 @@ class SwaggerTest(object):
     @pytest.mark.api(prefix='/api', version='1.0')
     def test_default_ns_resource_documentation(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -396,7 +396,7 @@ class SwaggerTest(object):
     @pytest.mark.api(default='site', default_label='Site namespace')
     def test_default_ns_resource_documentation_with_override(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -426,7 +426,7 @@ class SwaggerTest(object):
         ns = api.namespace('ns', 'Test namespace')
 
         @ns.route('/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -453,11 +453,11 @@ class SwaggerTest(object):
         assert url_for('api.test') == '/api/ns/'
 
     def test_ns_resource_documentation_lazy(self, app, client):
-        api = restplus.Api()
+        api = restx.Api()
         ns = api.namespace('ns', 'Test namespace')
 
         @ns.route('/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -486,7 +486,7 @@ class SwaggerTest(object):
 
     def test_methods_docstring_to_summary(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -525,7 +525,7 @@ class SwaggerTest(object):
 
     def test_path_parameter_no_type(self, api, client):
         @api.route('/id/<id>/', endpoint='by-id')
-        class ByIdResource(restplus.Resource):
+        class ByIdResource(restx.Resource):
             def get(self, id):
                 return {}
 
@@ -543,7 +543,7 @@ class SwaggerTest(object):
 
     def test_path_parameter_with_type(self, api, client):
         @api.route('/name/<int:age>/', endpoint='by-name')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             def get(self, age):
                 return {}
 
@@ -561,7 +561,7 @@ class SwaggerTest(object):
 
     def test_path_parameter_with_type_with_argument(self, api, client):
         @api.route('/name/<string(length=2):id>/', endpoint='by-name')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             def get(self, id):
                 return {}
 
@@ -583,7 +583,7 @@ class SwaggerTest(object):
                 'age': {'description': 'An age'}
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             def get(self, age):
                 return {}
 
@@ -603,7 +603,7 @@ class SwaggerTest(object):
     def test_path_parameter_with_decorator_details(self, api, client):
         @api.route('/name/<int:age>/')
         @api.param('age', 'An age')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             def get(self, age):
                 return {}
 
@@ -625,7 +625,7 @@ class SwaggerTest(object):
         parser.add_argument('param', type=int, help='Some param')
 
         @api.route('/with-parser/', endpoint='with-parser')
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             @api.expect(parser)
             def get(self):
                 return {}
@@ -648,7 +648,7 @@ class SwaggerTest(object):
 
         @api.route('/with-parser/', endpoint='with-parser')
         @api.expect(parser)
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -670,7 +670,7 @@ class SwaggerTest(object):
 
         @api.route('/with-parser/', endpoint='with-parser')
         @api.doc(get={'expect': parser})
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -697,7 +697,7 @@ class SwaggerTest(object):
         parser.add_argument('param', type=int, help='Some param')
 
         @api.route('/with-parser/', endpoint='with-parser')
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             @api.expect(parser)
             @api.doc(params={'param': {'description': 'New description'}})
             def get(self):
@@ -720,7 +720,7 @@ class SwaggerTest(object):
         parser.add_argument('param', type=int, help='Some param', location='form')
 
         @api.route('/with-parser/', endpoint='with-parser')
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             @api.expect(parser)
             def get(self):
                 return {}
@@ -744,7 +744,7 @@ class SwaggerTest(object):
         parser.add_argument('in_files', type=FileStorage, location='files')
 
         @api.route('/with-parser/', endpoint='with-parser')
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             @api.expect(parser)
             def get(self):
                 return {}
@@ -768,7 +768,7 @@ class SwaggerTest(object):
 
         @api.route('/with-parser/', endpoint='with-parser')
         @api.expect(parser)
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             def get(self):
                 return {}
 
@@ -791,7 +791,7 @@ class SwaggerTest(object):
 
     def test_explicit_parameters(self, api, client):
         @api.route('/name/<int:age>/', endpoint='by-name')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(params={
                 'q': {
                     'type': 'string',
@@ -825,7 +825,7 @@ class SwaggerTest(object):
 
     def test_explicit_parameters_with_decorator(self, api, client):
         @api.route('/name/')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.param('q', 'A query string', type='string', _in='formData')
             def get(self, age):
                 return {}
@@ -852,7 +852,7 @@ class SwaggerTest(object):
                 }
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             def get(self, age):
                 return {}
 
@@ -889,7 +889,7 @@ class SwaggerTest(object):
                 }
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(params={'q': {'description': 'A query string'}})
             def get(self, age):
                 return {}
@@ -950,7 +950,7 @@ class SwaggerTest(object):
                 }
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(params={'age': {'description': 'Overriden'}})
             def get(self, age):
                 return {}
@@ -1011,7 +1011,7 @@ class SwaggerTest(object):
                 }
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(params={'age': {'description': 'Overriden'}})
             def get(self, age):
                 return {}
@@ -1046,7 +1046,7 @@ class SwaggerTest(object):
                 'age': 'An age'
             }
         })
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(params={'age': 'Overriden'})
             def get(self, age):
                 return {}
@@ -1094,7 +1094,7 @@ class SwaggerTest(object):
 
     def test_explicit_parameters_native_types(self, api, client):
         @api.route('/types/', endpoint='native')
-        class NativeTypesResource(restplus.Resource):
+        class NativeTypesResource(restx.Resource):
             @api.doc(params={
                 'int': {
                     'type': int,
@@ -1154,11 +1154,11 @@ class SwaggerTest(object):
 
     def test_response_on_method(self, api, client):
         api.model('ErrorModel', {
-            'message': restplus.fields.String,
+            'message': restx.fields.String,
         })
 
         @api.route('/test/')
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(responses={
                 404: 'Not found',
                 405: ('Some message', 'ErrorModel'),
@@ -1189,7 +1189,7 @@ class SwaggerTest(object):
 
     def test_api_response(self, api, client):
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.response(200, 'Success')
             def get(self):
@@ -1207,7 +1207,7 @@ class SwaggerTest(object):
 
     def test_api_response_multiple(self, api, client):
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.response(200, 'Success')
             @api.response(400, 'Validation error')
@@ -1229,11 +1229,11 @@ class SwaggerTest(object):
 
     def test_api_response_with_model(self, api, client):
         model = api.model('SomeModel', {
-            'message': restplus.fields.String,
+            'message': restx.fields.String,
         })
 
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.response(200, 'Success', model)
             def get(self):
@@ -1256,7 +1256,7 @@ class SwaggerTest(object):
 
     def test_api_response_default(self, api, client):
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.response('default', 'Error')
             def get(self):
@@ -1275,7 +1275,7 @@ class SwaggerTest(object):
     def test_api_header(self, api, client):
         @api.route('/test/')
         @api.header('X-HEADER', 'A class header')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.header('X-HEADER-2', 'Another header', type=[int], collectionFormat='csv')
             @api.header('X-HEADER-3', type=int)
@@ -1308,7 +1308,7 @@ class SwaggerTest(object):
 
     def test_response_header(self, api, client):
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.response(200, 'Success')
             @api.response(400, 'Validation', headers={'X-HEADER': 'An header'})
             def get(self):
@@ -1326,7 +1326,7 @@ class SwaggerTest(object):
     def test_api_and_response_header(self, api, client):
         @api.route('/test/')
         @api.header('X-HEADER', 'A class header')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.header('X-HEADER-2', type=int)
             @api.response(200, 'Success')
@@ -1353,7 +1353,7 @@ class SwaggerTest(object):
         parser.add_argument('X-Header-4', location='headers', type=inputs.boolean)
 
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
 
             @api.expect(parser)
             def get(self):
@@ -1393,7 +1393,7 @@ class SwaggerTest(object):
             'description': 'Parent description.',
             'delete': {'description': 'A delete operation'},
         })
-        class ResourceWithDescription(restplus.Resource):
+        class ResourceWithDescription(restx.Resource):
             @api.doc(description='Some details')
             def get(self):
                 return {}
@@ -1413,7 +1413,7 @@ class SwaggerTest(object):
                 '''No description (only summary)'''
 
         @api.route('/descriptionless/', endpoint='descriptionless')
-        class ResourceWithoutDescription(restplus.Resource):
+        class ResourceWithoutDescription(restx.Resource):
             def get(self):
                 '''No description (only summary)'''
                 return {}
@@ -1442,7 +1442,7 @@ class SwaggerTest(object):
 
     def test_operation_id(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.doc(id='get_objects')
             def get(self):
                 return {}
@@ -1458,7 +1458,7 @@ class SwaggerTest(object):
 
     def test_operation_id_shortcut(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.doc('get_objects')
             def get(self):
                 return {}
@@ -1472,10 +1472,10 @@ class SwaggerTest(object):
         def default_id(resource, method):
             return '{0}{1}'.format(method, resource)
 
-        api = restplus.Api(app, default_id=default_id)
+        api = restx.Api(app, default_id=default_id)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.doc(id='get_objects')
             def get(self):
                 return {}
@@ -1492,7 +1492,7 @@ class SwaggerTest(object):
     @pytest.mark.api(default_id=lambda r, m: '{0}{1}'.format(m, r))
     def test_custom_default_operation_id_blueprint(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.doc(id='get_objects')
             def get(self):
                 return {}
@@ -1508,7 +1508,7 @@ class SwaggerTest(object):
 
     def test_model_primitive_types(self, api, client):
         @api.route('/model-int/')
-        class ModelInt(restplus.Resource):
+        class ModelInt(restx.Resource):
             @api.doc(model=int)
             def get(self):
                 return {}
@@ -1527,13 +1527,13 @@ class SwaggerTest(object):
 
     def test_model_as_flat_dict(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=fields)
             def get(self):
                 return {}
@@ -1553,15 +1553,15 @@ class SwaggerTest(object):
 
     def test_model_as_nested_dict(self, api, client):
         address_fields = api.model('Address', {
-            'road': restplus.fields.String,
+            'road': restx.fields.String,
         })
 
         fields = api.model('Person', {
-            'address': restplus.fields.Nested(address_fields)
+            'address': restx.fields.Nested(address_fields)
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=fields)
             def get(self):
                 return {}
@@ -1599,15 +1599,15 @@ class SwaggerTest(object):
 
     def test_model_as_nested_dict_with_details(self, api, client):
         address_fields = api.model('Address', {
-            'road': restplus.fields.String,
+            'road': restx.fields.String,
         })
 
         fields = api.model('Person', {
-            'address': restplus.fields.Nested(address_fields, description='description', readonly=True)
+            'address': restx.fields.Nested(address_fields, description='description', readonly=True)
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=fields)
             def get(self):
                 return {}
@@ -1643,13 +1643,13 @@ class SwaggerTest(object):
 
     def test_model_as_flat_dict_with_marchal_decorator(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(fields)
             def get(self):
                 return {}
@@ -1676,7 +1676,7 @@ class SwaggerTest(object):
         })
 
         @api.route('/model-bad-uri/')
-        class ModelBadUri(restplus.Resource):
+        class ModelBadUri(restx.Resource):
             @api.doc(model=fields)
             def get(self):
                 return {}
@@ -1698,13 +1698,13 @@ class SwaggerTest(object):
 
     def test_marchal_decorator_with_code(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(fields, code=204)
             def delete(self):
                 return {}
@@ -1726,13 +1726,13 @@ class SwaggerTest(object):
 
     def test_marchal_decorator_with_description(self, api, client):
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(person, description='Some details')
             def get(self):
                 return {}
@@ -1754,13 +1754,13 @@ class SwaggerTest(object):
 
     def test_marhsal_decorator_with_envelope(self, api, client):
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(person, envelope='person')
             def get(self):
                 return {}
@@ -1786,13 +1786,13 @@ class SwaggerTest(object):
 
     def test_model_as_flat_dict_with_marchal_decorator_list(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(fields, as_list=True)
             def get(self):
                 return {}
@@ -1825,13 +1825,13 @@ class SwaggerTest(object):
 
     def test_model_as_flat_dict_with_marchal_decorator_list_alt(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_list_with(fields)
             def get(self):
                 return {}
@@ -1849,13 +1849,13 @@ class SwaggerTest(object):
 
     def test_model_as_flat_dict_with_marchal_decorator_list_kwargs(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_list_with(fields, code=201, description='Some details')
             def get(self):
                 return {}
@@ -1878,13 +1878,13 @@ class SwaggerTest(object):
 
     def test_model_as_dict_with_list(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'tags': restplus.fields.List(restplus.fields.String),
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'tags': restx.fields.List(restx.fields.String),
         })
 
         @api.route('/model-with-list/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=fields)
             def get(self):
                 return {}
@@ -1916,18 +1916,18 @@ class SwaggerTest(object):
 
     def test_model_as_nested_dict_with_list(self, api, client):
         address = api.model('Address', {
-            'road': restplus.fields.String,
+            'road': restx.fields.String,
         })
 
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
-            'addresses': restplus.fields.List(restplus.fields.Nested(address))
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
+            'addresses': restx.fields.List(restx.fields.Nested(address))
         })
 
         @api.route('/model-with-list/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=person)
             def get(self):
                 return {}
@@ -1940,7 +1940,7 @@ class SwaggerTest(object):
 
     def test_model_list_of_primitive_types(self, api, client):
         @api.route('/model-list/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=[int])
             def get(self):
                 return {}
@@ -1965,13 +1965,13 @@ class SwaggerTest(object):
 
     def test_model_list_as_flat_dict(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=[fields])
             def get(self):
                 return {}
@@ -1994,14 +1994,14 @@ class SwaggerTest(object):
 
     def test_model_doc_on_class(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
         @api.doc(model=fields)
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             def get(self):
                 return {}
 
@@ -2018,14 +2018,14 @@ class SwaggerTest(object):
 
     def test_model_doc_for_method_on_class(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
         @api.doc(get={'model': fields})
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             def get(self):
                 return {}
 
@@ -2042,12 +2042,12 @@ class SwaggerTest(object):
 
     def test_model_with_discriminator(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String(discriminator=True),
-            'age': restplus.fields.Integer,
+            'name': restx.fields.String(discriminator=True),
+            'age': restx.fields.Integer,
         })
 
         @api.route('/model-with-discriminator/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(fields)
             def get(self):
                 return {}
@@ -2068,12 +2068,12 @@ class SwaggerTest(object):
 
     def test_model_with_discriminator_override_require(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String(discriminator=True, required=False),
-            'age': restplus.fields.Integer,
+            'name': restx.fields.String(discriminator=True, required=False),
+            'age': restx.fields.Integer,
         })
 
         @api.route('/model-with-discriminator/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(fields)
             def get(self):
                 return {}
@@ -2094,7 +2094,7 @@ class SwaggerTest(object):
 
     def test_model_not_found(self, api, client):
         @api.route('/model-not-found/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model='NotFound')
             def get(self):
                 return {}
@@ -2108,12 +2108,12 @@ class SwaggerTest(object):
         '''
         # Note the use of a strings '404' and '200' in class decorators as opposed to ints in method decorators.
         @api.response('404', 'Not Found')
-        class BaseResource(restplus.Resource):
+        class BaseResource(restx.Resource):
             def get(self):
                 pass
 
         model = api.model('SomeModel', {
-            'message': restplus.fields.String,
+            'message': restx.fields.String,
         })
 
         @api.route('/test/')
@@ -2144,17 +2144,17 @@ class SwaggerTest(object):
 
     def test_clone(self, api, client):
         parent = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         child = api.clone('Child', parent, {
-            'extra': restplus.fields.String,
+            'extra': restx.fields.String,
         })
 
         @api.route('/extend/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model=child)
             def get(self):
                 return {}
@@ -2175,16 +2175,16 @@ class SwaggerTest(object):
 
     def test_inherit(self, api, client):
         parent = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
         })
 
         child = api.inherit('Child', parent, {
-            'extra': restplus.fields.String,
+            'extra': restx.fields.String,
         })
 
         @api.route('/inherit/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(child)
             def get(self):
                 return {
@@ -2233,21 +2233,21 @@ class SwaggerTest(object):
 
     def test_inherit_inline(self, api, client):
         parent = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
         })
 
         child = api.inherit('Child', parent, {
-            'extra': restplus.fields.String,
+            'extra': restx.fields.String,
         })
 
         output = api.model('Output', {
-            'child': restplus.fields.Nested(child),
-            'children': restplus.fields.List(restplus.fields.Nested(child))
+            'child': restx.fields.Nested(child),
+            'children': restx.fields.List(restx.fields.Nested(child))
         })
 
         @api.route('/inherit/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(output)
             def get(self):
                 return {
@@ -2299,16 +2299,16 @@ class SwaggerTest(object):
             pass
 
         parent = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
         })
 
         child1 = api.inherit('Child1', parent, {
-            'extra1': restplus.fields.String,
+            'extra1': restx.fields.String,
         })
 
         child2 = api.inherit('Child2', parent, {
-            'extra2': restplus.fields.String,
+            'extra2': restx.fields.String,
         })
 
         mapping = {
@@ -2317,11 +2317,11 @@ class SwaggerTest(object):
         }
 
         output = api.model('Output', {
-            'child': restplus.fields.Polymorph(mapping)
+            'child': restx.fields.Polymorph(mapping)
         })
 
         @api.route('/polymorph/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(output)
             def get(self):
                 return {}
@@ -2347,15 +2347,15 @@ class SwaggerTest(object):
             extra2 = 'extra2'
 
         parent = api.model('Person', {
-            'name': restplus.fields.String,
+            'name': restx.fields.String,
         })
 
         child1 = api.inherit('Child1', parent, {
-            'extra1': restplus.fields.String,
+            'extra1': restx.fields.String,
         })
 
         child2 = api.inherit('Child2', parent, {
-            'extra2': restplus.fields.String,
+            'extra2': restx.fields.String,
         })
 
         mapping = {
@@ -2364,11 +2364,11 @@ class SwaggerTest(object):
         }
 
         output = api.model('Output', {
-            'children': restplus.fields.List(restplus.fields.Polymorph(mapping))
+            'children': restx.fields.List(restx.fields.Polymorph(mapping))
         })
 
         @api.route('/polymorph/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.marshal_with(output)
             def get(self):
                 return {
@@ -2399,13 +2399,13 @@ class SwaggerTest(object):
 
     def test_expect_model(self, api, client):
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.expect(person)
             def post(self):
                 return {}
@@ -2446,13 +2446,13 @@ class SwaggerTest(object):
 
     def test_body_model_shortcut(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(model='Person')
             @api.expect(fields)
             def post(self):
@@ -2496,13 +2496,13 @@ class SwaggerTest(object):
 
     def test_expect_model_list(self, api, client):
         model = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-list/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.expect([model])
             def post(self):
                 return {}
@@ -2545,13 +2545,13 @@ class SwaggerTest(object):
         parser.add_argument('param', type=int, help='Some param')
 
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/with-parser/', endpoint='with-parser')
-        class WithParserResource(restplus.Resource):
+        class WithParserResource(restx.Resource):
             @api.expect(parser, person)
             def get(self):
                 return {}
@@ -2601,8 +2601,8 @@ class SwaggerTest(object):
 
     def test_expect_primitive_list(self, api, client):
         @api.route('/model-list/')
-        class ModelAsDict(restplus.Resource):
-            @api.expect([restplus.fields.String])
+        class ModelAsDict(restx.Resource):
+            @api.expect([restx.fields.String])
             def post(self):
                 return {}
 
@@ -2622,13 +2622,13 @@ class SwaggerTest(object):
 
     def test_body_model_list(self, api, client):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-list/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.expect([fields])
             def post(self):
                 return {}
@@ -2668,13 +2668,13 @@ class SwaggerTest(object):
 
     def test_expect_model_with_description(self, api, client):
         person = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @api.route('/model-as-dict/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.expect((person, 'Body description'))
             def post(self):
                 return {}
@@ -2715,7 +2715,7 @@ class SwaggerTest(object):
         }
 
     def test_authorizations(self, app, client):
-        restplus.Api(app, authorizations={
+        restx.Api(app, authorizations={
             'apikey': {
                 'type': 'apiKey',
                 'in': 'header',
@@ -2724,7 +2724,7 @@ class SwaggerTest(object):
         })
 
         # @api.route('/authorizations/')
-        # class ModelAsDict(restplus.Resource):
+        # class ModelAsDict(restx.Resource):
         #     def get(self):
         #         return {}
 
@@ -2740,7 +2740,7 @@ class SwaggerTest(object):
         # assert path['post']['security'] == {'apikey': []}
 
     def test_single_root_security_string(self, app, client):
-        api = restplus.Api(app, security='apikey', authorizations={
+        api = restx.Api(app, security='apikey', authorizations={
             'apikey': {
                 'type': 'apiKey',
                 'in': 'header',
@@ -2749,7 +2749,7 @@ class SwaggerTest(object):
         })
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             def post(self):
                 return {}
 
@@ -2788,7 +2788,7 @@ class SwaggerTest(object):
             }
         }
 
-        api = restplus.Api(app,
+        api = restx.Api(app,
             security={
                 'oauth2': 'read',
                 'implicit': ['read', 'write']
@@ -2797,7 +2797,7 @@ class SwaggerTest(object):
         )
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             def post(self):
                 return {}
 
@@ -2828,10 +2828,10 @@ class SwaggerTest(object):
                 }
             }
         }
-        api = restplus.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
+        api = restx.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             def post(self):
                 return {}
 
@@ -2843,7 +2843,7 @@ class SwaggerTest(object):
         assert 'security' not in op
 
     def test_method_security(self, app, client):
-        api = restplus.Api(app, authorizations={
+        api = restx.Api(app, authorizations={
             'apikey': {
                 'type': 'apiKey',
                 'in': 'header',
@@ -2852,7 +2852,7 @@ class SwaggerTest(object):
         })
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(security=['apikey'])
             def get(self):
                 return {}
@@ -2892,10 +2892,10 @@ class SwaggerTest(object):
                 }
             }
         }
-        api = restplus.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
+        api = restx.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(security=[{'oauth2': ['read', 'write']}])
             def get(self):
                 return {}
@@ -2923,10 +2923,10 @@ class SwaggerTest(object):
                 }
             }
         }
-        api = restplus.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
+        api = restx.Api(app, security=['apikey', {'oauth2': 'read'}], authorizations=security_definitions)
 
         @api.route('/authorizations/')
-        class ModelAsDict(restplus.Resource):
+        class ModelAsDict(restx.Resource):
             @api.doc(security=[])
             def get(self):
                 return {}
@@ -2944,7 +2944,7 @@ class SwaggerTest(object):
 
     def test_hidden_resource(self, api, client):
         @api.route('/test/', endpoint='test', doc=False)
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -2953,7 +2953,7 @@ class SwaggerTest(object):
 
         @api.hide
         @api.route('/test2/', endpoint='test2')
-        class TestResource2(restplus.Resource):
+        class TestResource2(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -2962,7 +2962,7 @@ class SwaggerTest(object):
 
         @api.doc(False)
         @api.route('/test3/', endpoint='test3')
-        class TestResource3(restplus.Resource):
+        class TestResource3(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -2980,7 +2980,7 @@ class SwaggerTest(object):
         ns = api.namespace('ns')
 
         @ns.route('/test/', endpoint='test', doc=False)
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -2996,7 +2996,7 @@ class SwaggerTest(object):
     def test_hidden_methods(self, api, client):
         @api.route('/test/', endpoint='test')
         @api.doc(delete=False)
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 '''
                 GET operation
@@ -3032,7 +3032,7 @@ class SwaggerTest(object):
 
     def test_produces_method(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3052,7 +3052,7 @@ class SwaggerTest(object):
     def test_deprecated_resource(self, api, client):
         @api.deprecated
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3067,7 +3067,7 @@ class SwaggerTest(object):
 
     def test_deprecated_method(self, api, client):
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3086,7 +3086,7 @@ class SwaggerTest(object):
 
     def test_vendor_as_kwargs(self, api, client):
         @api.route('/vendor_fields', endpoint='vendor_fields')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.vendor(integration={'integration1': '1'})
             def get(self):
                 return {}
@@ -3103,7 +3103,7 @@ class SwaggerTest(object):
 
     def test_vendor_as_dict(self, api, client):
         @api.route('/vendor_fields', endpoint='vendor_fields')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             @api.vendor({
                 'x-some-integration': {
                     'integration1': '1'
@@ -3132,7 +3132,7 @@ class SwaggerTest(object):
     def test_method_restrictions(self, api, client):
         @api.route('/foo/bar', endpoint='foo')
         @api.route('/bar', methods=['GET'], endpoint='bar')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3153,7 +3153,7 @@ class SwaggerTest(object):
         @api.route('/foo/bar')
         @api.route('/bar')
         @api.doc(description='an endpoint')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3168,7 +3168,7 @@ class SwaggerTest(object):
     def test_multiple_routes_individual_doc(self, api, client):
         @api.route('/foo/bar', doc={'description': 'the same endpoint'})
         @api.route('/bar', doc={'description': 'an endpoint'})
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3184,7 +3184,7 @@ class SwaggerTest(object):
         @api.route('/foo/bar', doc={'description': 'the same endpoint'})
         @api.route('/bar')
         @api.doc(description='an endpoint')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3199,7 +3199,7 @@ class SwaggerTest(object):
     def test_multiple_routes_no_doc_same_operationIds(self, api, client):
         @api.route('/foo/bar')
         @api.route('/bar')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3219,7 +3219,7 @@ class SwaggerTest(object):
             doc={"description": "I should be treated separately"},
         )
         @api.route("/bar")
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3235,7 +3235,7 @@ class SwaggerTest(object):
         @api.route('/foo/bar', doc={'description': 'the same endpoint'})
         @api.route('/bar', doc={'description': False})
         @api.doc(security=[{'oauth2': ['read', 'write']}])
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3252,7 +3252,7 @@ class SwaggerTest(object):
     def test_multiple_routes_deprecation(self, api, client):
         @api.route('/foo/bar', doc={'deprecated': True})
         @api.route('/bar')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 pass
 
@@ -3278,7 +3278,7 @@ class SwaggerTest(object):
                 "age": {"description": "An age"},
             }
         )
-        class ByNameResource(restplus.Resource):
+        class ByNameResource(restx.Resource):
             @api.doc(
                 params={"q": {"description": "A query string"}}
             )
@@ -3332,7 +3332,7 @@ class SwaggerDeprecatedTest(object):
 
         with pytest.warns(DeprecationWarning):
             @api.route('/with-parser/')
-            class WithParserResource(restplus.Resource):
+            class WithParserResource(restx.Resource):
                 @api.doc(parser=parser)
                 def get(self):
                     return {}
@@ -3349,7 +3349,7 @@ class SwaggerDeprecatedTest(object):
         with pytest.warns(DeprecationWarning):
             @api.route('/with-parser/')
             @api.doc(get={'parser': parser})
-            class WithParserResource(restplus.Resource):
+            class WithParserResource(restx.Resource):
                 def get(self):
                     return {}
 
@@ -3363,14 +3363,14 @@ class SwaggerDeprecatedTest(object):
 
     def test_doc_body_as_tuple(self, api):
         fields = api.model('Person', {
-            'name': restplus.fields.String,
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String,
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         with pytest.warns(DeprecationWarning):
             @api.route('/model-as-dict/')
-            class ModelAsDict(restplus.Resource):
+            class ModelAsDict(restx.Resource):
                 @api.doc(body=(fields, 'Body description'))
                 def post(self):
                     return {}

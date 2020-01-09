@@ -60,5 +60,5 @@ histograms/
 doc/_build/
 
 # Specifics
-flask_restplus/static
+flask_restx/static
 node_modules

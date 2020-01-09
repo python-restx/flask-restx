@@ -10,7 +10,7 @@ except ImportError:
     # TODO Remove this to drop Python2 support
     from collections import OrderedDict
 
-from flask_restplus import fields, Model, OrderedModel, SchemaModel
+from flask_restx import fields, Model, OrderedModel, SchemaModel
 
 
 class ModelTest(object):

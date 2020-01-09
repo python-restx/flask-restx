@@ -16,13 +16,13 @@ PYPI_RST_FILTERS = (
     (r':(?:class|func|meth|mod|attr|obj|exc|data|const):`~(?:\w+\.)*(\w+)`', r'``\1``'),
     (r':(?:class|func|meth|mod|attr|obj|exc|data|const):`([^`]+)`', r'``\1``'),
     # replace doc references
-    (r':doc:`(.+) <(.*)>`', r'`\1 <http://flask-restplus.readthedocs.org/en/stable\2.html>`_'),
+    (r':doc:`(.+) <(.*)>`', r'`\1 <http://flask-restx.readthedocs.org/en/stable\2.html>`_'),
     # replace issues references
-    (r':issue:`(.+?)`', r'`#\1 <https://github.com/noirbizarre/flask-restplus/issues/\1>`_'),
+    (r':issue:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/issues/\1>`_'),
     # replace pr references
-    (r':pr:`(.+?)`', r'`#\1 <https://github.com/noirbizarre/flask-restplus/pull/\1>`_'),
+    (r':pr:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/pull/\1>`_'),
     # replace commit references
-    (r':commit:`(.+?)`', r'`#\1 <https://github.com/noirbizarre/flask-restplus/commit/\1>`_'),
+    (r':commit:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/commit/\1>`_'),
     # Drop unrecognized currentmodule
     (r'\.\. currentmodule:: .*', ''),
 )
@@ -60,7 +60,7 @@ long_description = '\n'.join((
 ))
 
 
-exec(compile(open('flask_restplus/__about__.py').read(), 'flask_restplus/__about__.py', 'exec'))
+exec(compile(open('flask_restx/__about__.py').read(), 'flask_restx/__about__.py', 'exec'))
 
 install_requires = pip('install')
 doc_require = pip('doc')
@@ -68,11 +68,11 @@ tests_require = pip('test')
 dev_require = tests_require + pip('develop')
 
 setup(
-    name='flask-restplus',
+    name='flask-restx',
     version=__version__,
     description=__description__,
     long_description=long_description,
-    url='https://github.com/noirbizarre/flask-restplus',
+    url='https://github.com/python-restx/flask-restx',
     author='Axel Haustant',
     author_email='axel@data.gouv.fr',
     packages=find_packages(exclude=['tests', 'tests.*']),
@@ -87,7 +87,7 @@ setup(
     },
     license='BSD-3-Clause',
     zip_safe=False,
-    keywords='flask restplus rest api swagger openapi',
+    keywords='flask restx rest api swagger openapi',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python',

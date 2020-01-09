@@ -10,7 +10,7 @@ except ImportError:
     # TODO Remove this to drop Python2 support
     from collections import OrderedDict
 
-from flask_restplus import mask, Api, Resource, fields, marshal, Mask
+from flask_restx import mask, Api, Resource, fields, marshal, Mask
 
 
 def assert_data(tested, expected):

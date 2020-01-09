@@ -5,7 +5,7 @@ Request Parsing
 
 .. warning ::
 
-    The whole request parser part of Flask-RESTPlus is slated for removal and
+    The whole request parser part of Flask-RESTX is slated for removal and
     will be replaced by documentation on how to integrate with other packages
     that do the input/output stuff better
     (such as `marshmallow <http://marshmallow.readthedocs.org>`_).
@@ -13,9 +13,9 @@ Request Parsing
     Don't worry, if you have code using that now and wish to continue doing so,
     it's not going to go away any time too soon.
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
-Flask-RESTPlus's request parsing interface, :mod:`reqparse`,
+Flask-RESTX's request parsing interface, :mod:`reqparse`,
 is modeled after the :mod:`python:argparse` interface.
 It's designed to provide simple and uniform access to any variable on the
 :class:`flask.request` object in Flask.
@@ -28,7 +28,7 @@ It looks for two arguments in the :attr:`flask.Request.values` dict: an integer 
 
 .. code-block:: python
 
-    from flask_restplus import reqparse
+    from flask_restx import reqparse
 
     parser = reqparse.RequestParser()
     parser.add_argument('rate', type=int, help='Rate cannot be converted')
@@ -169,7 +169,7 @@ Advanced types handling
 -----------------------
 
 Sometimes, you need more than a primitive type to handle input validation.
-The :mod:`~flask_restplus.inputs` module provides some common type handling like:
+The :mod:`~flask_restx.inputs` module provides some common type handling like:
 
 - :func:`~inputs.boolean` for wider boolean handling
 - :func:`~inputs.ipv4` and :func:`~inputs.ipv6` for IP adresses
@@ -181,7 +181,7 @@ You just have to use them as `type` argument:
 
     parser.add_argument('flag', type=inputs.boolean)
 
-See the :mod:`~flask_restplus.inputs` documentation for full list of available inputs.
+See the :mod:`~flask_restx.inputs` documentation for full list of available inputs.
 
 You can also write your own:
 
@@ -208,7 +208,7 @@ also overwrite any argument in the parent with
 :meth:`~reqparse.RequestParser.replace_argument`, or remove it completely
 with :meth:`~reqparse.RequestParser.remove_argument`. For example: ::
 
-    from flask_restplus import reqparse
+    from flask_restx import reqparse
 
     parser = reqparse.RequestParser()
     parser.add_argument('foo', type=int)
@@ -263,7 +263,7 @@ specified either at the Flask application level or on the specific
 RequestParser instance. To invoke a RequestParser with the bundling errors
 option, pass in the argument ``bundle_errors``. For example ::
 
-    from flask_restplus import reqparse
+    from flask_restx import reqparse
 
     parser = reqparse.RequestParser(bundle_errors=True)
     parser.add_argument('foo', type=int, required=True)
@@ -320,7 +320,7 @@ then the error message will be the value of ``help``.
 replaced with the string representation of the type error. This allows the
 message to be customized while preserving the original error::
 
-    from flask_restplus import reqparse
+    from flask_restx import reqparse
 
 
     parser = reqparse.RequestParser()

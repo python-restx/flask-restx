@@ -4,7 +4,7 @@ Swagger documentation
 =====================
 
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
 Swagger API documentation is automatically generated and available from your API's root URL.  You can configure the documentation using the :meth:`@api.doc() <Api.doc>` decorator.
 
@@ -174,7 +174,7 @@ You can specify lists as the expected input:
             pass
 
 
-You can use :exc:`~flask_restplus.reqparse.RequestParser` to define the expected input:
+You can use :exc:`~flask_restx.reqparse.RequestParser` to define the expected input:
 
 .. code-block:: python
 
@@ -184,7 +184,7 @@ You can use :exc:`~flask_restplus.reqparse.RequestParser` to define the expected
 
 
     @api.route('/with-parser/', endpoint='with-parser')
-    class WithParserResource(restplus.Resource):
+    class WithParserResource(restx.Resource):
         @api.expect(parser)
         def get(self):
             return {}
@@ -416,7 +416,7 @@ Routes with a ``doc`` parameter are given a `unique` Swagger ``operationId``. Ro
 Documenting the fields
 ----------------------
 
-Every Flask-Restplus field accepts optional arguments used to document the field:
+Every Flask-RESTX field accepts optional arguments used to document the field:
 
 - ``required``: a boolean indicating if the field is always set (*default*: ``False``)
 - ``description``: some details about the field (*default*: ``None``)
@@ -561,9 +561,9 @@ For ``POST`` and ``PUT`` methods, use the ``body`` keyword argument to specify t
             return {}
 
 
-If both ``body`` and ``formData`` parameters are used, a :exc:`~flask_restplus.errors.SpecsError` will be raised.
+If both ``body`` and ``formData`` parameters are used, a :exc:`~flask_restx.errors.SpecsError` will be raised.
 
-Models can also be specified with a :class:`~flask_restplus.reqparse.RequestParser`.
+Models can also be specified with a :class:`~flask_restx.reqparse.RequestParser`.
 
 .. code-block:: python
 
@@ -572,7 +572,7 @@ Models can also be specified with a :class:`~flask_restplus.reqparse.RequestPars
     parser.add_argument('in_files', type=FileStorage, location='files')
 
     @api.route('/with-parser/', endpoint='with-parser')
-    class WithParserResource(restplus.Resource):
+    class WithParserResource(restx.Resource):
         @api.expect(parser)
         def get(self):
             return {}
@@ -590,7 +590,7 @@ Models can also be specified with a :class:`~flask_restplus.reqparse.RequestPars
 
 .. note::
 
-    Using :class:`~flask_restplus.reqparse.RequestParser` is preferred over the ``api.param()`` decorator
+    Using :class:`~flask_restx.reqparse.RequestParser` is preferred over the ``api.param()`` decorator
     to document form fields as it also perform validation.
 
 Headers
@@ -602,7 +602,7 @@ You can document response headers with the ``@api.header()`` decorator shortcut.
 
     @api.route('/with-headers/')
     @api.header('X-Header', 'Some class header')
-    class WithHeaderResource(restplus.Resource):
+    class WithHeaderResource(restx.Resource):
         @api.header('X-Collection', type=[str], collectionType='csv')
         def get(self):
             pass
@@ -613,7 +613,7 @@ just use the `@api.response` `headers` parameter.
 .. code-block:: python
 
     @api.route('/response-headers/')
-    class WithHeaderResource(restplus.Resource):
+    class WithHeaderResource(restx.Resource):
         @api.response(200, 'Success', headers={'X-Header': 'Some header'})
         def get(self):
             pass
@@ -628,7 +628,7 @@ Documenting expected/request headers is done through the `@api.expect` decorator
 
     @api.route('/expect-headers/')
     @api.expect(parser)
-    class ExpectHeaderResource(restplus.Resource):
+    class ExpectHeaderResource(restx.Resource):
         def get(self):
             pass
 
@@ -851,7 +851,7 @@ Expose vendor Extensions
 ------------------------
 
 Swaggers allows you to expose custom `vendor extensions`_ and you can use them
-in Flask-RESTPlus with the `@api.vendor` decorator.
+in Flask-RESTX with the `@api.vendor` decorator.
 
 It supports both extensions as `dict` or `kwargs` and perform automatique `x-` prefix:
 
@@ -887,13 +887,13 @@ You can export the Swagger specifications for your API:
 Swagger UI
 ----------
 
-By default ``flask-restplus`` provides Swagger UI documentation, served from the root URL of the API.
+By default ``flask-restx`` provides Swagger UI documentation, served from the root URL of the API.
 
 
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api, Resource, fields
+    from flask_restx import Api, Resource, fields
 
     app = Flask(__name__)
     api = Api(app, version='1.0', title='Sample API',
@@ -929,7 +929,7 @@ You can control the Swagger UI path with the ``doc`` parameter (defaults to the 
 .. code-block:: python
 
     from flask import Flask, Blueprint
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     blueprint = Blueprint('api', __name__, url_prefix='/api')
@@ -945,7 +945,7 @@ You can specify a custom validator URL by setting ``config.SWAGGER_VALIDATOR_URL
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     app.config.SWAGGER_VALIDATOR_URL = 'http://domain.com/validator'
@@ -964,7 +964,7 @@ These values are all public knowledge. No *client secret* is specified here.
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
     
     app = Flask(__name__)
 
@@ -996,7 +996,7 @@ setting (``'none'``, ``'list'`` or ``'full'``):
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
@@ -1008,7 +1008,7 @@ By default, operation ID is hidden as well as request duration, you can enable t
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     app.config.SWAGGER_UI_OPERATION_ID = True
@@ -1023,7 +1023,7 @@ you can register a custom view function with the :meth:`~Api.documentation` deco
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api, apidoc
+    from flask_restx import Api, apidoc
 
     app = Flask(__name__)
     api = Api(app)
@@ -1042,7 +1042,7 @@ supporting the same values as the ``supportedSubmitMethods`` `Swagger UI paramet
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
 
@@ -1062,7 +1062,7 @@ To disable Swagger UI entirely, set ``doc=False``:
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api
+    from flask_restx import Api
 
     app = Flask(__name__)
     api = Api(app, doc=False)

@@ -18,7 +18,7 @@ class Apidoc(Blueprint):
         self.registered = True
 
 
-apidoc = Apidoc('restplus_doc', __name__,
+apidoc = Apidoc('restx_doc', __name__,
     template_folder='templates',
     static_folder='static',
     static_url_path='/swaggerui',
@@ -27,7 +27,7 @@ apidoc = Apidoc('restplus_doc', __name__,
 
 @apidoc.add_app_template_global
 def swagger_static(filename):
-    return url_for('restplus_doc.static', filename=filename)
+    return url_for('restx_doc.static', filename=filename)
 
 
 def ui_for(api):

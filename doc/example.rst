@@ -6,7 +6,7 @@ Here is a full example of a `TodoMVC <http://todomvc.com/>`_ API.
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api, Resource, fields
+    from flask_restx import Api, Resource, fields
     from werkzeug.contrib.fixers import ProxyFix
 
     app = Flask(__name__)
@@ -105,4 +105,4 @@ Here is a full example of a `TodoMVC <http://todomvc.com/>`_ API.
 
 You can find other examples in the `github repository examples folder`_.
 
-.. _github repository examples folder: https://github.com/noirbizarre/flask-restplus/tree/master/examples
+.. _github repository examples folder: https://github.com/python-restx/flask-restx/tree/master/examples

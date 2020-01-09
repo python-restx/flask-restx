@@ -6,12 +6,12 @@ import pytest
 from flask import url_for, Blueprint
 from werkzeug.routing import BuildError
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 
 class APIDocTest(object):
     def test_default_apidoc_on_root(self, app, client):
-        restplus.Api(app, version='1.0')
+        restx.Api(app, version='1.0')
 
         assert url_for('doc') == url_for('root')
 
@@ -20,7 +20,7 @@ class APIDocTest(object):
         assert response.content_type == 'text/html; charset=utf-8'
 
     def test_default_apidoc_on_root_lazy(self, app, client):
-        api = restplus.Api(version='1.0')
+        api = restx.Api(version='1.0')
         api.init_app(app)
 
         assert url_for('doc') == url_for('root')
@@ -31,7 +31,7 @@ class APIDocTest(object):
 
     def test_default_apidoc_on_root_with_blueprint(self, app, client):
         blueprint = Blueprint('api', __name__, url_prefix='/api')
-        restplus.Api(blueprint, version='1.0')
+        restx.Api(blueprint, version='1.0')
         app.register_blueprint(blueprint)
 
         assert url_for('api.doc') == url_for('api.root')
@@ -42,7 +42,7 @@ class APIDocTest(object):
 
     def test_apidoc_with_custom_validator(self, app, client):
         app.config['SWAGGER_VALIDATOR_URL'] = 'http://somewhere.com/validator'
-        restplus.Api(app, version='1.0')
+        restx.Api(app, version='1.0')
 
         response = client.get(url_for('doc'))
         assert response.status_code == 200
@@ -50,7 +50,7 @@ class APIDocTest(object):
         assert 'validatorUrl: "http://somewhere.com/validator" || null,' in str(response.data)
 
     def test_apidoc_doc_expansion_parameter(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
 
         response = client.get(url_for('doc'))
         assert 'docExpansion: "none"' in str(response.data)
@@ -64,7 +64,7 @@ class APIDocTest(object):
         assert 'docExpansion: "full"' in str(response.data)
 
     def test_apidoc_doc_display_operation_id(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
 
         response = client.get(url_for('doc'))
         assert 'displayOperationId: false' in str(response.data)
@@ -78,7 +78,7 @@ class APIDocTest(object):
         assert 'displayOperationId: true' in str(response.data)
 
     def test_apidoc_doc_display_request_duration(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
 
         response = client.get(url_for('doc'))
         assert 'displayRequestDuration: false' in str(response.data)
@@ -92,7 +92,7 @@ class APIDocTest(object):
         assert 'displayRequestDuration: true' in str(response.data)
 
     def test_custom_apidoc_url(self, app, client):
-        restplus.Api(app, version='1.0', doc='/doc/')
+        restx.Api(app, version='1.0', doc='/doc/')
 
         doc_url = url_for('doc')
         root_url = url_for('root')
@@ -109,12 +109,12 @@ class APIDocTest(object):
 
     def test_custom_api_prefix(self, app, client):
         prefix = '/api'
-        api = restplus.Api(app, prefix=prefix)
+        api = restx.Api(app, prefix=prefix)
         api.namespace('resource')
         assert url_for('root') == prefix
 
     def test_custom_apidoc_page(self, app, client):
-        api = restplus.Api(app, version='1.0')
+        api = restx.Api(app, version='1.0')
         content = 'My Custom API Doc'
 
         @api.documentation
@@ -127,7 +127,7 @@ class APIDocTest(object):
 
     def test_custom_apidoc_page_lazy(self, app, client):
         blueprint = Blueprint('api', __name__, url_prefix='/api')
-        api = restplus.Api(blueprint, version='1.0')
+        api = restx.Api(blueprint, version='1.0')
         content = 'My Custom API Doc'
 
         @api.documentation
@@ -141,7 +141,7 @@ class APIDocTest(object):
         assert response.data.decode('utf8') == content
 
     def test_disabled_apidoc(self, app, client):
-        restplus.Api(app, version='1.0', doc=False)
+        restx.Api(app, version='1.0', doc=False)
 
         with pytest.raises(BuildError):
             url_for('doc')

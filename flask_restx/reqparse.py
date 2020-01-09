@@ -44,7 +44,7 @@ _friendly_location = {
     'files': 'an uploaded file',
 }
 
-#: Maps Flask-RESTPlus RequestParser locations to Swagger ones
+#: Maps Flask-RESTX RequestParser locations to Swagger ones
 LOCATIONS = {
     'args': 'query',
     'form': 'formData',
@@ -296,7 +296,7 @@ class RequestParser(object):
     Enables adding and parsing of multiple arguments in the context of a single request.
     Ex::
 
-        from flask_restplus import RequestParser
+        from flask_restx import RequestParser
 
         parser = RequestParser()
         parser.add_argument('foo')
