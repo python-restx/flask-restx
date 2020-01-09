@@ -110,10 +110,11 @@ If you're new to NPM, also check out `nvm <https://github.com/creationix/nvm/blo
 Updating Copyright
 ------------------
 
-If you're a part of a corporation with an NDA, you may be required to update the LICENSE.
+If you're a part of a corporation with an NDA, you may be required to update the
+LICENSE file. This should be discussed and agreed upon by the project maintainers.
 
 1. Check with your legal department first.
-2. Add an appropriate line to the LICENSE file. See the Akamai entry for an example
+2. Add an appropriate line to the LICENSE file.
 3. When making a commit, add the specific copyright notice.
 
 Double check with your legal department about their regulations. Not all changes
