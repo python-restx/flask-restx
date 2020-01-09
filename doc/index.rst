@@ -75,7 +75,6 @@ Additional Notes
    :maxdepth: 2
 
    contributing
-   changelog
 
 
 Indices and tables
