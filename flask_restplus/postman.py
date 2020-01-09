@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 from time import time
 from uuid import uuid5, NAMESPACE_URL
 

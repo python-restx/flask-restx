@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from flask import request
 from flask.views import MethodView
 from werkzeug.wrappers import BaseResponse

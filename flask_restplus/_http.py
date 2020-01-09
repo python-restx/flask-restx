@@ -1,4 +1,3 @@
-# encoding: utf-8
 """
 This file is backported from Python 3.5 http built-in module.
 """

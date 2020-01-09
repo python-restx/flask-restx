@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 '''
 This module provide some helpers for advanced types parsing.
 
