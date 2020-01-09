@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_restplus import Api, Resource, fields
+from flask_restx import Api, Resource, fields
 from werkzeug.contrib.fixers import ProxyFix
 
 app = Flask(__name__)

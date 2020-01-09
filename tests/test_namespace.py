@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import flask_restplus as restplus
+import flask_restx as restx
 
-from flask_restplus import Namespace, Model, OrderedModel
+from flask_restx import Namespace, Model, OrderedModel
 
 
 class NamespaceTest(object):
     def test_parser(self):
         api = Namespace('test')
-        assert isinstance(api.parser(), restplus.reqparse.RequestParser)
+        assert isinstance(api.parser(), restx.reqparse.RequestParser)
 
     def test_doc_decorator(self):
         api = Namespace('test')
         params = {'q': {'description': 'some description'}}
 
         @api.doc(params=params)
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             pass
 
         assert hasattr(TestResource, '__apidoc__')
@@ -28,7 +28,7 @@ class NamespaceTest(object):
         child_params = {'q': {'description': 'some new description'}, 'other': {'description': 'another param'}}
 
         @api.doc(params=base_params)
-        class BaseResource(restplus.Resource):
+        class BaseResource(restx.Resource):
             pass
 
         @api.doc(params=child_params)
@@ -106,18 +106,18 @@ class NamespaceTest(object):
         assert 'Child' in api.models
 
     def test_api_payload(self, app, client):
-        api = restplus.Api(app, validate=True)
-        ns = restplus.Namespace('apples')
+        api = restx.Api(app, validate=True)
+        ns = restx.Namespace('apples')
         api.add_namespace(ns)
 
         fields = ns.model('Person', {
-            'name': restplus.fields.String(required=True),
-            'age': restplus.fields.Integer,
-            'birthdate': restplus.fields.DateTime,
+            'name': restx.fields.String(required=True),
+            'age': restx.fields.Integer,
+            'birthdate': restx.fields.DateTime,
         })
 
         @ns.route('/validation/')
-        class Payload(restplus.Resource):
+        class Payload(restx.Resource):
             payload = None
 
             @ns.expect(fields)

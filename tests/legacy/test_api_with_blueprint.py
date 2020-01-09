@@ -5,16 +5,16 @@ import flask
 
 from flask import Blueprint, request
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 
 # Add a dummy Resource to verify that the app is properly set.
-class HelloWorld(restplus.Resource):
+class HelloWorld(restx.Resource):
     def get(self):
         return {}
 
 
-class GoodbyeWorld(restplus.Resource):
+class GoodbyeWorld(restx.Resource):
     def __init__(self, err):
         self.err = err
 
@@ -25,7 +25,7 @@ class GoodbyeWorld(restplus.Resource):
 class APIWithBlueprintTest(object):
     def test_api_base(self, app):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         app.register_blueprint(blueprint)
         assert api.urls == {}
         assert api.prefix == ''
@@ -33,14 +33,14 @@ class APIWithBlueprintTest(object):
 
     def test_api_delayed_initialization(self, app):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api()
+        api = restx.Api()
         api.init_app(blueprint)
         app.register_blueprint(blueprint)
         api.add_resource(HelloWorld, '/', endpoint="hello")
 
     def test_add_resource_endpoint(self, app, mocker):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         view = mocker.Mock(**{'as_view.return_value.__name__': str('test_view')})
         api.add_resource(view, '/foo', endpoint='bar')
         app.register_blueprint(blueprint)
@@ -48,7 +48,7 @@ class APIWithBlueprintTest(object):
 
     def test_add_resource_endpoint_after_registration(self, app, mocker):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         app.register_blueprint(blueprint)
         view = mocker.Mock(**{'as_view.return_value.__name__': str('test_view')})
         api.add_resource(view, '/foo', endpoint='bar')
@@ -56,7 +56,7 @@ class APIWithBlueprintTest(object):
 
     def test_url_with_api_prefix(self, app):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint, prefix='/api')
+        api = restx.Api(blueprint, prefix='/api')
         api.add_resource(HelloWorld, '/hi', endpoint='hello')
         app.register_blueprint(blueprint)
         with app.test_request_context('/api/hi'):
@@ -64,7 +64,7 @@ class APIWithBlueprintTest(object):
 
     def test_url_with_blueprint_prefix(self, app):
         blueprint = Blueprint('test', __name__, url_prefix='/bp')
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint='hello')
         app.register_blueprint(blueprint)
         with app.test_request_context('/bp/hi'):
@@ -72,7 +72,7 @@ class APIWithBlueprintTest(object):
 
     def test_url_with_registration_prefix(self, app):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint='hello')
         app.register_blueprint(blueprint, url_prefix='/reg')
         with app.test_request_context('/reg/hi'):
@@ -80,7 +80,7 @@ class APIWithBlueprintTest(object):
 
     def test_registration_prefix_overrides_blueprint_prefix(self, app):
         blueprint = Blueprint('test', __name__, url_prefix='/bp')
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint='hello')
         app.register_blueprint(blueprint, url_prefix='/reg')
         with app.test_request_context('/reg/hi'):
@@ -88,7 +88,7 @@ class APIWithBlueprintTest(object):
 
     def test_url_with_api_and_blueprint_prefix(self, app):
         blueprint = Blueprint('test', __name__, url_prefix='/bp')
-        api = restplus.Api(blueprint, prefix='/api')
+        api = restx.Api(blueprint, prefix='/api')
         api.add_resource(HelloWorld, '/hi', endpoint='hello')
         app.register_blueprint(blueprint)
         with app.test_request_context('/bp/api/hi'):
@@ -96,7 +96,7 @@ class APIWithBlueprintTest(object):
 
     def test_error_routing(self, app, mocker):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint="hello")
         api.add_resource(GoodbyeWorld(404), '/bye', endpoint="bye")
         app.register_blueprint(blueprint)
@@ -109,11 +109,11 @@ class APIWithBlueprintTest(object):
 
     def test_non_blueprint_rest_error_routing(self, app, mocker):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint="hello")
         api.add_resource(GoodbyeWorld(404), '/bye', endpoint="bye")
         app.register_blueprint(blueprint, url_prefix='/blueprint')
-        api2 = restplus.Api(app)
+        api2 = restx.Api(app)
         api2.add_resource(HelloWorld(api), '/hi', endpoint="hello")
         api2.add_resource(GoodbyeWorld(404), '/bye', endpoint="bye")
         with app.test_request_context('/hi', method='POST'):
@@ -137,7 +137,7 @@ class APIWithBlueprintTest(object):
 
     def test_non_blueprint_non_rest_error_routing(self, app, mocker):
         blueprint = Blueprint('test', __name__)
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
         api.add_resource(HelloWorld, '/hi', endpoint="hello")
         api.add_resource(GoodbyeWorld(404), '/bye', endpoint="bye")
         app.register_blueprint(blueprint, url_prefix='/blueprint')

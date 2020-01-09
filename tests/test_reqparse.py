@@ -10,9 +10,9 @@ from werkzeug.exceptions import BadRequest
 from werkzeug.wrappers import Request
 from werkzeug.datastructures import FileStorage, MultiDict
 
-from flask_restplus import Api, Model, fields, inputs
-from flask_restplus.errors import SpecsError
-from flask_restplus.reqparse import Argument, RequestParser, ParseResult
+from flask_restx import Api, Model, fields, inputs
+from flask_restx.errors import SpecsError
+from flask_restx.reqparse import Argument, RequestParser, ParseResult
 
 
 class ReqParseTest(object):
@@ -38,7 +38,7 @@ class ReqParseTest(object):
             assert args['todo'] == {'task': 'aaa'}
 
     def test_help(self, app, mocker):
-        abort = mocker.patch('flask_restplus.reqparse.abort',
+        abort = mocker.patch('flask_restx.reqparse.abort',
                            side_effect=BadRequest('Bad Request'))
         parser = RequestParser()
         parser.add_argument('foo', choices=('one', 'two'), help='Bad choice.')
@@ -50,7 +50,7 @@ class ReqParseTest(object):
         abort.assert_called_with(400, 'Input payload validation failed', errors=expected)
 
     def test_no_help(self, app, mocker):
-        abort = mocker.patch('flask_restplus.reqparse.abort',
+        abort = mocker.patch('flask_restx.reqparse.abort',
                              side_effect=BadRequest('Bad Request'))
         parser = RequestParser()
         parser.add_argument('foo', choices=['one', 'two'])
@@ -765,7 +765,7 @@ class ArgumentTest(object):
         assert len(arg.operators) == 1
 
     def test_default_type(self, mocker):
-        mock_six = mocker.patch('flask_restplus.reqparse.six')
+        mock_six = mocker.patch('flask_restx.reqparse.six')
         arg = Argument('foo')
         sentinel = object()
         arg.type(sentinel)

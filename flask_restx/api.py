@@ -42,7 +42,7 @@ from ._http import HTTPStatus
 
 RE_RULES = re.compile('(<.*>)')
 
-# List headers that should never be handled by Flask-RESTPlus
+# List headers that should never be handled by Flask-RESTX
 HEADERS_BLACKLIST = ('Content-Length',)
 
 DEFAULT_REPRESENTATIONS = [('application/json', output_json)]
@@ -238,7 +238,7 @@ class Api(object):
         return ''.join(part for part in parts if part)
 
     def _register_apidoc(self, app):
-        conf = app.extensions.setdefault('restplus', {})
+        conf = app.extensions.setdefault('restx', {})
         if not conf.get('apidoc_registered', False):
             app.register_blueprint(apidoc.apidoc)
         conf['apidoc_registered'] = True
@@ -581,11 +581,11 @@ class Api(object):
 
     def error_router(self, original_handler, e):
         '''
-        This function decides whether the error occurred in a flask-restplus
-        endpoint or not. If it happened in a flask-restplus endpoint, our
+        This function decides whether the error occurred in a flask-restx
+        endpoint or not. If it happened in a flask-restx endpoint, our
         handler will be dispatched. If it happened in an unrelated view, the
         app's original error handler will be dispatched.
-        In the event that the error occurred in a flask-restplus endpoint but
+        In the event that the error occurred in a flask-restx endpoint but
         the local handler can't resolve the situation, the router will fall
         back onto the original_handler as last resort.
 
@@ -753,7 +753,7 @@ class Api(object):
         '''
         Synchronize prefix between blueprint/api and registration options, then
         perform initialization with setup_state.app :class:`flask.Flask` object.
-        When a :class:`flask_restplus.Api` object is initialized with a blueprint,
+        When a :class:`flask_restx.Api` object is initialized with a blueprint,
         this method is recorded on the blueprint to be run when the blueprint is later
         registered to a :class:`flask.Flask` object.  This method also monkeypatches
         BlueprintSetupState.add_url_rule with _blueprint_setup_add_url_rule_patch.
@@ -770,7 +770,7 @@ class Api(object):
             setup_state.add_url_rule = MethodType(Api._blueprint_setup_add_url_rule_patch,
                                                   setup_state)
         if not setup_state.first_registration:
-            raise ValueError('flask-restplus blueprints can only be registered once.')
+            raise ValueError('flask-restx blueprints can only be registered once.')
         self._init_app(setup_state.app)
 
     def mediatypes_method(self):
@@ -813,7 +813,7 @@ class Api(object):
         '''Given a response, change it to ask for credentials'''
 
         if self.serve_challenge_on_401:
-            realm = current_app.config.get("HTTP_BASIC_AUTH_REALM", "flask-restplus")
+            realm = current_app.config.get("HTTP_BASIC_AUTH_REALM", "flask-restx")
             challenge = u"{0} realm=\"{1}\"".format("Basic", realm)
 
             response.headers['WWW-Authenticate'] = challenge

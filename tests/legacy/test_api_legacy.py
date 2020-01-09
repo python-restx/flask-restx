@@ -10,11 +10,11 @@ from json import dumps, JSONEncoder
 from flask import Blueprint, redirect, views
 from werkzeug.exceptions import HTTPException, Unauthorized, BadRequest
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 
 # Add a dummy Resource to verify that the app is properly set.
-class HelloWorld(restplus.Resource):
+class HelloWorld(restx.Resource):
     def get(self):
         return {}
 
@@ -31,7 +31,7 @@ class APITest(object):
         response = mocker.Mock()
         response.headers = {}
         response = api.unauthorized(response)
-        assert response.headers['WWW-Authenticate'] == 'Basic realm="flask-restplus"'
+        assert response.headers['WWW-Authenticate'] == 'Basic realm="flask-restx"'
 
     @pytest.mark.options(HTTP_BASIC_AUTH_REALM='Foo')
     @pytest.mark.api(serve_challenge_on_401=True)
@@ -54,7 +54,7 @@ class APITest(object):
 
         resp = api.handle_error(exception)
         assert resp.status_code == 401
-        assert resp.headers['WWW-Authenticate'] == 'Basic realm="flask-restplus"'
+        assert resp.headers['WWW-Authenticate'] == 'Basic realm="flask-restx"'
 
     @pytest.mark.api(serve_challenge_on_401=True)
     @pytest.mark.options(HTTP_BASIC_AUTH_REALM='test-realm')
@@ -78,19 +78,19 @@ class APITest(object):
         assert api.representations['foo'] == foo
 
     def test_api_base(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         assert api.urls == {}
         assert api.prefix == ''
         assert api.default_mediatype == 'application/json'
 
     def test_api_delayed_initialization(self, app, client):
-        api = restplus.Api()
+        api = restx.Api()
         api.add_resource(HelloWorld, '/', endpoint="hello")
         api.init_app(app)
         assert client.get('/').status_code == 200
 
     def test_api_prefix(self, app):
-        api = restplus.Api(app, prefix='/foo')
+        api = restx.Api(app, prefix='/foo')
         assert api.prefix == '/foo'
 
     @pytest.mark.api(serve_challenge_on_401=True)
@@ -103,7 +103,7 @@ class APITest(object):
         assert 'WWW-Authenticate' in resp.headers
 
     def test_media_types(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         with app.test_request_context("/foo", headers={
             'Accept': 'application/json'
@@ -111,7 +111,7 @@ class APITest(object):
             assert api.mediatypes() == ['application/json']
 
     def test_media_types_method(self, app, mocker):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         with app.test_request_context("/foo", headers={
             'Accept': 'application/xml; q=.5'
@@ -119,7 +119,7 @@ class APITest(object):
             assert api.mediatypes_method()(mocker.Mock()) == ['application/xml', 'application/json']
 
     def test_media_types_q(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         with app.test_request_context("/foo", headers={
             'Accept': 'application/json; q=1, application/xml; q=.5'
@@ -131,7 +131,7 @@ class APITest(object):
             return 0
 
         view = mocker.Mock()
-        api = restplus.Api(mock_app)
+        api = restx.Api(mock_app)
         api.decorators.append(return_zero)
         api.output = mocker.Mock()
         api.add_resource(view, '/foo', endpoint='bar')
@@ -141,19 +141,19 @@ class APITest(object):
     def test_add_resource_endpoint(self, app, mocker):
         view = mocker.Mock(**{'as_view.return_value.__name__': str('test_view')})
 
-        api = restplus.Api(app)
+        api = restx.Api(app)
         api.add_resource(view, '/foo', endpoint='bar')
 
         view.as_view.assert_called_with('bar', api)
 
     def test_add_two_conflicting_resources_on_same_endpoint(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        class Foo1(restplus.Resource):
+        class Foo1(restx.Resource):
             def get(self):
                 return 'foo1'
 
-        class Foo2(restplus.Resource):
+        class Foo2(restx.Resource):
             def get(self):
                 return 'foo2'
 
@@ -162,9 +162,9 @@ class APITest(object):
             api.add_resource(Foo2, '/foo/toto', endpoint='bar')
 
     def test_add_the_same_resource_on_same_endpoint(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        class Foo1(restplus.Resource):
+        class Foo1(restx.Resource):
             def get(self):
                 return 'foo1'
 
@@ -178,7 +178,7 @@ class APITest(object):
             assert foo2.data == b'"foo1"\n'
 
     def test_add_resource(self, mocker, mock_app):
-        api = restplus.Api(mock_app)
+        api = restx.Api(mock_app)
         api.output = mocker.Mock()
         api.add_resource(views.MethodView, '/foo')
 
@@ -186,7 +186,7 @@ class APITest(object):
                                             view_func=api.output())
 
     def test_add_resource_kwargs(self, mocker, mock_app):
-        api = restplus.Api(mock_app)
+        api = restx.Api(mock_app)
         api.output = mocker.Mock()
         api.add_resource(views.MethodView, '/foo', defaults={"bar": "baz"})
 
@@ -195,9 +195,9 @@ class APITest(object):
                                             defaults={"bar": "baz"})
 
     def test_add_resource_forward_resource_class_parameters(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        class Foo(restplus.Resource):
+        class Foo(restx.Resource):
             def __init__(self, api, *args, **kwargs):
                 self.one = args[0]
                 self.two = kwargs['secret_state']
@@ -218,7 +218,7 @@ class APITest(object):
         def make_empty_response():
             return {'foo': 'bar'}
 
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         with app.test_request_context("/foo"):
             wrapper = api.output(make_empty_response)
@@ -231,7 +231,7 @@ class APITest(object):
         def make_empty_resposne():
             return flask.make_response('')
 
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         with app.test_request_context("/foo"):
             wrapper = api.output(make_empty_resposne)
@@ -240,13 +240,13 @@ class APITest(object):
             assert resp.data.decode() == ''
 
     def test_resource(self, app, mocker):
-        resource = restplus.Resource()
+        resource = restx.Resource()
         resource.get = mocker.Mock()
         with app.test_request_context("/foo"):
             resource.dispatch_request()
 
     def test_resource_resp(self, app, mocker):
-        resource = restplus.Resource()
+        resource = restx.Resource()
         resource.get = mocker.Mock()
         with app.test_request_context("/foo"):
             resource.get.return_value = flask.make_response('')
@@ -256,7 +256,7 @@ class APITest(object):
         def text(data, code, headers=None):
             return flask.make_response(six.text_type(data))
 
-        class Foo(restplus.Resource):
+        class Foo(restx.Resource):
             representations = {
                 'text/plain': text,
             }
@@ -271,18 +271,18 @@ class APITest(object):
 
     @pytest.mark.request_context('/foo')
     def test_resource_error(self, app):
-        resource = restplus.Resource()
+        resource = restx.Resource()
         with pytest.raises(AssertionError):
             resource.dispatch_request()
 
     @pytest.mark.request_context('/foo', method='HEAD')
     def test_resource_head(self, app):
-        resource = restplus.Resource()
+        resource = restx.Resource()
         with pytest.raises(AssertionError):
             resource.dispatch_request()
 
     def test_endpoints(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         api.add_resource(HelloWorld, '/ids/<int:id>', endpoint="hello")
         with app.test_request_context('/foo'):
             assert api._has_fr_route() is False
@@ -291,7 +291,7 @@ class APITest(object):
             assert api._has_fr_route() is True
 
     def test_url_for(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         api.add_resource(HelloWorld, '/ids/<int:id>')
         with app.test_request_context('/foo'):
             assert api.url_for(HelloWorld, id=123) == '/ids/123'
@@ -301,7 +301,7 @@ class APITest(object):
         Blueprint.
         """
         api_bp = Blueprint('api', __name__)
-        api = restplus.Api(api_bp)
+        api = restx.Api(api_bp)
         api.add_resource(HelloWorld, '/foo/<string:bar>')
         app.register_blueprint(api_bp)
         with app.test_request_context('/foo'):
@@ -323,9 +323,9 @@ class APITest(object):
                              'separators': (', ', ': ')}
 
         app.config.from_object(TestConfig)
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        class Foo(restplus.Resource):
+        class Foo(restx.Resource):
             def get(self):
                 return {'foo': 'bar', 'baz': 'qux'}
 
@@ -346,9 +346,9 @@ class APITest(object):
             RESTPLUS_JSON = {'cls': CabageEncoder}
 
         app.config.from_object(TestConfig)
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        class Cabbage(restplus.Resource):
+        class Cabbage(restx.Resource):
             def get(self):
                 return {'frob': object()}
 
@@ -360,7 +360,7 @@ class APITest(object):
         assert data == expected
 
     def test_json_with_no_settings(self, api, client):
-        class Foo(restplus.Resource):
+        class Foo(restx.Resource):
             def get(self):
                 return {'foo': 'bar'}
 
@@ -372,7 +372,7 @@ class APITest(object):
         assert data == expected
 
     def test_redirect(self, api, client):
-        class FooResource(restplus.Resource):
+        class FooResource(restx.Resource):
             def get(self):
                 return redirect('/')
 
@@ -383,7 +383,7 @@ class APITest(object):
         assert resp.headers['Location'] == 'http://localhost/'
 
     def test_calling_owns_endpoint_before_api_init(self):
-        api = restplus.Api()
+        api = restx.Api()
         api.owns_endpoint('endpoint')
         # with pytest.raises(AttributeError):
         # try:

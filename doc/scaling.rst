@@ -3,22 +3,22 @@
 Scaling your project
 ====================
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
-This page covers building a slightly more complex Flask-RESTPlus app that will
-cover out some best practices when setting up a real-world Flask-RESTPlus-based API.
-The :ref:`quickstart` section is great for getting started with your first Flask-RESTplus app,
-so if you're new to Flask-RESTPlus you'd be better off checking that out first.
+This page covers building a slightly more complex Flask-RESTX app that will
+cover out some best practices when setting up a real-world Flask-RESTX-based API.
+The :ref:`quickstart` section is great for getting started with your first Flask-RESTX app,
+so if you're new to Flask-RESTX you'd be better off checking that out first.
 
 
 Multiple namespaces
 -------------------
 
-There are many different ways to organize your Flask-RESTPlus app,
+There are many different ways to organize your Flask-RESTX app,
 but here we'll describe one that scales pretty well with larger apps
 and maintains a nice level organization.
 
-Flask-RESTPlus provides a way to use almost the same pattern as Flask's `blueprint`.
+Flask-RESTX provides a way to use almost the same pattern as Flask's `blueprint`.
 The main idea is to split your app into reusable namespaces.
 
 Here's an example directory structure::
@@ -51,7 +51,7 @@ For example:
 
 .. code-block:: Python
 
-    from flask_restplus import Namespace, Resource, fields
+    from flask_restx import Namespace, Resource, fields
 
     api = Namespace('cats', description='Cats related operations')
 
@@ -90,7 +90,7 @@ The `apis.__init__` module should aggregate them:
 
 .. code-block:: Python
 
-    from flask_restplus import Api
+    from flask_restx import Api
 
     from .namespace1 import api as ns1
     from .namespace2 import api as ns2
@@ -115,7 +115,7 @@ You don't have to bind url-prefix while declaration of Namespace object.
 
 .. code-block:: Python
 
-    from flask_restplus import Api
+    from flask_restx import Api
 
     from .namespace1 import api as ns1
     from .namespace2 import api as ns2
@@ -157,7 +157,7 @@ Here's an example of how to link an :class:`Api` up to a :class:`~flask.Blueprin
 .. code-block:: python
 
     from flask import Blueprint
-    from flask_restplus import Api
+    from flask_restx import Api
 
     blueprint = Blueprint('api', __name__)
     api = Api(blueprint)
@@ -219,7 +219,7 @@ Each `apivX` module will have the following pattern:
 .. code-block:: python
 
     from flask import Blueprint
-    from flask_restplus import Api
+    from flask_restx import Api
 
     api = Api(blueprint)
 
@@ -258,4 +258,4 @@ And the app will simply mount them:
 These are only proposals and you can do whatever suits your needs.
 Look at the `github repository examples folder`_ for more complete examples.
 
-.. _github repository examples folder: https://github.com/noirbizarre/flask-restplus/tree/master/examples
+.. _github repository examples folder: https://github.com/python-restx/flask-restx/tree/master/examples

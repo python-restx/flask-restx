@@ -3,10 +3,10 @@
 Response marshalling
 ====================
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
 
-Flask-RESTPlus provides an easy way to control what data you actually render in
+Flask-RESTX provides an easy way to control what data you actually render in
 your response or expect as in input payload.
 With the :mod:`~.fields` module, you can use whatever objects (ORM
 models/custom classes/etc.) you want in your resource.
@@ -27,7 +27,7 @@ formatted as an ISO 8601 datetime string (RFC 822 is supported as well):
 
 .. code-block:: python
 
-    from flask_restplus import Resource, fields
+    from flask_restx import Resource, fields
 
     model = api.model('Model', {
         'name': fields.String,
@@ -142,7 +142,7 @@ but for a human readable output it's nice to convert them to separate string fie
 Url & Other Concrete Fields
 ---------------------------
 
-Flask-RESTPlus includes a special field, :class:`fields.Url`,
+Flask-RESTX includes a special field, :class:`fields.Url`,
 that synthesizes a uri for the resource that's being requested.
 This is also a good example of how to add data to your response that's not actually present on your data object.
 
@@ -180,7 +180,7 @@ You can have a flat structure that :func:`marshal` will transform to a nested st
 
 .. code-block:: python
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> resource_fields = {'name': fields.String}
@@ -206,7 +206,7 @@ List Field
 
 You can also unmarshal fields as lists ::
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> resource_fields = {'name': fields.String, 'first_names': fields.List(fields.String)}
@@ -222,7 +222,7 @@ Wildcard Field
 If you don't know the name(s) of the field(s) you want to unmarshall, you can
 use :class:`~fields.Wildcard` ::
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> wild = fields.Wildcard(fields.String)
@@ -234,7 +234,7 @@ use :class:`~fields.Wildcard` ::
 The name you give to your :class:`~fields.Wildcard` acts as a real glob as
 shown bellow ::
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> wild = fields.Wildcard(fields.String)
@@ -256,7 +256,7 @@ In order to avoid unexpected behavior, when mixing :class:`~fields.Wildcard`
 with other fields, you may want to use an ``OrderedDict`` and use the
 :class:`~fields.Wildcard` as the last field ::
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> wild = fields.Wildcard(fields.Integer)
@@ -276,7 +276,7 @@ While nesting fields using dicts can turn a flat data object into a nested
 response, you can use :class:`~fields.Nested` to unmarshal nested data
 structures and render them appropriately. ::
 
-    >>> from flask_restplus import fields, marshal
+    >>> from flask_restx import fields, marshal
     >>> import json
     >>>
     >>> address_fields = {}
@@ -472,7 +472,7 @@ Let consider the following example with an optional ``skip_none`` keyword argume
 
 .. code-block:: python
 
-    >>> from flask_restplus import Model, fields, marshal_with
+    >>> from flask_restx import Model, fields, marshal_with
     >>> import json
     >>> model = Model('Model', {
     ...     'name': fields.String,
@@ -497,7 +497,7 @@ If your module use :class:`fields.Nested`, you need to pass ``skip_none=True`` k
 
 .. code-block:: python
 
-    >>> from flask_restplus import Model, fields, marshal_with
+    >>> from flask_restx import Model, fields, marshal_with
     >>> import json
     >>> model = Model('Model', {
     ...     'name': fields.String,

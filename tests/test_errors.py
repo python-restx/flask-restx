@@ -12,34 +12,34 @@ from flask.signals import got_request_exception
 from werkzeug.exceptions import HTTPException, BadRequest, NotFound, Aborter
 from werkzeug.http import quote_etag, unquote_etag
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 
 class ErrorsTest(object):
     def test_abort_type(self):
         with pytest.raises(HTTPException):
-            restplus.abort(404)
+            restx.abort(404)
 
     def test_abort_data(self):
         with pytest.raises(HTTPException) as cm:
-            restplus.abort(404, foo='bar')
+            restx.abort(404, foo='bar')
         assert cm.value.data == {'foo': 'bar'}
 
     def test_abort_no_data(self):
         with pytest.raises(HTTPException) as cm:
-            restplus.abort(404)
+            restx.abort(404)
         assert not hasattr(cm.value, 'data')
 
     def test_abort_custom_message(self):
         with pytest.raises(HTTPException) as cm:
-            restplus.abort(404, 'My message')
+            restx.abort(404, 'My message')
         assert cm.value.data['message'] == 'My message'
 
     def test_abort_code_only_with_defaults(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 api.abort(403)
 
@@ -51,10 +51,10 @@ class ErrorsTest(object):
         assert 'message' in data
 
     def test_abort_with_message(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 api.abort(403, 'A message')
 
@@ -66,10 +66,10 @@ class ErrorsTest(object):
         assert data['message'] == 'A message'
 
     def test_abort_with_lazy_init(self, app, client):
-        api = restplus.Api()
+        api = restx.Api()
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 api.abort(403)
 
@@ -83,10 +83,10 @@ class ErrorsTest(object):
         assert 'message' in data
 
     def test_abort_on_exception(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise ValueError()
 
@@ -98,10 +98,10 @@ class ErrorsTest(object):
         assert 'message' in data
 
     def test_abort_on_exception_with_lazy_init(self, app, client):
-        api = restplus.Api()
+        api = restx.Api()
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise ValueError()
 
@@ -115,13 +115,13 @@ class ErrorsTest(object):
         assert 'message' in data
 
     def test_errorhandler_for_exception_inheritance(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class CustomException(RuntimeError):
             pass
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -140,13 +140,13 @@ class ErrorsTest(object):
         }
 
     def test_errorhandler_for_custom_exception(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class CustomException(RuntimeError):
             pass
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -166,7 +166,7 @@ class ErrorsTest(object):
 
     def test_blunder_in_errorhandler_is_not_suppressed_in_logs(self, app, client, caplog):
 
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class CustomException(RuntimeError):
             pass
@@ -175,7 +175,7 @@ class ErrorsTest(object):
             pass
 
         @api.route('/test/', endpoint="test")
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -190,13 +190,13 @@ class ErrorsTest(object):
         assert response.status_code == 500
 
     def test_errorhandler_for_custom_exception_with_headers(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class CustomException(RuntimeError):
             pass
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -213,10 +213,10 @@ class ErrorsTest(object):
         assert response.headers['Retry-After'] == '120'
 
     def test_errorhandler_for_httpexception(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise BadRequest()
 
@@ -235,15 +235,15 @@ class ErrorsTest(object):
         }
 
     def test_errorhandler_with_namespace(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
-        ns = restplus.Namespace("ExceptionHandler", path="/")
+        ns = restx.Namespace("ExceptionHandler", path="/")
 
         class CustomException(RuntimeError):
             pass
 
         @ns.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -264,7 +264,7 @@ class ErrorsTest(object):
         }
 
     def test_errorhandler_with_namespace_from_api(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         ns = api.namespace("ExceptionHandler", path="/")
 
@@ -272,7 +272,7 @@ class ErrorsTest(object):
             pass
 
         @ns.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -291,10 +291,10 @@ class ErrorsTest(object):
         }
 
     def test_default_errorhandler(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise Exception('error')
 
@@ -307,10 +307,10 @@ class ErrorsTest(object):
 
     def test_default_errorhandler_with_propagate_true(self, app, client):
         blueprint = Blueprint('api', __name__, url_prefix='/api')
-        api = restplus.Api(blueprint)
+        api = restx.Api(blueprint)
 
         @api.route('/test/')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise Exception('error')
 
@@ -326,10 +326,10 @@ class ErrorsTest(object):
             client.get('/api/test/')
 
     def test_custom_default_errorhandler(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise Exception('error')
 
@@ -348,10 +348,10 @@ class ErrorsTest(object):
         }
 
     def test_custom_default_errorhandler_with_headers(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise Exception('error')
 
@@ -368,13 +368,13 @@ class ErrorsTest(object):
         assert response.headers['Retry-After'] == '120'
 
     def test_errorhandler_lazy(self, app, client):
-        api = restplus.Api()
+        api = restx.Api()
 
         class CustomException(RuntimeError):
             pass
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise CustomException('error')
 
@@ -395,10 +395,10 @@ class ErrorsTest(object):
         }
 
     def test_handle_api_error(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/api', endpoint='api')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             def get(self):
                 abort(404)
 
@@ -409,20 +409,20 @@ class ErrorsTest(object):
         assert 'message' in data
 
     def test_handle_non_api_error(self, app, client):
-        restplus.Api(app)
+        restx.Api(app)
 
         response = client.get("/foo")
         assert response.status_code == 404
         assert response.headers['Content-Type'] == 'text/html'
 
     def test_non_api_error_404_catchall(self, app, client):
-        api = restplus.Api(app, catch_all_404s=True)
+        api = restx.Api(app, catch_all_404s=True)
 
         response = client.get("/foo")
         assert response.headers['Content-Type'] == api.default_mediatype
 
     def test_handle_error_signal(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         exception = BadRequest()
 
@@ -441,7 +441,7 @@ class ErrorsTest(object):
             got_request_exception.disconnect(record, app)
 
     def test_handle_error(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         response = api.handle_error(BadRequest())
         assert response.status_code == 400
@@ -450,15 +450,15 @@ class ErrorsTest(object):
         }
 
     def test_handle_error_does_not_duplicate_content_length(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         # with self.app.test_request_context("/foo"):
         response = api.handle_error(BadRequest())
         assert len(response.headers.getlist('Content-Length')) == 1
 
     def test_handle_smart_errors(self, app):
-        api = restplus.Api(app)
-        view = restplus.Resource
+        api = restx.Api(app)
+        view = restx.Resource
 
         api.add_resource(view, '/foo', endpoint='bor')
         api.add_resource(view, '/fee', endpoint='bir')
@@ -485,8 +485,8 @@ class ErrorsTest(object):
         }
 
     def test_handle_include_error_message(self, app):
-        api = restplus.Api(app)
-        view = restplus.Resource
+        api = restx.Api(app)
+        view = restx.Resource
 
         api.add_resource(view, '/foo', endpoint='bor')
 
@@ -497,8 +497,8 @@ class ErrorsTest(object):
     def test_handle_not_include_error_message(self, app):
         app.config['ERROR_INCLUDE_MESSAGE'] = False
 
-        api = restplus.Api(app)
-        view = restplus.Resource
+        api = restx.Api(app)
+        view = restx.Resource
 
         api.add_resource(view, '/foo', endpoint='bor')
 
@@ -515,7 +515,7 @@ class ErrorsTest(object):
         def raise_blunder(arg):
             raise blunder
 
-        api = restplus.Api(app)
+        api = restx.Api(app)
         app.handle_exception = mocker.Mock()
         api.handle_error = mocker.Mock(side_effect=raise_blunder)
         api._has_fr_route = mocker.Mock(return_value=True)
@@ -526,10 +526,10 @@ class ErrorsTest(object):
         app.handle_exception.assert_called_with(blunder)
 
     def test_fr_405(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/ids/<int:id>', endpoint='hello')
-        class HelloWorld(restplus.Resource):
+        class HelloWorld(restx.Resource):
             def get(self):
                 return {}
 
@@ -544,7 +544,7 @@ class ErrorsTest(object):
     @pytest.mark.options(debug=True)
     def test_exception_header_forwarded(self, app, client):
         '''Ensure that HTTPException's headers are extended properly'''
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class NotModified(HTTPException):
             code = 304
@@ -559,7 +559,7 @@ class ErrorsTest(object):
         custom_abort = Aborter(mapping={304: NotModified})
 
         @api.route('/foo')
-        class Foo1(restplus.Resource):
+        class Foo1(restx.Resource):
             def get(self):
                 custom_abort(304, etag='myETag')
 
@@ -567,7 +567,7 @@ class ErrorsTest(object):
         assert foo.get_etag() == unquote_etag(quote_etag('myETag'))
 
     def test_handle_server_error(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         resp = api.handle_error(Exception())
         assert resp.status_code == 500
@@ -576,7 +576,7 @@ class ErrorsTest(object):
         }
 
     def test_handle_error_with_code(self, app):
-        api = restplus.Api(app, serve_challenge_on_401=True)
+        api = restx.Api(app, serve_challenge_on_401=True)
 
         exception = Exception()
         exception.code = "Not an integer"
@@ -587,17 +587,17 @@ class ErrorsTest(object):
         assert json.loads(response.data.decode()) == {"foo": "bar"}
 
     def test_errorhandler_swagger_doc(self, app, client):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         class CustomException(RuntimeError):
             pass
 
         error = api.model('Error', {
-            'message': restplus.fields.String()
+            'message': restx.fields.String()
         })
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 '''
                 Do something
@@ -642,10 +642,10 @@ class ErrorsTest(object):
         '''Exceptions with errorhandler should not be returned to client, even
         if PROPAGATE_EXCEPTIONS is set.'''
         app.config['PROPAGATE_EXCEPTIONS'] = True
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/', endpoint='test')
-        class TestResource(restplus.Resource):
+        class TestResource(restx.Resource):
             def get(self):
                 raise RuntimeError('error')
 

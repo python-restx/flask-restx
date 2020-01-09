@@ -38,7 +38,7 @@ def abort(code=HTTPStatus.INTERNAL_SERVER_ERROR, message=None, **kwargs):
 
 
 class RestError(Exception):
-    '''Base class for all Flask-Restplus Errors'''
+    '''Base class for all Flask-RESTX Errors'''
     def __init__(self, msg):
         self.msg = msg
 

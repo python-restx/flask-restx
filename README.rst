@@ -1,29 +1,33 @@
-==============
-Flask RestPlus
-==============
+===========
+Flask RESTX
+===========
 
-.. image:: https://secure.travis-ci.org/noirbizarre/flask-restplus.svg?branch=master
-    :target: https://travis-ci.org/noirbizarre/flask-restplus?branch=master
+.. image:: https://secure.travis-ci.org/python-restx/flask-restx.svg?branch=master
+    :target: https://travis-ci.org/python-restx/flask-restx?branch=master
     :alt: Build status
-.. image:: https://coveralls.io/repos/noirbizarre/flask-restplus/badge.svg?branch=master
-    :target: https://coveralls.io/r/noirbizarre/flask-restplus?branch=master
+.. image:: https://coveralls.io/repos/github/python-restx/flask-restx/badge.svg?branch=master
+    :target: https://coveralls.io/github/python-restx/flask-restx?branch=master
     :alt: Code coverage
-.. image:: https://readthedocs.org/projects/flask-restplus/badge/?version=latest
-    :target: https://flask-restplus.readthedocs.io/en/latest/
+.. image:: https://readthedocs.org/projects/flask-restx/badge/?version=latest
+    :target: https://flask-restx.readthedocs.io/en/latest/
     :alt: Documentation status
-.. image:: https://img.shields.io/pypi/l/flask-restplus.svg
-    :target: https://pypi.org/project/flask-restplus
+.. image:: https://img.shields.io/pypi/l/flask-restx.svg
+    :target: https://pypi.org/project/flask-restx
     :alt: License
-.. image:: https://img.shields.io/pypi/pyversions/flask-restplus.svg
-    :target: https://pypi.org/project/flask-restplus
+.. image:: https://img.shields.io/pypi/pyversions/flask-restx.svg
+    :target: https://pypi.org/project/flask-restx
     :alt: Supported Python versions
 .. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/noirbizarre/flask-restplus
-   :target: https://gitter.im/noirbizarre/flask-restplus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+   :alt: Join the chat at https://gitter.im/python-restx
+   :target: https://gitter.im/python-restx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-Flask-RESTPlus is an extension for `Flask`_ that adds support for quickly building REST APIs.
-Flask-RESTPlus encourages best practices with minimal setup.
-If you are familiar with Flask, Flask-RESTPlus should be easy to pick up.
+
+Flask-RESTX is a community driven fork of `Flask-RESTPlus <https://github.com/noirbizarre/flask-restplus>`_.
+
+
+Flask-RESTX is an extension for `Flask`_ that adds support for quickly building REST APIs.
+Flask-RESTX encourages best practices with minimal setup.
+If you are familiar with Flask, Flask-RESTX should be easy to pick up.
 It provides a coherent collection of decorators and tools to describe your API
 and expose its documentation properly using `Swagger`_.
 
@@ -31,34 +35,34 @@ and expose its documentation properly using `Swagger`_.
 Compatibility
 =============
 
-Flask-RestPlus requires Python 2.7 or 3.4+.
+Flask-RESTX requires Python 2.7 or 3.4+.
 
 
 Installation
 ============
 
-You can install Flask-Restplus with pip:
+You can install Flask-RESTX with pip:
 
 .. code-block:: console
 
-    $ pip install flask-restplus
+    $ pip install flask-restx
 
 or with easy_install:
 
 .. code-block:: console
 
-    $ easy_install flask-restplus
+    $ easy_install flask-restx
 
 
 Quick start
 ===========
 
-With Flask-Restplus, you only import the api instance to route and document your endpoints.
+With Flask-RESTX, you only import the api instance to route and document your endpoints.
 
 .. code-block:: python
 
     from flask import Flask
-    from flask_restplus import Api, Resource, fields
+    from flask_restx import Api, Resource, fields
 
     app = Flask(__name__)
     api = Api(app, version='1.0', title='TodoMVC API',
@@ -155,8 +159,8 @@ With Flask-Restplus, you only import the api instance to route and document your
 Contributors
 ============
 
-Flask-RESTPlus is brought to you by @noirbizarre. Since early 2019 @SteadBytes,
-@a-luna, @j5awry, @ziirish volunteered to help @noirbizarre keep the project up
+Flask-RESTX is brought to you by @python-restx. Since early 2019 @SteadBytes,
+@a-luna, @j5awry, @ziirish volunteered to help @python-restx keep the project up
 and running.
 Of course everyone is welcome to contribute and we will be happy to review your
 PR's or answer to your issues.
@@ -165,7 +169,7 @@ PR's or answer to your issues.
 Documentation
 =============
 
-The documentation is hosted `on Read the Docs <http://flask-restplus.readthedocs.io/en/latest/>`_
+The documentation is hosted `on Read the Docs <http://flask-restx.readthedocs.io/en/latest/>`_
 
 
 .. _Flask: http://flask.pocoo.org/
@@ -174,4 +178,4 @@ The documentation is hosted `on Read the Docs <http://flask-restplus.readthedocs
 
 Contribution
 ============
-Want to contribute! That's awesome! Check out `CONTRIBUTING.rst! <https://github.com/noirbizarre/flask-restplus/blob/master/CONTRIBUTING.rst>`_
+Want to contribute! That's awesome! Check out `CONTRIBUTING.rst! <https://github.com/python-restx/flask-restx/blob/master/CONTRIBUTING.rst>`_

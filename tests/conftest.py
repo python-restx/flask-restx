@@ -7,7 +7,7 @@ import pytest
 from flask import Flask, Blueprint
 from flask.testing import FlaskClient
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 
 class TestClient(FlaskClient):
@@ -60,7 +60,7 @@ def api(request, app):
             bpkwargs['subdomain'] = marker.kwargs.pop('subdomain')
         kwargs = marker.kwargs
     blueprint = Blueprint('api', __name__, **bpkwargs)
-    api = restplus.Api(blueprint, **kwargs)
+    api = restx.Api(blueprint, **kwargs)
     app.register_blueprint(blueprint)
     yield api
 
@@ -70,7 +70,7 @@ def mock_app(mocker):
     app = mocker.Mock(Flask)
     # mock Flask app object doesn't have any real loggers -> mock logging
     # set up on Api object
-    mocker.patch.object(restplus.Api, '_configure_namespace_logger')
+    mocker.patch.object(restx.Api, '_configure_namespace_logger')
     app.view_functions = {}
     app.extensions = {}
     app.config = {}

@@ -1,8 +1,8 @@
 {
-  "name": "flask-restplus",
+  "name": "flask-restx",
   "version": "0.10.1",
   "description": "Fully featured framework for fast, easy and documented API development with Flask",
-  "repository": "noirbizarre/flask-restplus",
+  "repository": "python-restx/flask-restx",
   "keywords": [
     "swagger",
     "flask"

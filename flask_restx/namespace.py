@@ -138,7 +138,7 @@ class Namespace(object):
         '''
         Properly abort the current request
 
-        See: :func:`~flask_restplus.errors.abort`
+        See: :func:`~flask_restx.errors.abort`
         '''
         abort(*args, **kwargs)
 

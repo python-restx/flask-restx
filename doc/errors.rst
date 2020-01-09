@@ -1,7 +1,7 @@
 Error handling
 ==============
 
-.. currentmodule:: flask_restplus
+.. currentmodule:: flask_restx
 
 HTTPException handling
 ----------------------
@@ -91,7 +91,7 @@ will output
     }
 
 
-The Flask-RESTPlus abort helper
+The Flask-RESTX abort helper
 -------------------------------
 
 The :func:`errors.abort` and the :meth:`Namespace.abort` helpers
@@ -100,7 +100,7 @@ but it will also add the keyword arguments to the response.
 
 .. code-block:: python
 
-    from flask_restplus import abort
+    from flask_restx import abort
     abort(400, custom='value')
 
 will return a 400 HTTP code and output
@@ -209,7 +209,7 @@ It also allows for overriding the default error handler when used without parame
 
 .. note ::
 
-    Flask-RESTPlus will return a message in the error response by default.
+    Flask-RESTX will return a message in the error response by default.
     If a custom response is required as an error and the message field is not needed,
     it can be disabled by setting ``ERROR_INCLUDE_MESSAGE`` to ``False`` in your application config.
 

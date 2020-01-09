@@ -8,7 +8,7 @@ from os.path import join, dirname
 from jsonschema import validate
 from werkzeug.datastructures import FileStorage
 
-import flask_restplus as restplus
+import flask_restx as restx
 
 from six.moves.urllib.parse import parse_qs, urlparse
 
@@ -19,7 +19,7 @@ with open(join(dirname(__file__), 'postman-v1.schema.json')) as f:
 
 class PostmanTest(object):
     def test_basic_export(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         data = api.as_postman()
 
@@ -28,7 +28,7 @@ class PostmanTest(object):
         assert len(data['requests']) == 0
 
     def test_export_infos(self, app):
-        api = restplus.Api(app, version='1.0',
+        api = restx.Api(app, version='1.0',
             title='My API',
             description='This is a testing API',
         )
@@ -41,10 +41,10 @@ class PostmanTest(object):
         assert data['description'] == 'This is a testing API'
 
     def test_export_with_one_entry(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.doc('test_post')
             def post(self):
                 '''A test post'''
@@ -67,11 +67,11 @@ class PostmanTest(object):
         assert request['folder'] == folder['id']
 
     def test_export_with_namespace(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('test', 'A test namespace')
 
         @ns.route('/test')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.doc('test_post')
             def post(self):
                 '''A test post'''
@@ -94,7 +94,7 @@ class PostmanTest(object):
         assert request['folder'] == folder['id']
 
     def test_id_is_the_same(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         first = api.as_postman()
 
@@ -104,23 +104,23 @@ class PostmanTest(object):
 
     def test_resources_order_in_folder(self, app):
         '''It should preserve resources order'''
-        api = restplus.Api(app)
+        api = restx.Api(app)
         ns = api.namespace('test', 'A test namespace')
 
         @ns.route('/test1')
-        class Test1(restplus.Resource):
+        class Test1(restx.Resource):
             @api.doc('test_post_z')
             def post(self):
                 pass
 
         @ns.route('/test2')
-        class Test2(restplus.Resource):
+        class Test2(restx.Resource):
             @api.doc('test_post_y')
             def post(self):
                 pass
 
         @ns.route('/test3')
-        class Test3(restplus.Resource):
+        class Test3(restx.Resource):
             @api.doc('test_post_x')
             def post(self):
                 pass
@@ -143,10 +143,10 @@ class PostmanTest(object):
             assert request['name'] == expected
 
     def test_prefix_with_trailing_slash(self, app):
-        api = restplus.Api(app, prefix='/prefix/')
+        api = restx.Api(app, prefix='/prefix/')
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.doc('test_post')
             def post(self):
                 pass
@@ -160,10 +160,10 @@ class PostmanTest(object):
         assert request['url'] == 'http://localhost/prefix/test/'
 
     def test_prefix_without_trailing_slash(self, app):
-        api = restplus.Api(app, prefix='/prefix')
+        api = restx.Api(app, prefix='/prefix')
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.doc('test_post')
             def post(self):
                 pass
@@ -177,10 +177,10 @@ class PostmanTest(object):
         assert request['url'] == 'http://localhost/prefix/test/'
 
     def test_path_variables(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         @api.route('/test/<id>/<int:integer>/<float:number>/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.doc('test_post')
             def post(self):
                 pass
@@ -199,7 +199,7 @@ class PostmanTest(object):
         }
 
     def test_url_variables_disabled(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         parser = api.parser()
         parser.add_argument('int', type=int)
@@ -207,7 +207,7 @@ class PostmanTest(object):
         parser.add_argument('str', type=str)
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.expect(parser)
             def get(self):
                 pass
@@ -221,7 +221,7 @@ class PostmanTest(object):
         assert request['url'] == 'http://localhost/test/'
 
     def test_url_variables_enabled(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         parser = api.parser()
         parser.add_argument('int', type=int)
@@ -229,7 +229,7 @@ class PostmanTest(object):
         parser.add_argument('str', type=str)
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             @api.expect(parser)
             def get(self):
                 pass
@@ -252,14 +252,14 @@ class PostmanTest(object):
         assert qs['str'][0] == ''
 
     def test_headers(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         parser = api.parser()
         parser.add_argument('X-Header-1', location='headers', default='xxx')
         parser.add_argument('X-Header-2', location='headers', required=True)
 
         @api.route('/headers/')
-        class TestHeaders(restplus.Resource):
+        class TestHeaders(restx.Resource):
             @api.doc('headers')
             @api.expect(parser)
             def get(self):
@@ -275,7 +275,7 @@ class PostmanTest(object):
         assert headers['X-Header-2'] == ''
 
     def test_content_type_header(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
         form_parser = api.parser()
         form_parser.add_argument('param', type=int, help='Some param', location='form')
 
@@ -283,27 +283,27 @@ class PostmanTest(object):
         file_parser.add_argument('in_files', type=FileStorage, location='files')
 
         @api.route('/json/')
-        class TestJson(restplus.Resource):
+        class TestJson(restx.Resource):
             @api.doc('json')
             def post(self):
                 pass
 
         @api.route('/form/')
-        class TestForm(restplus.Resource):
+        class TestForm(restx.Resource):
             @api.doc('form')
             @api.expect(form_parser)
             def post(self):
                 pass
 
         @api.route('/file/')
-        class TestFile(restplus.Resource):
+        class TestFile(restx.Resource):
             @api.doc('file')
             @api.expect(file_parser)
             def post(self):
                 pass
 
         @api.route('/get/')
-        class TestGet(restplus.Resource):
+        class TestGet(restx.Resource):
             @api.doc('get')
             def get(self):
                 pass
@@ -321,7 +321,7 @@ class PostmanTest(object):
         assert requests['get'] == ''
 
     def test_method_security_headers(self, app):
-        api = restplus.Api(app, authorizations={
+        api = restx.Api(app, authorizations={
             'apikey': {
                 'type': 'apiKey',
                 'in': 'header',
@@ -330,13 +330,13 @@ class PostmanTest(object):
         })
 
         @api.route('/secure/')
-        class Secure(restplus.Resource):
+        class Secure(restx.Resource):
             @api.doc('secure', security='apikey')
             def get(self):
                 pass
 
         @api.route('/unsecure/')
-        class Unsecure(restplus.Resource):
+        class Unsecure(restx.Resource):
             @api.doc('unsecure')
             def get(self):
                 pass
@@ -350,7 +350,7 @@ class PostmanTest(object):
         assert requests['secure'] == 'X-API:'
 
     def test_global_security_headers(self, app):
-        api = restplus.Api(app, security='apikey', authorizations={
+        api = restx.Api(app, security='apikey', authorizations={
             'apikey': {
                 'type': 'apiKey',
                 'in': 'header',
@@ -359,7 +359,7 @@ class PostmanTest(object):
         })
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             def get(self):
                 pass
 
@@ -372,7 +372,7 @@ class PostmanTest(object):
         assert headers['X-API'] == ''
 
     def test_oauth_security_headers(self, app):
-        api = restplus.Api(app, security='oauth', authorizations={
+        api = restx.Api(app, security='oauth', authorizations={
             'oauth': {
                 'type': 'oauth2',
                 'authorizationUrl': 'https://somewhere.com/oauth/authorize',
@@ -385,7 +385,7 @@ class PostmanTest(object):
         })
 
         @api.route('/test/')
-        class Test(restplus.Resource):
+        class Test(restx.Resource):
             def get(self):
                 pass
 
@@ -398,7 +398,7 @@ class PostmanTest(object):
         # assert headers['X-API'] == ''
 
     def test_export_with_swagger(self, app):
-        api = restplus.Api(app)
+        api = restx.Api(app)
 
         data = api.as_postman(swagger=True)
 
