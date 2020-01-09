@@ -21,7 +21,7 @@ import socket
 
 from datetime import datetime, time, timedelta
 from email.utils import parsedate_tz, mktime_tz
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 import aniso8601
 import pytz

@@ -7,7 +7,7 @@ from werkzeug.datastructures import FileStorage
 
 import flask_restx as restx
 
-from six.moves.urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse
 
 
 with open(join(dirname(__file__), "postman-v1.schema.json")) as f:

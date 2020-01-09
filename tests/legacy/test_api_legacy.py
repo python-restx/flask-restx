@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import flask
 import pytest
-import six
 
 from json import dumps, JSONEncoder
 
@@ -255,7 +254,7 @@ class APITest(object):
 
     def test_resource_text_plain(self, app):
         def text(data, code, headers=None):
-            return flask.make_response(six.text_type(data))
+            return flask.make_response(str(data))
 
         class Foo(restx.Resource):
             representations = {
