@@ -1,12 +1,7 @@
 import re
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from copy import deepcopy
-from six import iteritems
 
 from ._http import HTTPStatus
 
@@ -33,7 +28,7 @@ def merge(first, second):
     if not isinstance(second, dict):
         return second
     result = deepcopy(first)
-    for key, value in iteritems(second):
+    for key, value in second.items():
         if key in result and isinstance(result[key], dict):
             result[key] = merge(result[key], value)
         else:
@@ -66,7 +61,7 @@ def not_none(data):
     :return: The same dictionary without the keys with values to ``None``
     :rtype: dict
     '''
-    return dict((k, v) for k, v in iteritems(data) if v is not None)
+    return dict((k, v) for k, v in data.items() if v is not None)
 
 
 def not_none_sorted(data):
@@ -77,7 +72,7 @@ def not_none_sorted(data):
     :return: The same dictionary without the keys with values to ``None``
     :rtype: OrderedDict
     '''
-    return OrderedDict((k, v) for k, v in sorted(iteritems(data)) if v is not None)
+    return OrderedDict((k, v) for k, v in sorted(data.items()) if v is not None)
 
 
 def unpack(response, default_code=HTTPStatus.OK):

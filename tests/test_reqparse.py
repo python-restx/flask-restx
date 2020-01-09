@@ -1,6 +1,6 @@
 import decimal
 import json
-import six
+import io
 import pytest
 
 from werkzeug.exceptions import BadRequest
@@ -483,7 +483,7 @@ class ReqParseTest(object):
 
         fdata = 'foo bar baz qux'.encode('utf-8')
         with app.test_request_context('/bubble', method='POST',
-                                      data={'foo': (six.BytesIO(fdata), 'baz.txt')}):
+                                      data={'foo': (io.BytesIO(fdata), 'baz.txt')}):
             args = parser.parse_args()
 
             assert args['foo'].name == 'foo'
@@ -501,7 +501,7 @@ class ReqParseTest(object):
 
         fdata = 'foo bar baz qux'.encode('utf-8')
         with app.test_request_context('/bubble', method='POST',
-                                      data={'foo': (six.BytesIO(fdata), 'baz.txt')}):
+                                      data={'foo': (io.BytesIO(fdata), 'baz.txt')}):
             args = parser.parse_args()
 
             assert args['foo'].name == 'fooaaaa'
@@ -761,12 +761,10 @@ class ArgumentTest(object):
         assert arg.operators[0] == '='
         assert len(arg.operators) == 1
 
-    def test_default_type(self, mocker):
-        mock_six = mocker.patch('flask_restplus.reqparse.six')
+    def test_default_type(self):
         arg = Argument('foo')
-        sentinel = object()
-        arg.type(sentinel)
-        mock_six.text_type.assert_called_with(sentinel)
+        sentinel = 666
+        assert arg.type(sentinel) == '666'
 
     def test_default_default(self):
         arg = Argument('foo')

@@ -2,12 +2,7 @@ import copy
 import re
 import warnings
 
-try:
-    from collections.abc import OrderedDict, MutableMapping
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict, MutableMapping
-from six import iteritems, itervalues
+from collections import OrderedDict, MutableMapping
 from werkzeug.utils import cached_property
 
 from .mask import Mask
@@ -143,7 +138,7 @@ class RawModel(ModelBase):
         properties = self.wrapper()
         required = set()
         discriminator = None
-        for name, field in iteritems(self):
+        for name, field in self.items():
             field = instance(field)
             properties[name] = field.__schema__
             if field.required:
@@ -172,7 +167,7 @@ class RawModel(ModelBase):
             resolved.update(parent.resolved)
 
         # Handle discriminator
-        candidates = [f for f in itervalues(resolved) if getattr(f, 'discriminator', None)]
+        candidates = [f for f in resolved.values() if getattr(f, 'discriminator', None)]
         # Ensure the is only one discriminator
         if len(candidates) > 1:
             raise ValueError('There can only be one discriminator by schema')
@@ -220,7 +215,7 @@ class RawModel(ModelBase):
 
     def __deepcopy__(self, memo):
         obj = self.__class__(self.name,
-                             [(key, copy.deepcopy(value, memo)) for key, value in iteritems(self)],
+                             [(key, copy.deepcopy(value, memo)) for key, value in self.items()],
                              mask=self.__mask__)
         obj.__parents__ = self.__parents__
         return obj

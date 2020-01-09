@@ -4,14 +4,9 @@ from itertools import chain
 import logging
 import operator
 import re
-import six
 import sys
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from functools import wraps, partial
 from types import MethodType
 
@@ -436,7 +431,7 @@ class Api(object):
             urls = self.ns_urls(ns, r.urls)
             self.register_resource(ns, r.resource, *urls, **r.kwargs)
         # Register models
-        for name, definition in six.iteritems(ns.models):
+        for name, definition in ns.models.items():
             self.models[name] = definition
         if not self.blueprint and self.app is not None:
             self._configure_namespace_logger(self.app, ns)
@@ -508,7 +503,7 @@ class Api(object):
         rv = {}
         rv.update(self.error_handlers)
         for ns in self.namespaces:
-            for exception, handler in six.iteritems(ns.error_handlers):
+            for exception, handler in ns.error_handlers.items():
                 rv[exception] = handler
         return rv
 
@@ -623,7 +618,7 @@ class Api(object):
 
         headers = Headers()
 
-        for typecheck, handler in six.iteritems(self._own_and_child_error_handlers):
+        for typecheck, handler in self._own_and_child_error_handlers.items():
             if isinstance(e, typecheck):
                 result = handler(e)
                 default_data, code, headers = unpack(result, HTTPStatus.INTERNAL_SERVER_ERROR)

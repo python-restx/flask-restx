@@ -3,7 +3,6 @@ import pytz
 import pytest
 
 from datetime import date, datetime
-from six import text_type
 
 from flask_restplus import inputs
 
@@ -97,9 +96,9 @@ class URLTest(object):
         with pytest.raises(ValueError) as cm:
             validator(value)
         if details:
-            assert text_type(cm.value) == '. '.join((msg, details)).format(value)
+            assert str(cm.value) == '. '.join((msg, details)).format(value)
         else:
-            assert text_type(cm.value).startswith(msg.format(value))
+            assert str(cm.value).startswith(msg.format(value))
 
     @pytest.mark.parametrize('url', [
         'http://www.djangoproject.com/',
@@ -142,7 +141,7 @@ class URLTest(object):
         # msg = '{0} is not a valid URL'.format(url)
         # with pytest.raises(ValueError) as cm:
         #     validator(url)
-        # assert text_type(cm.exception).startswith(msg)
+        # assert str(cm.exception).startswith(msg)
 
     @pytest.mark.parametrize('url', [
         'google.com',
@@ -343,7 +342,7 @@ class UrlTest(object):
     def test_bad_url(self, url):
         with pytest.raises(ValueError) as cm:
             inputs.url(url)
-        assert text_type(cm.value).startswith('{0} is not a valid URL'.format(url))
+        assert str(cm.value).startswith('{0} is not a valid URL'.format(url))
 
     @pytest.mark.parametrize('url', [
         'google.com',
@@ -354,7 +353,7 @@ class UrlTest(object):
     def test_bad_url_with_suggestion(self, url):
         with pytest.raises(ValueError) as cm:
             inputs.url(url)
-        assert text_type(cm.value) == '{0} is not a valid URL. Did you mean: http://{0}'.format(url)
+        assert str(cm.value) == '{0} is not a valid URL. Did you mean: http://{0}'.format(url)
 
     def test_schema(self):
         assert inputs.url.__schema__ == {'type': 'string', 'format': 'url'}

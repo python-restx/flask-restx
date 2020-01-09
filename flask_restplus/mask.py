@@ -1,12 +1,7 @@
 import logging
 import re
-import six
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from inspect import isclass
 
 from .errors import RestError
@@ -35,7 +30,7 @@ class Mask(OrderedDict):
     '''
     def __init__(self, mask=None, skip=False, **kwargs):
         self.skip = skip
-        if isinstance(mask, six.string_types):
+        if isinstance(mask, str):
             super(Mask, self).__init__()
             self.parse(mask)
         elif isinstance(mask, (dict, OrderedDict)):
@@ -138,7 +133,7 @@ class Mask(OrderedDict):
 
         '''
         out = {}
-        for field, content in six.iteritems(self):
+        for field, content in self.items():
             if field == '*':
                 continue
             elif isinstance(content, Mask):
@@ -155,7 +150,7 @@ class Mask(OrderedDict):
                 out[field] = data.get(field, None)
 
         if '*' in self.keys():
-            for key, value in six.iteritems(data):
+            for key, value in data.items():
                 if key not in out:
                     out[key] = value
         return out
@@ -163,7 +158,7 @@ class Mask(OrderedDict):
     def __str__(self):
         return '{{{0}}}'.format(','.join([
             ''.join((k, str(v))) if isinstance(v, Mask) else k
-            for k, v in six.iteritems(self)
+            for k, v in self.items()
         ]))
 
 
