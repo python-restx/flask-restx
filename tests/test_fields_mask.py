@@ -1,11 +1,7 @@
 import json
 import pytest
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 
 from flask_restplus import mask, Api, Resource, fields, marshal, Mask
 
