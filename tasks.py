@@ -157,7 +157,12 @@ def qa(ctx):
         else:
             success('No linter errors')
         info('Ensure PyPI can render README and CHANGELOG')
-        readme_results = ctx.run('python setup.py check -r -s', pty=True, warn=True, hide=True)
+        info('Building dist package')
+        dist = ctx.run('python setup.py sdist', pty=True, warn=False, hide=True)
+        if dist.failed:
+            error('Unable to build sdist package')
+            exit('Quality check failed', dist.return_code)
+        readme_results = ctx.run('twine check dist/*', pty=True, warn=True, hide=True)
         if readme_results.failed:
             print(readme_results.stdout)
             error('README and/or CHANGELOG is not renderable by PyPI')
