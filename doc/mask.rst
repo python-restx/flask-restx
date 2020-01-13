@@ -5,7 +5,7 @@ Flask-RESTX support partial object fetching (aka. fields mask)
 by supplying a custom header in the request.
 
 By default the header is ``X-Fields``
-but it can be changed with the ``RESTPLUS_MASK_HEADER`` parameter.
+but it can be changed with the ``RESTX_MASK_HEADER`` parameter.
 
 Syntax
 ------
@@ -65,7 +65,7 @@ The header will be exposed as a Swagger parameter each time you use the
 
 As Swagger does not permit exposing a global header once
 it can make your Swagger specifications a lot more verbose.
-You can disable this behavior by setting ``RESTPLUS_MASK_SWAGGER`` to ``False``.
+You can disable this behavior by setting ``RESTX_MASK_SWAGGER`` to ``False``.
 
 You can also specify a default mask that will be applied if no header mask is found.
 

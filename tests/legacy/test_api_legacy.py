@@ -318,9 +318,11 @@ class APITest(object):
 
     def test_read_json_settings_from_config(self, app, client):
         class TestConfig(object):
-            RESTPLUS_JSON = {'indent': 2,
-                             'sort_keys': True,
-                             'separators': (', ', ': ')}
+            RESTX_JSON = {
+                'indent': 2,
+                'sort_keys': True,
+                'separators': (', ', ': ')
+            }
 
         app.config.from_object(TestConfig)
         api = restx.Api(app)
@@ -343,7 +345,7 @@ class APITest(object):
                 return 'cabbage'
 
         class TestConfig(object):
-            RESTPLUS_JSON = {'cls': CabageEncoder}
+            RESTX_JSON = {'cls': CabageEncoder}
 
         app.config.from_object(TestConfig)
         api = restx.Api(app)

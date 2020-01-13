@@ -757,7 +757,7 @@ class MaskAPI(object):
                     'boolean': True
                 }
 
-        app.config['RESTPLUS_MASK_HEADER'] = 'X-Mask'
+        app.config['RESTX_MASK_HEADER'] = 'X-Mask'
         data = client.get_json('/test/', headers={'X-Mask': '{name,age}'})
 
         assert data == {'name': 'John Doe', 'age': 42}
@@ -963,7 +963,7 @@ class SwaggerMaskHeaderTest(object):
                     'boolean': True
                 }
 
-        app.config['RESTPLUS_MASK_HEADER'] = 'X-Mask'
+        app.config['RESTX_MASK_HEADER'] = 'X-Mask'
         specs = client.get_specs()
 
         op = specs['paths']['/test/']['get']
@@ -992,7 +992,7 @@ class SwaggerMaskHeaderTest(object):
                     'boolean': True
                 }
 
-        app.config['RESTPLUS_MASK_SWAGGER'] = False
+        app.config['RESTX_MASK_SWAGGER'] = False
         specs = client.get_specs()
 
         op = specs['paths']['/test/']['get']

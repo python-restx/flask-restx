@@ -247,7 +247,7 @@ class marshal_with(object):
             resp = f(*args, **kwargs)
             mask = self.mask
             if has_app_context():
-                mask_header = current_app.config['RESTPLUS_MASK_HEADER']
+                mask_header = current_app.config['RESTX_MASK_HEADER']
                 mask = request.headers.get(mask_header) or mask
             if isinstance(resp, tuple):
                 data, code, headers = unpack(resp)
