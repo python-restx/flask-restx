@@ -110,7 +110,7 @@ class PayloadTest(object):
         assert 'ipv4' in out['errors']['ip']
 
     def test_validation_false_in_config(self, app, client):
-        app.config['RESTPLUS_VALIDATE'] = False
+        app.config['RESTX_VALIDATE'] = False
         api = restx.Api(app)
 
         fields = api.model('Person', {
@@ -132,7 +132,7 @@ class PayloadTest(object):
         assert out == {}
 
     def test_validation_in_config(self, app, client):
-        app.config['RESTPLUS_VALIDATE'] = True
+        app.config['RESTX_VALIDATE'] = True
         api = restx.Api(app)
 
         fields = api.model('Person', {

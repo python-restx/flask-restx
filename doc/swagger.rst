@@ -125,7 +125,7 @@ The ``@api.expect()`` decorator
 The ``@api.expect()`` decorator allows you to specify the expected input fields.
 It accepts an optional boolean parameter ``validate`` indicating whether the payload should be validated.
 The validation behavior can be customized globally either
-by setting the ``RESTPLUS_VALIDATE`` configuration to ``True``
+by setting the ``RESTX_VALIDATE`` configuration to ``True``
 or passing ``validate=True`` to the API constructor.
 
 The following examples are equivalent:
@@ -215,7 +215,7 @@ An example of application-wide validation by config:
 
 .. code-block:: python
 
-    app.config['RESTPLUS_VALIDATE'] = True
+    app.config['RESTX_VALIDATE'] = True
 
     api = Api(app)
 

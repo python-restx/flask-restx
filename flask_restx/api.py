@@ -215,9 +215,9 @@ class Api(object):
             self._configure_namespace_logger(app, ns)
 
         self._register_apidoc(app)
-        self._validate = self._validate if self._validate is not None else app.config.get('RESTPLUS_VALIDATE', False)
-        app.config.setdefault('RESTPLUS_MASK_HEADER', 'X-Fields')
-        app.config.setdefault('RESTPLUS_MASK_SWAGGER', True)
+        self._validate = self._validate if self._validate is not None else app.config.get('RESTX_VALIDATE', False)
+        app.config.setdefault('RESTX_MASK_HEADER', 'X-Fields')
+        app.config.setdefault('RESTX_MASK_SWAGGER', True)
 
     def __getattr__(self, name):
         try:

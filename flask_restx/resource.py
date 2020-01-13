@@ -12,7 +12,7 @@ from .utils import unpack
 
 class Resource(MethodView):
     '''
-    Represents an abstract RESTPlus resource.
+    Represents an abstract RESTX resource.
 
     Concrete resources should extend from this class
     and expose methods for each supported HTTP method.

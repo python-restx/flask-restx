@@ -12,7 +12,7 @@ from flask import make_response, current_app
 def output_json(data, code, headers=None):
     '''Makes a Flask response with a JSON encoded body'''
 
-    settings = current_app.config.get('RESTPLUS_JSON', {})
+    settings = current_app.config.get('RESTX_JSON', {})
 
     # If we're in debug mode, and the indent is not set, we set it to a
     # reasonable value here.  Note that this won't override any existing value

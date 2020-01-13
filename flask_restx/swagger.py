@@ -468,9 +468,9 @@ class Swagger(object):
 
         # Handle fields mask
         mask = doc.get('__mask__')
-        if (mask and current_app.config['RESTPLUS_MASK_SWAGGER']):
+        if (mask and current_app.config['RESTX_MASK_SWAGGER']):
             param = {
-                'name': current_app.config['RESTPLUS_MASK_HEADER'],
+                'name': current_app.config['RESTX_MASK_HEADER'],
                 'in': 'header',
                 'type': 'string',
                 'format': 'mask',
