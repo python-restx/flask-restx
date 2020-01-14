@@ -1,29 +1,34 @@
 language: python
-
 python:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
-  - 3.7
+  - '2.7'
+  - '3.4'
+  - '3.5'
+  - '3.6'
+  - '3.7'
+  - '3.8'
   - pypy
   - pypy3
-
-matrix:
-  include:
-    - python: 3.8-dev
-      dist: xenial
+jobs:
   allow_failures:
     - python: pypy3
-    - python: 3.8-dev
-
+    - python: '3.8'
 install:
   - pip install .[dev]
-
 script:
   - inv cover qa
-
 after_success:
   - pip install coveralls
   - coveralls --rcfile=coverage.rc
-  - ./travis-bench-after-success.sh
+  - "./travis-bench-after-success.sh"
+before_deploy:
+  - inv assets
+deploy:
+  provider: pypi
+  user: "__token__"
+  password:
+    secure: GMWo0ZNej1wdyleDtigLCCtWVYLDI7N8izEYxpnk8kxCKsfF8tCoinV1qTrRh84MJxhuVJtwgjk4hme/Vzxa9vCkBmzYHbTkwufROxQND5lJcMPPaLGdiL2TDCq8Z4DyfUta5bMg1N/o/cbq8BqrjyzzzDx/YNziNiDCOppRRtZRiS7kCfSOA+LdtzF1VP0QnqcrheOrTXnNtpm0oIdF1H309QgXroQ+Kkliv1Gk9CsYq/N20ccdaBtkS1o2I8RXDO4PdQH4kNWAjQuv+NwK5c6IUWGkTiWiYzB97dRMUiOvCef+iQdNeJPmh5zjuokUONBs+zcY28Tn8I74sxCeFnOg0QtSoYVxGH1VJTYjDZ4Jd0uuWAH+APFVvHUzh1eXAZDjKVvK6VbwD/RfkiT1Ax6PZPPjYvDyLIU9ifoj+6lNqQpy4VbZ7oQFiMQkVAinHGgQy1G3P+KwMQAkZdx0gIgUd6Oo/Tb81JfmNNLTqSDBTp9tCB26LoNy2OKYKBWM/BpwmhH6/Nvc5PAk32Ei0doB5mCtRAdz7Y2FqPBYgCu0U4cuQ62+DNoEPmSw0eWp8pjCrdrgKsphzerygzjB9svI9PSZVuG6S2KAx9XB1IDQliuOqPHEFBCRnSX7ZisnUl+j0sf4rvZeTyAoDg5jMBW27X7hnp5/t7ijaSoPwAM=
+  on:
+    tags: true
+  skip_existing: true
+  skip_cleanup: true
+  server: https://test.pypi.org/legacy/
