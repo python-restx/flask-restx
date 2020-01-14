@@ -1,9 +1,9 @@
 Contributing
 ============
 
-flask-restx is open-source and very open to contributions. 
+flask-restx is open-source and very open to contributions.
 
-If you're part of a corporation with an NDA, and you may require updating the license. 
+If you're part of a corporation with an NDA, and you may require updating the license.
 See Updating Copyright below
 
 Submitting issues
@@ -35,7 +35,7 @@ If you want to contribute some code:
 7. add your change to the changelog
 8. submit your pull-request
 9. 2 Maintainers should review the code for bugfix and features. 1 maintainer for minor changes (such as docs)
-10. After review, a maintainer a will merge the PR. Maintainers should not merge their own PRs 
+10. After review, a maintainer a will merge the PR. Maintainers should not merge their own PRs
 
 There are some rules to follow:
 
@@ -103,9 +103,15 @@ For local development, you may wish to run a local server. running the following
 
     $ inv assets
 
-NOTE: You'll need `NPM <https://docs.npmjs.com/getting-started/>`_ installed to do this. 
+NOTE: You'll need `NPM <https://docs.npmjs.com/getting-started/>`_ installed to do this.
 If you're new to NPM, also check out `nvm <https://github.com/creationix/nvm/blob/master/README.md>`_
 
+Release process
+---------------
+
+The new releases are pushed on `Pypi.org <https://pypi.org/>`_ automatically
+from `travis-ci <https://travis-ci.org/>`_ when we add a new tag (unless the
+tests are failing).
 
 Updating Copyright
 ------------------
