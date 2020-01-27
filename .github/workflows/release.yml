@@ -1,0 +1,28 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[dev]" wheel
+      - name: Fetch web assets
+        run: inv assets
+      - name: Publish
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python setup.py sdist bdist_wheel
+          twine upload dist/*
