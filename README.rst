@@ -2,9 +2,9 @@
 Flask RESTX
 ===========
 
-.. image:: https://secure.travis-ci.org/python-restx/flask-restx.svg?branch=master
-    :target: https://travis-ci.org/python-restx/flask-restx?branch=master
-    :alt: Build status
+.. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?branch=master&event=push
+    :target: https://github.com/python-restx/flask-restx/actions?query=workflow%3ATests
+    :alt: Tests status
 .. image:: https://coveralls.io/repos/github/python-restx/flask-restx/badge.svg?branch=master
     :target: https://coveralls.io/github/python-restx/flask-restx?branch=master
     :alt: Code coverage
