@@ -1,0 +1,65 @@
+name: Tests
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[dev]"
+      - name: Test with inv
+        run: inv cover qa
+      - name: Coveralls
+        run: |
+          pip install coveralls
+          coveralls --rcfile=coverage.rc
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  bench:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Checkout ${{ github.base_ref }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.base_ref}}
+          path: base
+      - name: Checkout ${{ github.ref }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref}}
+          path: ref
+      - name: Install dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e "base[dev]"
+          pip install -e "base[ci]"
+      - name: Install ci dependencies for ${{ github.base_ref }}
+        run: pip install -e "base[ci]"
+      - name: Benchmarks for ${{ github.base_ref }}
+        run: |
+          cd base
+          inv benchmark --max-time 4 --save
+      - name: Install ci dependencies for ${{ github.ref }}
+        run: pip install -e "ref[ci]"
+      - name: Benchmarks for ${{ github.ref }}
+        run: |
+          cd ref
+          inv benchmark --max-time 4 --compare
