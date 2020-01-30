@@ -623,6 +623,7 @@ class SwaggerTest(object):
     def test_expect_parser(self, api, client):
         parser = api.parser()
         parser.add_argument('param', type=int, help='Some param')
+        parser.add_argument('jsonparam', type=str, location='json', help='Some param')
 
         @api.route('/with-parser/', endpoint='with-parser')
         class WithParserResource(restx.Resource):
@@ -634,13 +635,19 @@ class SwaggerTest(object):
         assert '/with-parser/' in data['paths']
 
         op = data['paths']['/with-parser/']['get']
-        assert len(op['parameters']) == 1
+        assert len(op['parameters']) == 2
 
-        parameter = op['parameters'][0]
+        parameter = [o for o in op['parameters'] if o['in'] == 'query'][0]
         assert parameter['name'] == 'param'
         assert parameter['type'] == 'integer'
         assert parameter['in'] == 'query'
         assert parameter['description'] == 'Some param'
+
+        parameter = [o for o in op['parameters'] if o['in'] == 'body'][0]
+        assert parameter['name'] == 'payload'
+        assert parameter['required']
+        assert parameter['in'] == 'body'
+        assert parameter['schema']['properties']['jsonparam']['type'] == 'string'
 
     def test_expect_parser_on_class(self, api, client):
         parser = api.parser()
@@ -3377,3 +3384,19 @@ class SwaggerDeprecatedTest(object):
 
         assert 'body' not in ModelAsDict.post.__apidoc__
         assert ModelAsDict.post.__apidoc__['expect'] == [(fields, 'Body description')]
+
+    def test_build_request_body_parameters_schema(self):
+        parser = restx.reqparse.RequestParser()
+        parser.add_argument('test', type=int, location='headers')
+        parser.add_argument('test1', type=int, location='json')
+        parser.add_argument('test2', location='json')
+
+        body_params = [p for p in parser.__schema__ if p['in'] == 'body']
+        result = restx.swagger.build_request_body_parameters_schema(body_params)
+
+        assert result['name'] == 'payload'
+        assert result['required']
+        assert result['in'] == 'body'
+        assert result['schema']['type'] == 'object'
+        assert result['schema']['properties']['test1']['type'] == 'integer'
+        assert result['schema']['properties']['test2']['type'] == 'string'
