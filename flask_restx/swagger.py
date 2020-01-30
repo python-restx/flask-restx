@@ -147,6 +147,48 @@ def is_hidden(resource, route_doc=None):
         return hasattr(resource, "__apidoc__") and resource.__apidoc__ is False
 
 
+def build_request_body_parameters_schema(body_params):
+    """
+    :param body_params: List of JSON schema of body parameters.
+    :type body_params: list of dict, generated from the json body parameters of a request parser
+    :return dict: The Swagger schema representation of the request body
+
+    :Example:
+        {
+            'name': 'payload',
+            'required': True,
+            'in': 'body',
+            'schema': {
+                'type': 'object',
+                'properties': [
+                    'parameter1': {
+                        'type': 'integer'
+                    },
+                    'parameter2': {
+                        'type': 'string'
+                    }
+                ]
+            }
+        }
+    """
+
+    properties = {}
+    for param in body_params:
+        properties[param['name']] = {
+            'type': param.get('type', 'string')
+        }
+
+    return {
+        'name': 'payload',
+        'required': True,
+        'in': 'body',
+        'schema': {
+            'type': 'object',
+            'properties': properties
+        }
+    }
+
+
 class Swagger(object):
     '''
     A Swagger documentation wrapper for an API instance.
@@ -333,8 +375,12 @@ class Swagger(object):
 
         for expect in doc.get('expect', []):
             if isinstance(expect, RequestParser):
-                parser_params = OrderedDict((p['name'], p) for p in expect.__schema__)
+                parser_params = OrderedDict((p['name'], p) for p in expect.__schema__ if p['in'] != 'body')
                 params.update(parser_params)
+
+                body_params = [p for p in expect.__schema__ if p['in'] == 'body']
+                if body_params:
+                    params['payload'] = build_request_body_parameters_schema(body_params)
             elif isinstance(expect, ModelBase):
                 params['payload'] = not_none({
                     'name': 'payload',
