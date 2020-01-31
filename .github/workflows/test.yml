@@ -9,12 +9,12 @@ jobs:
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -50,13 +50,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e "base[dev]"
-          pip install -e "base[ci]"
       - name: Install ci dependencies for ${{ github.base_ref }}
         run: pip install -e "base[ci]"
       - name: Benchmarks for ${{ github.base_ref }}
         run: |
           cd base
           inv benchmark --max-time 4 --save
+          mv .benchmarks ../ref/
       - name: Install ci dependencies for ${{ github.ref }}
         run: pip install -e "ref[ci]"
       - name: Benchmarks for ${{ github.ref }}
