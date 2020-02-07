@@ -9,6 +9,7 @@ clean =
     inv clean
 files =
     README.rst
+    package.json
 
 [bump]
 unsuffix = true
@@ -16,11 +17,6 @@ unsuffix = true
 [prepare]
 part = patch
 suffix = dev
-
-[changelog]
-file = CHANGELOG.rst
-bump = {version} ({date:%Y-%m-%d})
-prepare = Current
 
 [readthedoc]
 id = flask-restx
