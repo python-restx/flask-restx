@@ -1,13 +1,13 @@
 {
   "name": "flask-restx",
-  "version": "0.10.1",
+  "version": "0.1.0",
   "description": "Fully featured framework for fast, easy and documented API development with Flask",
   "repository": "python-restx/flask-restx",
   "keywords": [
     "swagger",
     "flask"
   ],
-  "author": "Axel Haustant",
+  "author": "python-restx authors",
   "license": "BSD-3-Clause",
   "dependencies": {
     "swagger-ui-dist": "^3.4.0",
