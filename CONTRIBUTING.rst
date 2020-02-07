@@ -110,7 +110,7 @@ Release process
 ---------------
 
 The new releases are pushed on `Pypi.org <https://pypi.org/>`_ automatically
-from `travis-ci <https://travis-ci.org/>`_ when we add a new tag (unless the
+from `GitHub Actions <https://github.com/python-restx/flask-restx/actions?query=workflow%3ARelease>`_ when we add a new tag (unless the
 tests are failing).
 
 Updating Copyright
