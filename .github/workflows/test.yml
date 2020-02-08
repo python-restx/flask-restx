@@ -22,11 +22,12 @@ jobs:
       - name: Test with inv
         run: inv cover qa
       - name: Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           pip install coveralls
           coveralls --rcfile=coverage.rc
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
   bench:
     needs: test
     runs-on: ubuntu-latest
