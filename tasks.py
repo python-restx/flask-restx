@@ -135,7 +135,7 @@ def cover(ctx, html=False):
     header(cover.__doc__)
     extra = '--cov-report html' if html else ''
     with ctx.cd(ROOT):
-        ctx.run('pytest --benchmark-skip --cov flask_restx --cov-report term {0}'.format(extra), pty=True)
+        ctx.run('pytest --benchmark-skip --cov flask_restx --cov-report term --cov-report xml {0}'.format(extra), pty=True)
 
 
 @task
