@@ -2,6 +2,7 @@
 Flask RESTX
 ===========
 
+
 .. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?branch=master&event=push
     :target: https://github.com/python-restx/flask-restx/actions?query=workflow%3ATests
     :alt: Tests status
