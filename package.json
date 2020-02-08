@@ -1,6 +1,6 @@
 {
   "name": "flask-restx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fully featured framework for fast, easy and documented API development with Flask",
   "repository": "python-restx/flask-restx",
   "keywords": [
