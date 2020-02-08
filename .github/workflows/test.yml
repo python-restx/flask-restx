@@ -24,7 +24,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: secret:qD07bPLswGcPaLjZxz+tZa1CCxV9ErNFzDJ9dudfO226IVd+roFEJxhSu7q69MyjV64E2ZJevg8XdRgN3VpKnFEs0smoodaRU+70Wej15Bs=
           file: ./coverage.xml
   bench:
     needs: test
