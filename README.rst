@@ -6,8 +6,8 @@ Flask RESTX
 .. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?branch=master&event=push
     :target: https://github.com/python-restx/flask-restx/actions?query=workflow%3ATests
     :alt: Tests status
-.. image:: https://coveralls.io/repos/github/python-restx/flask-restx/badge.svg?branch=master
-    :target: https://coveralls.io/github/python-restx/flask-restx?branch=master
+.. image:: https://codecov.io/gh/python-restx/flask-restx/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/python-restx/flask-restx
     :alt: Code coverage
 .. image:: https://readthedocs.org/projects/flask-restx/badge/?version=latest
     :target: https://flask-restx.readthedocs.io/en/latest/

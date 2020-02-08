@@ -21,12 +21,11 @@ jobs:
           pip install ".[dev]"
       - name: Test with inv
         run: inv cover qa
-      - name: Coveralls
-        run: |
-          pip install coveralls
-          coveralls --rcfile=coverage.rc
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
   bench:
     needs: test
     runs-on: ubuntu-latest
