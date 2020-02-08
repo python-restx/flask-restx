@@ -113,6 +113,14 @@ The new releases are pushed on `Pypi.org <https://pypi.org/>`_ automatically
 from `GitHub Actions <https://github.com/python-restx/flask-restx/actions?query=workflow%3ARelease>`_ when we add a new tag (unless the
 tests are failing).
 
+In order to prepare a new release, you can use `bumpr <https://github.com/noirbizarre/bumpr>`_
+which automates a few things.
+You first need to install it, then run the ``bumpr`` command. You can then refer
+to the `documentation <https://bumpr.readthedocs.io/en/latest/commandline.html>`_
+for further details.
+For instance, you would run ``bumpr -m`` (replace ``-m`` with ``-p`` or ``-M``
+depending the expected version).
+
 Updating Copyright
 ------------------
 
