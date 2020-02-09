@@ -1,7 +1,13 @@
 name: Tests
 on:
-  - push
-  - pull_request
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - "*"
+  schedule:
+    - cron: "0 1 * * *"
 jobs:
   test:
     runs-on: ubuntu-latest
