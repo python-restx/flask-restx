@@ -1,0 +1,14 @@
+blinker==1.4
+Faker==3.0.1; python_version < '3'
+Faker==4.0.0; python_version >= '3'
+mock==3.0.5; python_version < '3'
+mock==4.0.1; python_version >= '3'
+pytest==4.6.5; python_version < '3.5'
+pytest==5.3.5; python_version >= '3.5'
+pytest-benchmark==3.2.3
+pytest-cov==2.8.1
+pytest-flask==0.15.1
+pytest-mock==2.0.0
+pytest-profiling==1.7.0
+pytest-sugar==0.9.2
+tzlocal==2.0.0

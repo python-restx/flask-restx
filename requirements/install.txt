@@ -1,0 +1,7 @@
+aniso8601==8.0.0
+jsonschema==3.2.0
+Flask==1.1.1
+werkzeug==0.16.1
+pytz==2019.3
+six==1.14.0
+enum34==1.1.6; python_version < '3.4'
