@@ -22,6 +22,7 @@ jobs:
       - name: Test with inv
         run: inv cover qa
       - name: Coveralls
+        if: github.repository == 'python-restx/flask-restx' && github.event == 'push'
         run: |
           pip install coveralls
           coveralls --rcfile=coverage.rc
