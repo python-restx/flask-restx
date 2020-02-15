@@ -7,7 +7,7 @@ api = Api(app)
 todos = {}
 
 
-@api.route('/<string:todo_id>')
+@api.route("/<string:todo_id>")
 class TodoSimple(Resource):
     """
     You can try this example as follow:
@@ -30,15 +30,14 @@ class TodoSimple(Resource):
      {u'todo2': u'Change my breakpads'}
 
     """
+
     def get(self, todo_id):
         return {todo_id: todos[todo_id]}
 
     def put(self, todo_id):
-        todos[todo_id] = request.form['data']
+        todos[todo_id] = request.form["data"]
         return {todo_id: todos[todo_id]}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=False)
-
-

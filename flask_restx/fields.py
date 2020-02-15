@@ -16,22 +16,46 @@ from six.moves.urllib.parse import urlparse, urlunparse
 from flask import url_for, request
 from werkzeug.utils import cached_property
 
-from .inputs import date_from_iso8601, datetime_from_iso8601, datetime_from_rfc822, boolean
+from .inputs import (
+    date_from_iso8601,
+    datetime_from_iso8601,
+    datetime_from_rfc822,
+    boolean,
+)
 from .errors import RestError
 from .marshalling import marshal
 from .utils import camel_to_dash, not_none
 
 
-__all__ = ('Raw', 'String', 'FormattedString', 'Url', 'DateTime', 'Date',
-           'Boolean', 'Integer', 'Float', 'Arbitrary', 'Fixed',
-           'Nested', 'List', 'ClassName', 'Polymorph', 'Wildcard',
-           'StringMixin', 'MinMaxMixin', 'NumberMixin', 'MarshallingError')
+__all__ = (
+    "Raw",
+    "String",
+    "FormattedString",
+    "Url",
+    "DateTime",
+    "Date",
+    "Boolean",
+    "Integer",
+    "Float",
+    "Arbitrary",
+    "Fixed",
+    "Nested",
+    "List",
+    "ClassName",
+    "Polymorph",
+    "Wildcard",
+    "StringMixin",
+    "MinMaxMixin",
+    "NumberMixin",
+    "MarshallingError",
+)
 
 
 class MarshallingError(RestError):
-    '''
+    """
     This is an encapsulating Exception in case of marshalling error.
-    '''
+    """
+
     def __init__(self, underlying_exception):
         # just put the contextual representation of the error to hint on what
         # went wrong without exposing internals
@@ -43,13 +67,13 @@ def is_indexable_but_not_string(obj):
 
 
 def get_value(key, obj, default=None):
-    '''Helper for pulling a keyed value off various types of objects'''
+    """Helper for pulling a keyed value off various types of objects"""
     if isinstance(key, int):
         return _get_value_for_key(key, obj, default)
     elif callable(key):
         return key(obj)
     else:
-        return _get_value_for_keys(key.split('.'), obj, default)
+        return _get_value_for_keys(key.split("."), obj, default)
 
 
 def _get_value_for_keys(keys, obj, default):
@@ -57,7 +81,8 @@ def _get_value_for_keys(keys, obj, default):
         return _get_value_for_key(keys[0], obj, default)
     else:
         return _get_value_for_keys(
-            keys[1:], _get_value_for_key(keys[0], obj, default), default)
+            keys[1:], _get_value_for_key(keys[0], obj, default), default
+        )
 
 
 def _get_value_for_key(key, obj, default):
@@ -70,24 +95,24 @@ def _get_value_for_key(key, obj, default):
 
 
 def to_marshallable_type(obj):
-    '''
+    """
     Helper for converting an object to a dictionary only if it is not
     dictionary already or an indexable object nor a simple type
-    '''
+    """
     if obj is None:
         return None  # make it idempotent for None
 
-    if hasattr(obj, '__marshallable__'):
+    if hasattr(obj, "__marshallable__"):
         return obj.__marshallable__()
 
-    if hasattr(obj, '__getitem__'):
+    if hasattr(obj, "__getitem__"):
         return obj  # it is indexable it is ok
 
     return dict(obj.__dict__)
 
 
 class Raw(object):
-    '''
+    """
     Raw provides a base field class from which others should extend. It
     applies no formatting by default, and should only be used in cases where
     data does not need to be formatted before being serialized. Fields should
@@ -104,16 +129,27 @@ class Raw(object):
     :param bool readonly: Is the field read only ? (for documentation purpose)
     :param example: An optional data example (for documentation purpose)
     :param callable mask: An optional mask function to be applied to output
-    '''
+    """
+
     #: The JSON/Swagger schema type
-    __schema_type__ = 'object'
+    __schema_type__ = "object"
     #: The JSON/Swagger schema format
     __schema_format__ = None
     #: An optional JSON/Swagger schema example
     __schema_example__ = None
 
-    def __init__(self, default=None, attribute=None, title=None, description=None,
-                 required=None, readonly=None, example=None, mask=None, **kwargs):
+    def __init__(
+        self,
+        default=None,
+        attribute=None,
+        title=None,
+        description=None,
+        required=None,
+        readonly=None,
+        example=None,
+        mask=None,
+        **kwargs
+    ):
         self.attribute = attribute
         self.default = default
         self.title = title
@@ -124,7 +160,7 @@ class Raw(object):
         self.mask = mask
 
     def format(self, value):
-        '''
+        """
         Formats a field's value. No-op by default - field classes that
         modify how the value of existing object keys should be presented should
         override this and apply the appropriate formatting.
@@ -137,11 +173,11 @@ class Raw(object):
             class TitleCase(Raw):
                 def format(self, value):
                     return unicode(value).title()
-        '''
+        """
         return value
 
     def output(self, key, obj, **kwargs):
-        '''
+        """
         Pulls the value for the given key from the object, applies the
         field's formatting and returns the result. If the key is not found
         in the object, returns the default value. Field classes that create
@@ -149,23 +185,25 @@ class Raw(object):
         should override this and return the desired value.
 
         :raises MarshallingError: In case of formatting problem
-        '''
+        """
 
         value = get_value(key if self.attribute is None else self.attribute, obj)
 
         if value is None:
-            default = self._v('default')
+            default = self._v("default")
             return self.format(default) if default else default
 
         try:
             data = self.format(value)
         except MarshallingError as e:
-            msg = 'Unable to marshal field "{0}" value "{1}": {2}'.format(key, value, str(e))
+            msg = 'Unable to marshal field "{0}" value "{1}": {2}'.format(
+                key, value, str(e)
+            )
             raise MarshallingError(msg)
         return self.mask.apply(data) if self.mask else data
 
     def _v(self, key):
-        '''Helper for getting a value from attribute allowing callable'''
+        """Helper for getting a value from attribute allowing callable"""
         value = getattr(self, key)
         return value() if callable(value) else value
 
@@ -175,18 +213,18 @@ class Raw(object):
 
     def schema(self):
         return {
-            'type': self.__schema_type__,
-            'format': self.__schema_format__,
-            'title': self.title,
-            'description': self.description,
-            'readOnly': self.readonly,
-            'default': self._v('default'),
-            'example': self.example,
+            "type": self.__schema_type__,
+            "format": self.__schema_format__,
+            "title": self.title,
+            "description": self.description,
+            "readOnly": self.readonly,
+            "default": self._v("default"),
+            "example": self.example,
         }
 
 
 class Nested(Raw):
-    '''
+    """
     Allows you to nest one set of fields inside another.
     See :ref:`nested-field` for more information
 
@@ -200,10 +238,13 @@ class Nested(Raw):
         dictionary will be marshaled as its value if nested dictionary is
         all-null keys (e.g. lets you return an empty JSON object instead of
         null)
-    '''
+    """
+
     __schema_type__ = None
 
-    def __init__(self, model, allow_null=False, skip_none=False, as_list=False, **kwargs):
+    def __init__(
+        self, model, allow_null=False, skip_none=False, as_list=False, **kwargs
+    ):
         self.model = model
         self.as_list = as_list
         self.allow_null = allow_null
@@ -212,7 +253,7 @@ class Nested(Raw):
 
     @property
     def nested(self):
-        return getattr(self.model, 'resolved', self.model)
+        return getattr(self.model, "resolved", self.model)
 
     def output(self, key, obj, ordered=False, **kwargs):
         value = get_value(key if self.attribute is None else self.attribute, obj)
@@ -226,42 +267,43 @@ class Nested(Raw):
 
     def schema(self):
         schema = super(Nested, self).schema()
-        ref = '#/definitions/{0}'.format(self.nested.name)
+        ref = "#/definitions/{0}".format(self.nested.name)
 
         if self.as_list:
-            schema['type'] = 'array'
-            schema['items'] = {'$ref': ref}
+            schema["type"] = "array"
+            schema["items"] = {"$ref": ref}
         elif any(schema.values()):
             # There is already some properties in the schema
-            allOf = schema.get('allOf', [])
-            allOf.append({'$ref': ref})
-            schema['allOf'] = allOf
+            allOf = schema.get("allOf", [])
+            allOf.append({"$ref": ref})
+            schema["allOf"] = allOf
         else:
-            schema['$ref'] = ref
+            schema["$ref"] = ref
         return schema
 
     def clone(self, mask=None):
         kwargs = self.__dict__.copy()
-        model = kwargs.pop('model')
+        model = kwargs.pop("model")
         if mask:
-            model = mask.apply(model.resolved if hasattr(model, 'resolved') else model)
+            model = mask.apply(model.resolved if hasattr(model, "resolved") else model)
         return self.__class__(model, **kwargs)
 
 
 class List(Raw):
-    '''
+    """
     Field for marshalling lists of other fields.
 
     See :ref:`list-field` for more information.
 
     :param cls_or_instance: The field type the list will contain.
-    '''
+    """
+
     def __init__(self, cls_or_instance, **kwargs):
-        self.min_items = kwargs.pop('min_items', None)
-        self.max_items = kwargs.pop('max_items', None)
-        self.unique = kwargs.pop('unique', None)
+        self.min_items = kwargs.pop("min_items", None)
+        self.max_items = kwargs.pop("max_items", None)
+        self.unique = kwargs.pop("unique", None)
         super(List, self).__init__(**kwargs)
-        error_msg = 'The type of the list elements must be a subclass of fields.Raw'
+        error_msg = "The type of the list elements must be a subclass of fields.Raw"
         if isinstance(cls_or_instance, type):
             if not issubclass(cls_or_instance, Raw):
                 raise MarshallingError(error_msg)
@@ -284,8 +326,12 @@ class List(Raw):
         if value is None:
             return []
         return [
-            self.container.output(idx,
-                                  val if (isinstance(val, dict) or is_attr(val)) and not is_nested else value)
+            self.container.output(
+                idx,
+                val
+                if (isinstance(val, dict) or is_attr(val)) and not is_nested
+                else value,
+            )
             for idx, val in enumerate(value)
         ]
 
@@ -296,83 +342,90 @@ class List(Raw):
             return self.format(value)
 
         if value is None:
-            return self._v('default')
+            return self._v("default")
 
         return [marshal(value, self.container.nested)]
 
     def schema(self):
         schema = super(List, self).schema()
-        schema.update(minItems=self._v('min_items'),
-                      maxItems=self._v('max_items'),
-                      uniqueItems=self._v('unique'))
-        schema['type'] = 'array'
-        schema['items'] = self.container.__schema__
+        schema.update(
+            minItems=self._v("min_items"),
+            maxItems=self._v("max_items"),
+            uniqueItems=self._v("unique"),
+        )
+        schema["type"] = "array"
+        schema["items"] = self.container.__schema__
         return schema
 
     def clone(self, mask=None):
         kwargs = self.__dict__.copy()
-        model = kwargs.pop('container')
+        model = kwargs.pop("container")
         if mask:
             model = mask.apply(model)
         return self.__class__(model, **kwargs)
 
 
 class StringMixin(object):
-    __schema_type__ = 'string'
+    __schema_type__ = "string"
 
     def __init__(self, *args, **kwargs):
-        self.min_length = kwargs.pop('min_length', None)
-        self.max_length = kwargs.pop('max_length', None)
-        self.pattern = kwargs.pop('pattern', None)
+        self.min_length = kwargs.pop("min_length", None)
+        self.max_length = kwargs.pop("max_length", None)
+        self.pattern = kwargs.pop("pattern", None)
         super(StringMixin, self).__init__(*args, **kwargs)
 
     def schema(self):
         schema = super(StringMixin, self).schema()
-        schema.update(minLength=self._v('min_length'),
-                      maxLength=self._v('max_length'),
-                      pattern=self._v('pattern'))
+        schema.update(
+            minLength=self._v("min_length"),
+            maxLength=self._v("max_length"),
+            pattern=self._v("pattern"),
+        )
         return schema
 
 
 class MinMaxMixin(object):
     def __init__(self, *args, **kwargs):
-        self.minimum = kwargs.pop('min', None)
-        self.exclusiveMinimum = kwargs.pop('exclusiveMin', None)
-        self.maximum = kwargs.pop('max', None)
-        self.exclusiveMaximum = kwargs.pop('exclusiveMax', None)
+        self.minimum = kwargs.pop("min", None)
+        self.exclusiveMinimum = kwargs.pop("exclusiveMin", None)
+        self.maximum = kwargs.pop("max", None)
+        self.exclusiveMaximum = kwargs.pop("exclusiveMax", None)
         super(MinMaxMixin, self).__init__(*args, **kwargs)
 
     def schema(self):
         schema = super(MinMaxMixin, self).schema()
-        schema.update(minimum=self._v('minimum'),
-                      exclusiveMinimum=self._v('exclusiveMinimum'),
-                      maximum=self._v('maximum'),
-                      exclusiveMaximum=self._v('exclusiveMaximum'))
+        schema.update(
+            minimum=self._v("minimum"),
+            exclusiveMinimum=self._v("exclusiveMinimum"),
+            maximum=self._v("maximum"),
+            exclusiveMaximum=self._v("exclusiveMaximum"),
+        )
         return schema
 
 
 class NumberMixin(MinMaxMixin):
-    __schema_type__ = 'number'
+    __schema_type__ = "number"
 
     def __init__(self, *args, **kwargs):
-        self.multiple = kwargs.pop('multiple', None)
+        self.multiple = kwargs.pop("multiple", None)
         super(NumberMixin, self).__init__(*args, **kwargs)
 
     def schema(self):
         schema = super(NumberMixin, self).schema()
-        schema.update(multipleOf=self._v('multiple'))
+        schema.update(multipleOf=self._v("multiple"))
         return schema
 
 
 class String(StringMixin, Raw):
-    '''
+    """
     Marshal a value as a string. Uses ``six.text_type`` so values will
     be converted to :class:`unicode` in python2 and :class:`str` in
     python3.
-    '''
+    """
+
     def __init__(self, *args, **kwargs):
-        self.enum = kwargs.pop('enum', None)
-        self.discriminator = kwargs.pop('discriminator', None)
+        self.enum = kwargs.pop("enum", None)
+        self.discriminator = kwargs.pop("discriminator", None)
         super(String, self).__init__(*args, **kwargs)
         self.required = self.discriminator or self.required
 
@@ -383,22 +436,23 @@ class String(StringMixin, Raw):
             raise MarshallingError(ve)
 
     def schema(self):
-        enum = self._v('enum')
+        enum = self._v("enum")
         schema = super(String, self).schema()
         if enum:
             schema.update(enum=enum)
-        if enum and schema['example'] is None:
-            schema['example'] = enum[0]
+        if enum and schema["example"] is None:
+            schema["example"] = enum[0]
         return schema
 
 
 class Integer(NumberMixin, Raw):
-    '''
+    """
     Field for outputting an integer value.
 
     :param int default: The default value for the field, if no value is specified.
-    '''
-    __schema_type__ = 'integer'
+    """
+
+    __schema_type__ = "integer"
 
     def format(self, value):
         try:
@@ -410,11 +464,11 @@ class Integer(NumberMixin, Raw):
 
 
 class Float(NumberMixin, Raw):
-    '''
+    """
     A double as IEEE-754 double precision.
 
     ex : 3.141592653589793 3.1415926535897933e-06 3.141592653589793e+24 nan inf -inf
-    '''
+    """
 
     def format(self, value):
         try:
@@ -424,11 +478,11 @@ class Float(NumberMixin, Raw):
 
 
 class Arbitrary(NumberMixin, Raw):
-    '''
+    """
     A floating point number with an arbitrary precision.
 
     ex: 634271127864378216478362784632784678324.23432
-    '''
+    """
 
     def format(self, value):
         return text_type(Decimal(value))
@@ -438,34 +492,36 @@ ZERO = Decimal()
 
 
 class Fixed(NumberMixin, Raw):
-    '''
+    """
     A decimal number with a fixed precision.
-    '''
+    """
+
     def __init__(self, decimals=5, **kwargs):
         super(Fixed, self).__init__(**kwargs)
-        self.precision = Decimal('0.' + '0' * (decimals - 1) + '1')
+        self.precision = Decimal("0." + "0" * (decimals - 1) + "1")
 
     def format(self, value):
         dvalue = Decimal(value)
         if not dvalue.is_normal() and dvalue != ZERO:
-            raise MarshallingError('Invalid Fixed precision number.')
+            raise MarshallingError("Invalid Fixed precision number.")
         return text_type(dvalue.quantize(self.precision, rounding=ROUND_HALF_EVEN))
 
 
 class Boolean(Raw):
-    '''
+    """
     Field for outputting a boolean value.
 
     Empty collections such as ``""``, ``{}``, ``[]``, etc. will be converted to ``False``.
-    '''
-    __schema_type__ = 'boolean'
+    """
+
+    __schema_type__ = "boolean"
 
     def format(self, value):
         return boolean(value)
 
 
 class DateTime(MinMaxMixin, Raw):
-    '''
+    """
     Return a formatted datetime string in UTC. Supported formats are RFC 822 and ISO 8601.
 
     See :func:`email.utils.formatdate` for more info on the RFC 822 format.
@@ -473,11 +529,12 @@ class DateTime(MinMaxMixin, Raw):
     See :meth:`datetime.datetime.isoformat` for more info on the ISO 8601 format.
 
     :param str dt_format: ``rfc822`` or ``iso8601``
-    '''
-    __schema_type__ = 'string'
-    __schema_format__ = 'date-time'
+    """
 
-    def __init__(self, dt_format='iso8601', **kwargs):
+    __schema_type__ = "string"
+    __schema_format__ = "date-time"
+
+    def __init__(self, dt_format="iso8601", **kwargs):
         super(DateTime, self).__init__(**kwargs)
         self.dt_format = dt_format
 
@@ -485,45 +542,47 @@ class DateTime(MinMaxMixin, Raw):
         if value is None:
             return None
         elif isinstance(value, string_types):
-            parser = datetime_from_iso8601 if self.dt_format == 'iso8601' else datetime_from_rfc822
+            parser = (
+                datetime_from_iso8601
+                if self.dt_format == "iso8601"
+                else datetime_from_rfc822
+            )
             return parser(value)
         elif isinstance(value, datetime):
             return value
         elif isinstance(value, date):
             return datetime(value.year, value.month, value.day)
         else:
-            raise ValueError('Unsupported DateTime format')
+            raise ValueError("Unsupported DateTime format")
 
     def format(self, value):
         try:
             value = self.parse(value)
-            if self.dt_format == 'iso8601':
+            if self.dt_format == "iso8601":
                 return self.format_iso8601(value)
-            elif self.dt_format == 'rfc822':
+            elif self.dt_format == "rfc822":
                 return self.format_rfc822(value)
             else:
-                raise MarshallingError(
-                    'Unsupported date format %s' % self.dt_format
-                )
+                raise MarshallingError("Unsupported date format %s" % self.dt_format)
         except (AttributeError, ValueError) as e:
             raise MarshallingError(e)
 
     def format_rfc822(self, dt):
-        '''
+        """
         Turn a datetime object into a formatted date.
 
         :param datetime dt: The datetime to transform
         :return: A RFC 822 formatted date string
-        '''
+        """
         return formatdate(timegm(dt.utctimetuple()))
 
     def format_iso8601(self, dt):
-        '''
+        """
         Turn a datetime object into an ISO8601 formatted date.
 
         :param datetime dt: The datetime to transform
         :return: A ISO 8601 formatted date string
-        '''
+        """
         return dt.isoformat()
 
     def _for_schema(self, name):
@@ -532,23 +591,24 @@ class DateTime(MinMaxMixin, Raw):
 
     def schema(self):
         schema = super(DateTime, self).schema()
-        schema['default'] = self._for_schema('default')
-        schema['minimum'] = self._for_schema('minimum')
-        schema['maximum'] = self._for_schema('maximum')
+        schema["default"] = self._for_schema("default")
+        schema["minimum"] = self._for_schema("minimum")
+        schema["maximum"] = self._for_schema("maximum")
         return schema
 
 
 class Date(DateTime):
-    '''
+    """
     Return a formatted date string in UTC in ISO 8601.
 
     See :meth:`datetime.date.isoformat` for more info on the ISO 8601 format.
-    '''
-    __schema_format__ = 'date'
+    """
+
+    __schema_format__ = "date"
 
     def __init__(self, **kwargs):
-        kwargs.pop('dt_format', None)
-        super(Date, self).__init__(dt_format='iso8601', **kwargs)
+        kwargs.pop("dt_format", None)
+        super(Date, self).__init__(dt_format="iso8601", **kwargs)
 
     def parse(self, value):
         if value is None:
@@ -560,17 +620,18 @@ class Date(DateTime):
         elif isinstance(value, date):
             return value
         else:
-            raise ValueError('Unsupported Date format')
+            raise ValueError("Unsupported Date format")
 
 
 class Url(StringMixin, Raw):
-    '''
+    """
     A string representation of a Url
 
     :param str endpoint: Endpoint name. If endpoint is ``None``, ``request.endpoint`` is used instead
     :param bool absolute: If ``True``, ensures that the generated urls will have the hostname included
     :param str scheme: URL scheme specifier (e.g. ``http``, ``https``)
-    '''
+    """
+
     def __init__(self, endpoint=None, absolute=False, scheme=None, **kwargs):
         super(Url, self).__init__(**kwargs)
         self.endpoint = endpoint
@@ -591,7 +652,7 @@ class Url(StringMixin, Raw):
 
 
 class FormattedString(StringMixin, Raw):
-    '''
+    """
     FormattedString is used to interpolate other values from
     the response into this field. The syntax for the source string is
     the same as the string :meth:`~str.format` method from the python
@@ -609,7 +670,8 @@ class FormattedString(StringMixin, Raw):
         marshal(data, fields)
 
     :param str src_str: the string to format with the other values from the response.
-    '''
+    """
+
     def __init__(self, src_str, **kwargs):
         super(FormattedString, self).__init__(**kwargs)
         self.src_str = text_type(src_str)
@@ -623,24 +685,25 @@ class FormattedString(StringMixin, Raw):
 
 
 class ClassName(String):
-    '''
+    """
     Return the serialized object class name as string.
 
     :param bool dash: If `True`, transform CamelCase to kebab_case.
-    '''
+    """
+
     def __init__(self, dash=False, **kwargs):
         super(ClassName, self).__init__(**kwargs)
         self.dash = dash
 
     def output(self, key, obj, **kwargs):
         classname = obj.__class__.__name__
-        if classname == 'dict':
-            return 'object'
+        if classname == "dict":
+            return "object"
         return camel_to_dash(classname) if self.dash else classname
 
 
 class Polymorph(Nested):
-    '''
+    """
     A Nested field handling inheritance.
 
     Allows you to specify a mapping between Python classes and fields specifications.
@@ -657,7 +720,8 @@ class Polymorph(Nested):
         })
 
     :param dict mapping: Maps classes to their model/fields representation
-    '''
+    """
+
     def __init__(self, mapping, required=False, **kwargs):
         self.mapping = mapping
         parent = self.resolve_ancestor(list(itervalues(mapping)))
@@ -673,49 +737,58 @@ class Polymorph(Nested):
                 return self.default
 
         # Handle mappings
-        if not hasattr(value, '__class__'):
-            raise ValueError('Polymorph field only accept class instances')
+        if not hasattr(value, "__class__"):
+            raise ValueError("Polymorph field only accept class instances")
 
-        candidates = [fields for cls, fields in iteritems(self.mapping) if type(value) == cls]
+        candidates = [
+            fields for cls, fields in iteritems(self.mapping) if type(value) == cls
+        ]
 
         if len(candidates) <= 0:
-            raise ValueError('Unknown class: ' + value.__class__.__name__)
+            raise ValueError("Unknown class: " + value.__class__.__name__)
         elif len(candidates) > 1:
-            raise ValueError('Unable to determine a candidate for: ' + value.__class__.__name__)
+            raise ValueError(
+                "Unable to determine a candidate for: " + value.__class__.__name__
+            )
         else:
-            return marshal(value, candidates[0].resolved, mask=self.mask, ordered=ordered)
+            return marshal(
+                value, candidates[0].resolved, mask=self.mask, ordered=ordered
+            )
 
     def resolve_ancestor(self, models):
-        '''
+        """
         Resolve the common ancestor for all models.
 
         Assume there is only one common ancestor.
-        '''
+        """
         ancestors = [m.ancestors for m in models]
         candidates = set.intersection(*ancestors)
         if len(candidates) != 1:
             field_names = [f.name for f in models]
-            raise ValueError('Unable to determine the common ancestor for: ' + ', '.join(field_names))
+            raise ValueError(
+                "Unable to determine the common ancestor for: " + ", ".join(field_names)
+            )
 
         parent_name = candidates.pop()
         return models[0].get_parent(parent_name)
 
     def clone(self, mask=None):
         data = self.__dict__.copy()
-        mapping = data.pop('mapping')
-        for field in ('allow_null', 'model'):
+        mapping = data.pop("mapping")
+        for field in ("allow_null", "model"):
             data.pop(field, None)
 
-        data['mask'] = mask
+        data["mask"] = mask
         return Polymorph(mapping, **data)
 
 
 class Wildcard(Raw):
-    '''
+    """
     Field for marshalling list of "unkown" fields.
 
     :param cls_or_instance: The field type the list will contain.
-    '''
+    """
+
     exclude = set()
     # cache the flat object
     _flat = None
@@ -725,7 +798,7 @@ class Wildcard(Raw):
 
     def __init__(self, cls_or_instance, **kwargs):
         super(Wildcard, self).__init__(**kwargs)
-        error_msg = 'The type of the wildcard elements must be a subclass of fields.Raw'
+        error_msg = "The type of the wildcard elements must be a subclass of fields.Raw"
         if isinstance(cls_or_instance, type):
             if not issubclass(cls_or_instance, Raw):
                 raise MarshallingError(error_msg)
@@ -746,8 +819,9 @@ class Wildcard(Raw):
 
             def __match_attributes(attribute):
                 attr_name, attr_obj = attribute
-                if inspect.isroutine(attr_obj) or \
-                        (attr_name.startswith('__') and attr_name.endswith('__')):
+                if inspect.isroutine(attr_obj) or (
+                    attr_name.startswith("__") and attr_name.endswith("__")
+                ):
                     return False
                 return True
 
@@ -780,9 +854,11 @@ class Wildcard(Raw):
                     # loop over the whole object every time dropping the
                     # complexity to O(n)
                     (objkey, val) = self._flat.pop()
-                    if objkey not in self._cache and \
-                            objkey not in self.exclude and \
-                            re.match(reg, objkey, re.IGNORECASE):
+                    if (
+                        objkey not in self._cache
+                        and objkey not in self.exclude
+                        and re.match(reg, objkey, re.IGNORECASE)
+                    ):
                         value = val
                         self._cache.add(objkey)
                         self._last = objkey
@@ -796,16 +872,21 @@ class Wildcard(Raw):
             return None
 
         if isinstance(self.container, Nested):
-            return marshal(value, self.container.nested, skip_none=self.container.skip_none, ordered=ordered)
+            return marshal(
+                value,
+                self.container.nested,
+                skip_none=self.container.skip_none,
+                ordered=ordered,
+            )
         return self.container.format(value)
 
     def schema(self):
         schema = super(Wildcard, self).schema()
-        schema['type'] = 'object'
-        schema['additionalProperties'] = self.container.__schema__
+        schema["type"] = "object"
+        schema["additionalProperties"] = self.container.__schema__
         return schema
 
     def clone(self):
         kwargs = self.__dict__.copy()
-        model = kwargs.pop('container')
+        model = kwargs.pop("container")
         return self.__class__(model, **kwargs)

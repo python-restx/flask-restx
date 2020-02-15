@@ -9,16 +9,16 @@ class LoggingTest(object):
         caplog.set_level(logging.INFO, logger=app.logger.name)
 
         api = restx.Api(app)
-        ns1 = api.namespace('ns1', path='/ns1')
-        ns2 = api.namespace('ns2', path='/ns2')
+        ns1 = api.namespace("ns1", path="/ns1")
+        ns2 = api.namespace("ns2", path="/ns2")
 
-        @ns1.route('/')
+        @ns1.route("/")
         class Ns1(restx.Resource):
             def get(self):
                 ns1.logger.info("hello from ns1")
                 pass
 
-        @ns2.route('/')
+        @ns2.route("/")
         class Ns2(restx.Resource):
             def get(self):
                 ns2.logger.info("hello from ns2")
@@ -38,16 +38,16 @@ class LoggingTest(object):
         caplog.set_level(logging.INFO, logger=app.logger.name)
 
         api = restx.Api(app)
-        ns1 = api.namespace('ns1', path='/ns1')
-        ns2 = api.namespace('ns2', path='/ns2')
+        ns1 = api.namespace("ns1", path="/ns1")
+        ns2 = api.namespace("ns2", path="/ns2")
 
-        @ns1.route('/')
+        @ns1.route("/")
         class Ns1(restx.Resource):
             def get(self):
                 ns1.logger.debug("hello from ns1")
                 pass
 
-        @ns2.route('/')
+        @ns2.route("/")
         class Ns2(restx.Resource):
             def get(self):
                 ns2.logger.info("hello from ns2")
@@ -67,17 +67,17 @@ class LoggingTest(object):
         caplog.set_level(logging.INFO, logger=app.logger.name)
 
         api = restx.Api(app)
-        ns1 = api.namespace('ns1', path='/ns1')
+        ns1 = api.namespace("ns1", path="/ns1")
         ns1.logger.setLevel(logging.DEBUG)
-        ns2 = api.namespace('ns2', path='/ns2')
+        ns2 = api.namespace("ns2", path="/ns2")
 
-        @ns1.route('/')
+        @ns1.route("/")
         class Ns1(restx.Resource):
             def get(self):
                 ns1.logger.debug("hello from ns1")
                 pass
 
-        @ns2.route('/')
+        @ns2.route("/")
         class Ns2(restx.Resource):
             def get(self):
                 ns2.logger.debug("hello from ns2")
@@ -98,21 +98,21 @@ class LoggingTest(object):
         log_file = tmp_path / "v1.log"
 
         api = restx.Api(app)
-        ns1 = api.namespace('ns1', path='/ns1')
+        ns1 = api.namespace("ns1", path="/ns1")
         # set up a file handler for ns1 only
         # FileHandler only supports Path object on Python >= 3.6 -> cast to str
         fh = logging.FileHandler(str(log_file))
         ns1.logger.addHandler(fh)
 
-        ns2 = api.namespace('ns2', path='/ns2')
+        ns2 = api.namespace("ns2", path="/ns2")
 
-        @ns1.route('/')
+        @ns1.route("/")
         class Ns1(restx.Resource):
             def get(self):
                 ns1.logger.info("hello from ns1")
                 pass
 
-        @ns2.route('/')
+        @ns2.route("/")
         class Ns2(restx.Resource):
             def get(self):
                 ns2.logger.info("hello from ns2")

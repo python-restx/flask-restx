@@ -9,100 +9,103 @@ import sys
 
 from setuptools import setup, find_packages
 
-RE_REQUIREMENT = re.compile(r'^\s*-r\s*(?P<filename>.*)$')
+RE_REQUIREMENT = re.compile(r"^\s*-r\s*(?P<filename>.*)$")
 
 PYPI_RST_FILTERS = (
     # Replace Python crossreferences by simple monospace
-    (r':(?:class|func|meth|mod|attr|obj|exc|data|const):`~(?:\w+\.)*(\w+)`', r'``\1``'),
-    (r':(?:class|func|meth|mod|attr|obj|exc|data|const):`([^`]+)`', r'``\1``'),
+    (r":(?:class|func|meth|mod|attr|obj|exc|data|const):`~(?:\w+\.)*(\w+)`", r"``\1``"),
+    (r":(?:class|func|meth|mod|attr|obj|exc|data|const):`([^`]+)`", r"``\1``"),
     # replace doc references
-    (r':doc:`(.+) <(.*)>`', r'`\1 <http://flask-restx.readthedocs.org/en/stable\2.html>`_'),
+    (
+        r":doc:`(.+) <(.*)>`",
+        r"`\1 <http://flask-restx.readthedocs.org/en/stable\2.html>`_",
+    ),
     # replace issues references
-    (r':issue:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/issues/\1>`_'),
+    (
+        r":issue:`(.+?)`",
+        r"`#\1 <https://github.com/python-restx/flask-restx/issues/\1>`_",
+    ),
     # replace pr references
-    (r':pr:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/pull/\1>`_'),
+    (r":pr:`(.+?)`", r"`#\1 <https://github.com/python-restx/flask-restx/pull/\1>`_"),
     # replace commit references
-    (r':commit:`(.+?)`', r'`#\1 <https://github.com/python-restx/flask-restx/commit/\1>`_'),
+    (
+        r":commit:`(.+?)`",
+        r"`#\1 <https://github.com/python-restx/flask-restx/commit/\1>`_",
+    ),
     # Drop unrecognized currentmodule
-    (r'\.\. currentmodule:: .*', ''),
+    (r"\.\. currentmodule:: .*", ""),
 )
 
 
 def rst(filename):
-    '''
+    """
     Load rst file and sanitize it for PyPI.
     Remove unsupported github tags:
      - code-block directive
      - all badges
-    '''
+    """
     content = io.open(filename).read()
     for regex, replacement in PYPI_RST_FILTERS:
         content = re.sub(regex, replacement, content)
     return content
 
 
-
 def pip(filename):
-    '''Parse pip reqs file and transform it to setuptools requirements.'''
+    """Parse pip reqs file and transform it to setuptools requirements."""
     requirements = []
-    for line in io.open(os.path.join('requirements', '{0}.pip'.format(filename))):
+    for line in io.open(os.path.join("requirements", "{0}.pip".format(filename))):
         line = line.strip()
-        if not line or '://' in line or line.startswith('#'):
+        if not line or "://" in line or line.startswith("#"):
             continue
         requirements.append(line)
     return requirements
 
 
-long_description = '\n'.join((
-    rst('README.rst'),
-    ''
-))
+long_description = "\n".join((rst("README.rst"), ""))
 
 
-exec(compile(open('flask_restx/__about__.py').read(), 'flask_restx/__about__.py', 'exec'))
+exec(
+    compile(open("flask_restx/__about__.py").read(), "flask_restx/__about__.py", "exec")
+)
 
-install_requires = pip('install')
-doc_require = pip('doc')
-tests_require = pip('test')
-dev_require = tests_require + pip('develop')
+install_requires = pip("install")
+doc_require = pip("doc")
+tests_require = pip("test")
+dev_require = tests_require + pip("develop")
 
 setup(
-    name='flask-restx',
+    name="flask-restx",
     version=__version__,
     description=__description__,
     long_description=long_description,
-    url='https://github.com/python-restx/flask-restx',
-    author='python-restx Authors',
-    packages=find_packages(exclude=['tests', 'tests.*']),
+    url="https://github.com/python-restx/flask-restx",
+    author="python-restx Authors",
+    packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     install_requires=install_requires,
     tests_require=tests_require,
     dev_require=dev_require,
-    extras_require={
-        'test': tests_require,
-        'doc': doc_require,
-        'dev': dev_require,
-    },
-    license='BSD-3-Clause',
+    extras_require={"test": tests_require, "doc": doc_require, "dev": dev_require,},
+    license="BSD-3-Clause",
     zip_safe=False,
-    keywords='flask restx rest api swagger openapi',
+    keywords="flask restx rest api swagger openapi",
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Programming Language :: Python',
-        'Environment :: Web Environment',
-        'Operating System :: OS Independent',
-        'Intended Audience :: Developers',
-        'Topic :: System :: Software Distribution',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: Implementation :: PyPy',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'License :: OSI Approved :: BSD License',
+        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python",
+        "Environment :: Web Environment",
+        "Operating System :: OS Independent",
+        "Intended Audience :: Developers",
+        "Topic :: System :: Software Distribution",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: Implementation :: PyPy",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "License :: OSI Approved :: BSD License",
     ],
 )
