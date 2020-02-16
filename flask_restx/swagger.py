@@ -5,11 +5,12 @@ import itertools
 import re
 
 from inspect import isclass, getdoc
+from collections import OrderedDict
 try:
-    from collections.abc import OrderedDict, Hashable
+    from collections.abc import Hashable
 except ImportError:
     # TODO Remove this to drop Python2 support
-    from collections import OrderedDict, Hashable
+    from collections import Hashable
 from six import string_types, itervalues, iteritems, iterkeys
 
 from flask import current_app
@@ -644,7 +645,7 @@ class Swagger(object):
                 self.register_model(model)
         elif isinstance(field, fields.Nested):
             self.register_model(field.nested)
-        elif isinstance(field, fields.List):
+        elif isinstance(field, (fields.List, fields.Wildcard)):
             self.register_field(field.container)
 
     def security_for(self, doc, method):
