@@ -150,12 +150,6 @@ def qa(ctx):
     '''Run a quality report'''
     header(qa.__doc__)
     with ctx.cd(ROOT):
-        info('Python Static Analysis')
-        flake8_results = ctx.run('flake8 flask_restx tests', pty=True, warn=True)
-        if flake8_results.failed:
-            error('There is some lints to fix')
-        else:
-            success('No linter errors')
         info('Ensure PyPI can render README and CHANGELOG')
         info('Building dist package')
         dist = ctx.run('python setup.py sdist', pty=True, warn=False, hide=True)
@@ -168,8 +162,8 @@ def qa(ctx):
             error('README and/or CHANGELOG is not renderable by PyPI')
         else:
             success('README and CHANGELOG are renderable by PyPI')
-    if flake8_results.failed or readme_results.failed:
-        exit('Quality check failed', flake8_results.return_code or readme_results.return_code)
+    if readme_results.failed:
+        exit('Quality check failed', readme_results.return_code)
     success('Quality check OK')
 
 
