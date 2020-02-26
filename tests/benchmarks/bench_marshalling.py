@@ -6,31 +6,21 @@ from flask_restx import marshal, fields
 
 fake = Faker()
 
-person_fields = {
-    'name': fields.String,
-    'age': fields.Integer
-}
+person_fields = {"name": fields.String, "age": fields.Integer}
 
 family_fields = {
-    'father': fields.Nested(person_fields),
-    'mother': fields.Nested(person_fields),
-    'children': fields.List(fields.Nested(person_fields))
+    "father": fields.Nested(person_fields),
+    "mother": fields.Nested(person_fields),
+    "children": fields.List(fields.Nested(person_fields)),
 }
 
 
 def person():
-    return {
-        'name': fake.name(),
-        'age': fake.pyint()
-    }
+    return {"name": fake.name(), "age": fake.pyint()}
 
 
 def family():
-    return {
-        'father': person(),
-        'mother': person(),
-        'children': [person(), person()]
-    }
+    return {"father": person(), "mother": person(), "children": [person(), person()]}
 
 
 def marshal_simple():
@@ -42,16 +32,16 @@ def marshal_nested():
 
 
 def marshal_simple_with_mask(app):
-    with app.test_request_context('/', headers={'X-Fields': 'name'}):
+    with app.test_request_context("/", headers={"X-Fields": "name"}):
         return marshal(person(), person_fields)
 
 
 def marshal_nested_with_mask(app):
-    with app.test_request_context('/', headers={'X-Fields': 'father,children{name}'}):
+    with app.test_request_context("/", headers={"X-Fields": "father,children{name}"}):
         return marshal(family(), family_fields)
 
 
-@pytest.mark.benchmark(group='marshalling')
+@pytest.mark.benchmark(group="marshalling")
 class MarshallingBenchmark(object):
     def bench_marshal_simple(self, benchmark):
         benchmark(marshal_simple)

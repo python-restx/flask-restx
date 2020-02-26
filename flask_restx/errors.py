@@ -8,15 +8,15 @@ from werkzeug.exceptions import HTTPException
 from ._http import HTTPStatus
 
 __all__ = (
-    'abort',
-    'RestError',
-    'ValidationError',
-    'SpecsError',
+    "abort",
+    "RestError",
+    "ValidationError",
+    "SpecsError",
 )
 
 
 def abort(code=HTTPStatus.INTERNAL_SERVER_ERROR, message=None, **kwargs):
-    '''
+    """
     Properly abort the current request.
 
     Raise a `HTTPException` for the given status `code`.
@@ -26,19 +26,20 @@ def abort(code=HTTPStatus.INTERNAL_SERVER_ERROR, message=None, **kwargs):
     :param str message: An optional details message
     :param kwargs: Any additional data to pass to the error payload
     :raise HTTPException:
-    '''
+    """
     try:
         flask.abort(code)
     except HTTPException as e:
         if message:
-            kwargs['message'] = str(message)
+            kwargs["message"] = str(message)
         if kwargs:
             e.data = kwargs
         raise
 
 
 class RestError(Exception):
-    '''Base class for all Flask-RESTX Errors'''
+    """Base class for all Flask-RESTX Errors"""
+
     def __init__(self, msg):
         self.msg = msg
 
@@ -47,10 +48,12 @@ class RestError(Exception):
 
 
 class ValidationError(RestError):
-    '''A helper class for validation errors.'''
+    """A helper class for validation errors."""
+
     pass
 
 
 class SpecsError(RestError):
-    '''A helper class for incoherent specifications.'''
+    """A helper class for incoherent specifications."""
+
     pass
