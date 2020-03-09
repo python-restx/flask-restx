@@ -459,7 +459,7 @@ class Integer(NumberMixin, Raw):
             if value is None:
                 return self.default
             return int(value)
-        except ValueError as ve:
+        except (ValueError, TypeError) as ve:
             raise MarshallingError(ve)
 
 
@@ -473,7 +473,7 @@ class Float(NumberMixin, Raw):
     def format(self, value):
         try:
             return float(value)
-        except ValueError as ve:
+        except (ValueError, TypeError) as ve:
             raise MarshallingError(ve)
 
 
