@@ -63,6 +63,8 @@ jobs:
         run: inv cover qa
       - name: Codecov
         uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
   bench:
     needs: unit-tests
     runs-on: ubuntu-latest
