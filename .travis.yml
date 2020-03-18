@@ -1,9 +1,0 @@
-language: python
-python: "3.8"
-if: type = pull_request
-install:
-  - pip install ".[dev]" coveralls
-script:
-  - inv cover
-after_success:
-  - coveralls --rcfile=coverage.rc
