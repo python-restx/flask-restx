@@ -26,3 +26,75 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
           twine upload dist/*
+  feedstock:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Checkout flask-restx code
+        uses: actions/checkout@v2
+        with:
+          path: base
+      - name: Checkout flask-restx-feedstock code
+        uses: actions/checkout@v2
+        with:
+          repository: python-restx/flask-restx-feedstock.git
+          path: feedstock
+          token: ${{ secrets.BOT_TOKEN }}
+      - name: Set Variables
+        id: vars
+        run: |
+          echo "::set-output name=version::$(echo ${{ github.ref }} | cut -d'/' -f3)"
+      - name: Create a release branch
+        run: |
+          cd feedstock
+          git remote add forge https://github.com/conda-forge/flask-restx-feedstock.git
+          git fetch forge
+          git checkout forge/master -b release-${{ steps.vars.outputs.version }}
+      - name: Update meta.yml
+        shell: python
+        run: |
+          from http import client
+          from pkg_resources import parse_requirements
+          import re
+          VERSION = "${{ steps.vars.outputs.version }}"
+          with open("feedstock/recipe/meta.yaml") as f:
+              meta = f.read()
+          requirements = []
+          with open("base/requirements/install.pip") as f:
+              for req in parse_requirements(f):
+                  name = req.project_name
+                  versions = ",".join(["".join(spec) for spec in req.specs])
+                  if versions:
+                      name += " " + versions
+                  requirements.append(name)
+          requirements = '"' + '", "'.join(requirements) + '"'
+          conn = client.HTTPSConnection("pypi.org")
+          conn.request("GET", "/simple/flask-restx/")
+          resp = conn.getresponse()
+          content = str(resp.read(), "utf-8")
+          conn.close()
+          m = re.findall(r'flask-restx-%s.tar.gz#sha256=([A-Za-z0-9]+)"' % VERSION, content)
+          if not m:
+              raise Exception("sha256 not found in: %s" % content)
+          sha256 = m[0]
+          meta = re.sub(r'({% set version = )".+"( %})', r'\1"%s"\2' % VERSION, meta)
+          meta = re.sub(r'({% set sha256 = )".+"( %})', r'\1"%s"\2' % sha256, meta)
+          meta = re.sub(r"({% set requirements = \[).+(] %})", r"\1%s\2" % requirements, meta)
+          meta = re.sub(r"(number:) \d+", r"\1 0", meta)
+          with open("feedstock/recipe/meta.yaml", "w") as f:
+              f.write(meta)
+      - name: Push
+        run: |
+          cd feedstock
+          git config user.name "${{ secrets.BOT_USERNAME }}"
+          git config user.email "python.restx.bot@gmail.com"
+          git add recipe/meta.yaml
+          git commit -m"Release version ${{ steps.vars.outputs.version }}"
+          git push origin release-${{ steps.vars.outputs.version }}
+      - name: Create Pull Request
+        run: |
+          curl --fail -u ${{ secrets.BOT_USERNAME }}:${{ secrets.BOT_TOKEN }} https://api.github.com/repos/conda-forge/flask-restx-feedstock/pulls -d '{"title": "Release version ${{ steps.vars.outputs.version }}", "head": "python-restx:release-${{ steps.vars.outputs.version }}", "base": "master", "maintainer_can_modify": true}'
