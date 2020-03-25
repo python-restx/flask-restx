@@ -4,7 +4,7 @@ vcs = git
 commit = true
 tag = true
 push = true
-tests = tox
+tests = tox -e py38
 clean =
     inv clean
 files =
