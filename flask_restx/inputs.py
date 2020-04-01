@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
+"""
 This module provide some helpers for advanced types parsing.
 
 You can define you own parser using the same pattern:
@@ -15,7 +15,7 @@ You can define you own parser using the same pattern:
     my_type.__schema__ = {'type': 'string', 'format': 'my-custom-format'}
 
 The last line allows you to document properly the type in the Swagger documentation.
-'''
+"""
 from __future__ import unicode_literals
 
 import re
@@ -34,55 +34,55 @@ END_OF_DAY = time(23, 59, 59, 999999, tzinfo=pytz.UTC)
 
 
 netloc_regex = re.compile(
-    r'(?:(?P<auth>[^:@]+?(?::[^:@]*?)?)@)?'  # basic auth
-    r'(?:'
-    r'(?P<localhost>localhost)|'  # localhost...
-    r'(?P<ipv4>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|'  # ...or ipv4
-    r'(?:\[?(?P<ipv6>[A-F0-9]*:[A-F0-9:]+)\]?)|'  # ...or ipv6
-    r'(?P<domain>(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?))'  # domain...
-    r')'
-    r'(?::(?P<port>\d+))?'  # optional port
-    r'$', re.IGNORECASE)
+    r"(?:(?P<auth>[^:@]+?(?::[^:@]*?)?)@)?"  # basic auth
+    r"(?:"
+    r"(?P<localhost>localhost)|"  # localhost...
+    r"(?P<ipv4>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|"  # ...or ipv4
+    r"(?:\[?(?P<ipv6>[A-F0-9]*:[A-F0-9:]+)\]?)|"  # ...or ipv6
+    r"(?P<domain>(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?))"  # domain...
+    r")"
+    r"(?::(?P<port>\d+))?"  # optional port
+    r"$",
+    re.IGNORECASE,
+)
 
 
 email_regex = re.compile(
-    r'^'
-    '(?P<local>[^@]*[^@.])'
-    r'@'
-    r'(?P<server>[^@]+(?:\.[^@]+)*)'
-    r'$', re.IGNORECASE)
+    r"^" "(?P<local>[^@]*[^@.])" r"@" r"(?P<server>[^@]+(?:\.[^@]+)*)" r"$",
+    re.IGNORECASE,
+)
 
-time_regex = re.compile(r'\d{2}:\d{2}')
+time_regex = re.compile(r"\d{2}:\d{2}")
 
 
 def ipv4(value):
-    '''Validate an IPv4 address'''
+    """Validate an IPv4 address"""
     try:
         socket.inet_aton(value)
-        if value.count('.') == 3:
+        if value.count(".") == 3:
             return value
     except socket.error:
         pass
-    raise ValueError('{0} is not a valid ipv4 address'.format(value))
+    raise ValueError("{0} is not a valid ipv4 address".format(value))
 
 
-ipv4.__schema__ = {'type': 'string', 'format': 'ipv4'}
+ipv4.__schema__ = {"type": "string", "format": "ipv4"}
 
 
 def ipv6(value):
-    '''Validate an IPv6 address'''
+    """Validate an IPv6 address"""
     try:
         socket.inet_pton(socket.AF_INET6, value)
         return value
     except socket.error:
-        raise ValueError('{0} is not a valid ipv4 address'.format(value))
+        raise ValueError("{0} is not a valid ipv4 address".format(value))
 
 
-ipv6.__schema__ = {'type': 'string', 'format': 'ipv6'}
+ipv6.__schema__ = {"type": "string", "format": "ipv6"}
 
 
 def ip(value):
-    '''Validate an IP address (both IPv4 and IPv6)'''
+    """Validate an IP address (both IPv4 and IPv6)"""
     try:
         return ipv4(value)
     except ValueError:
@@ -90,14 +90,14 @@ def ip(value):
     try:
         return ipv6(value)
     except ValueError:
-        raise ValueError('{0} is not a valid ip'.format(value))
+        raise ValueError("{0} is not a valid ip".format(value))
 
 
-ip.__schema__ = {'type': 'string', 'format': 'ip'}
+ip.__schema__ = {"type": "string", "format": "ip"}
 
 
 class URL(object):
-    '''
+    """
     Validate an URL.
 
     Example::
@@ -117,9 +117,19 @@ class URL(object):
     :param list|tuple schemes: Restrict valid schemes to this list
     :param list|tuple domains: Restrict valid domains to this list
     :param list|tuple exclude: Exclude some domains
-    '''
-    def __init__(self, check=False, ip=False, local=False, port=False, auth=False,
-                 schemes=None, domains=None, exclude=None):
+    """
+
+    def __init__(
+        self,
+        check=False,
+        ip=False,
+        local=False,
+        port=False,
+        auth=False,
+        schemes=None,
+        domains=None,
+        exclude=None,
+    ):
         self.check = check
         self.ip = ip
         self.local = local
@@ -130,66 +140,68 @@ class URL(object):
         self.exclude = exclude
 
     def error(self, value, details=None):
-        msg = '{0} is not a valid URL'
+        msg = "{0} is not a valid URL"
         if details:
-            msg = '. '.join((msg, details))
+            msg = ". ".join((msg, details))
         raise ValueError(msg.format(value))
 
     def __call__(self, value):
         parsed = urlparse(value)
         netloc_match = netloc_regex.match(parsed.netloc)
         if not all((parsed.scheme, parsed.netloc)):
-            if netloc_regex.match(parsed.netloc or parsed.path.split('/', 1)[0].split('?', 1)[0]):
-                self.error(value, 'Did you mean: http://{0}')
+            if netloc_regex.match(
+                parsed.netloc or parsed.path.split("/", 1)[0].split("?", 1)[0]
+            ):
+                self.error(value, "Did you mean: http://{0}")
             self.error(value)
         if parsed.scheme and self.schemes and parsed.scheme not in self.schemes:
-            self.error(value, 'Protocol is not allowed')
+            self.error(value, "Protocol is not allowed")
         if not netloc_match:
             self.error(value)
         data = netloc_match.groupdict()
-        if data['ipv4'] or data['ipv6']:
+        if data["ipv4"] or data["ipv6"]:
             if not self.ip:
-                self.error(value, 'IP is not allowed')
+                self.error(value, "IP is not allowed")
             else:
                 try:
-                    ip(data['ipv4'] or data['ipv6'])
+                    ip(data["ipv4"] or data["ipv6"])
                 except ValueError as e:
                     self.error(value, str(e))
             if not self.local:
-                if data['ipv4'] and data['ipv4'].startswith('127.'):
-                    self.error(value, 'Localhost is not allowed')
-                elif data['ipv6'] == '::1':
-                    self.error(value, 'Localhost is not allowed')
+                if data["ipv4"] and data["ipv4"].startswith("127."):
+                    self.error(value, "Localhost is not allowed")
+                elif data["ipv6"] == "::1":
+                    self.error(value, "Localhost is not allowed")
             if self.check:
                 pass
-        if data['auth'] and not self.auth:
-            self.error(value, 'Authentication is not allowed')
-        if data['localhost'] and not self.local:
-            self.error(value, 'Localhost is not allowed')
-        if data['port']:
+        if data["auth"] and not self.auth:
+            self.error(value, "Authentication is not allowed")
+        if data["localhost"] and not self.local:
+            self.error(value, "Localhost is not allowed")
+        if data["port"]:
             if not self.port:
-                self.error(value, 'Custom port is not allowed')
+                self.error(value, "Custom port is not allowed")
             else:
-                port = int(data['port'])
+                port = int(data["port"])
                 if not 0 < port < 65535:
-                    self.error(value, 'Port is out of range')
-        if data['domain']:
-            if self.domains and data['domain'] not in self.domains:
-                self.error(value, 'Domain is not allowed')
-            elif self.exclude and data['domain'] in self.exclude:
-                self.error(value, 'Domain is not allowed')
+                    self.error(value, "Port is out of range")
+        if data["domain"]:
+            if self.domains and data["domain"] not in self.domains:
+                self.error(value, "Domain is not allowed")
+            elif self.exclude and data["domain"] in self.exclude:
+                self.error(value, "Domain is not allowed")
             if self.check:
                 try:
-                    socket.getaddrinfo(data['domain'], None)
+                    socket.getaddrinfo(data["domain"], None)
                 except socket.error:
-                    self.error(value, 'Domain does not exists')
+                    self.error(value, "Domain does not exists")
         return value
 
     @property
     def __schema__(self):
         return {
-            'type': 'string',
-            'format': 'url',
+            "type": "string",
+            "format": "url",
         }
 
 
@@ -197,11 +209,13 @@ class URL(object):
 #:
 #: Legacy validator, allows, auth, port, ip and local
 #: Only allows schemes 'http', 'https', 'ftp' and 'ftps'
-url = URL(ip=True, auth=True, port=True, local=True, schemes=('http', 'https', 'ftp', 'ftps'))
+url = URL(
+    ip=True, auth=True, port=True, local=True, schemes=("http", "https", "ftp", "ftps")
+)
 
 
 class email(object):
-    '''
+    """
     Validate an email.
 
     Example::
@@ -217,7 +231,8 @@ class email(object):
     :param bool local: Allow localhost (both string or ip) as domain
     :param list|tuple domains: Restrict valid domains to this list
     :param list|tuple exclude: Exclude some domains
-    '''
+    """
+
     def __init__(self, check=False, ip=False, local=False, domains=None, exclude=None):
         self.check = check
         self.ip = ip
@@ -226,7 +241,7 @@ class email(object):
         self.exclude = exclude
 
     def error(self, value, msg=None):
-        msg = msg or '{0} is not a valid email'
+        msg = msg or "{0} is not a valid email"
         raise ValueError(msg.format(value))
 
     def is_ip(self, value):
@@ -238,19 +253,21 @@ class email(object):
 
     def __call__(self, value):
         match = email_regex.match(value)
-        if not match or '..' in value:
+        if not match or ".." in value:
             self.error(value)
-        server = match.group('server')
+        server = match.group("server")
         if self.check:
             try:
                 socket.getaddrinfo(server, None)
             except socket.error:
                 self.error(value)
         if self.domains and server not in self.domains:
-            self.error(value, '{0} does not belong to the authorized domains')
+            self.error(value, "{0} does not belong to the authorized domains")
         if self.exclude and server in self.exclude:
-            self.error(value, '{0} belongs to a forbidden domain')
-        if not self.local and (server in ('localhost', '::1') or server.startswith('127.')):
+            self.error(value, "{0} belongs to a forbidden domain")
+        if not self.local and (
+            server in ("localhost", "::1") or server.startswith("127.")
+        ):
             self.error(value)
         if self.is_ip(server) and not self.ip:
             self.error(value)
@@ -259,13 +276,13 @@ class email(object):
     @property
     def __schema__(self):
         return {
-            'type': 'string',
-            'format': 'email',
+            "type": "string",
+            "format": "email",
         }
 
 
 class regex(object):
-    '''
+    """
     Validate a string based on a regular expression.
 
     Example::
@@ -277,7 +294,7 @@ class regex(object):
     but numbers.
 
     :param str pattern: The regular expression the input must match
-    '''
+    """
 
     def __init__(self, pattern):
         self.pattern = pattern
@@ -295,13 +312,13 @@ class regex(object):
     @property
     def __schema__(self):
         return {
-            'type': 'string',
-            'pattern': self.pattern,
+            "type": "string",
+            "pattern": self.pattern,
         }
 
 
 def _normalize_interval(start, end, value):
-    '''
+    """
     Normalize datetime intervals.
 
     Given a pair of datetime.date or datetime.datetime objects,
@@ -317,7 +334,7 @@ def _normalize_interval(start, end, value):
     Params:
         - start: A date or datetime
         - end: A date or datetime
-    '''
+    """
     if not isinstance(start, datetime):
         start = datetime.combine(start, START_OF_DAY)
         end = datetime.combine(end, START_OF_DAY)
@@ -340,9 +357,9 @@ def _expand_datetime(start, value):
     else:
         # Expand a datetime based on the finest resolution provided
         # in the original input string.
-        time = value.split('T')[1]
-        time_without_offset = re.sub('[+-].+', '', time)
-        num_separators = time_without_offset.count(':')
+        time = value.split("T")[1]
+        time_without_offset = re.sub("[+-].+", "", time)
+        num_separators = time_without_offset.count(":")
         if num_separators == 0:
             # Hour resolution
             end = start + timedelta(hours=1)
@@ -357,10 +374,10 @@ def _expand_datetime(start, value):
 
 
 def _parse_interval(value):
-    '''
+    """
     Do some nasty try/except voodoo to get some sort of datetime
     object(s) out of the string.
-    '''
+    """
     try:
         return sorted(aniso8601.parse_interval(value))
     except ValueError:
@@ -370,8 +387,8 @@ def _parse_interval(value):
             return aniso8601.parse_date(value), None
 
 
-def iso8601interval(value, argument='argument'):
-    '''
+def iso8601interval(value, argument="argument"):
+    """
     Parses ISO 8601-formatted datetime intervals into tuples of datetimes.
 
     Accepts both a single date(time) or a full interval using either start/end
@@ -397,9 +414,9 @@ def iso8601interval(value, argument='argument'):
     :return: Two UTC datetimes, the start and the end of the specified interval
     :rtype: A tuple (datetime, datetime)
     :raises ValueError: if the interval is invalid.
-    '''
+    """
     if not value:
-        raise ValueError('Expected a valid ISO8601 date/time interval.')
+        raise ValueError("Expected a valid ISO8601 date/time interval.")
 
     try:
         start, end = _parse_interval(value)
@@ -410,58 +427,61 @@ def iso8601interval(value, argument='argument'):
         start, end = _normalize_interval(start, end, value)
 
     except ValueError:
-        msg = 'Invalid {arg}: {value}. {arg} must be a valid ISO8601 date/time interval.'
+        msg = (
+            "Invalid {arg}: {value}. {arg} must be a valid ISO8601 date/time interval."
+        )
         raise ValueError(msg.format(arg=argument, value=value))
 
     return start, end
 
 
-iso8601interval.__schema__ = {'type': 'string', 'format': 'iso8601-interval'}
+iso8601interval.__schema__ = {"type": "string", "format": "iso8601-interval"}
 
 
 def date(value):
-    '''Parse a valid looking date in the format YYYY-mm-dd'''
+    """Parse a valid looking date in the format YYYY-mm-dd"""
     date = datetime.strptime(value, "%Y-%m-%d")
     return date
 
 
-date.__schema__ = {'type': 'string', 'format': 'date'}
+date.__schema__ = {"type": "string", "format": "date"}
 
 
 def _get_integer(value):
     try:
         return int(value)
     except (TypeError, ValueError):
-        raise ValueError('{0} is not a valid integer'.format(value))
+        raise ValueError("{0} is not a valid integer".format(value))
 
 
-def natural(value, argument='argument'):
-    '''Restrict input type to the natural numbers (0, 1, 2, 3...)'''
+def natural(value, argument="argument"):
+    """Restrict input type to the natural numbers (0, 1, 2, 3...)"""
     value = _get_integer(value)
     if value < 0:
-        msg = 'Invalid {arg}: {value}. {arg} must be a non-negative integer'
+        msg = "Invalid {arg}: {value}. {arg} must be a non-negative integer"
         raise ValueError(msg.format(arg=argument, value=value))
     return value
 
 
-natural.__schema__ = {'type': 'integer', 'minimum': 0}
+natural.__schema__ = {"type": "integer", "minimum": 0}
 
 
-def positive(value, argument='argument'):
-    '''Restrict input type to the positive integers (1, 2, 3...)'''
+def positive(value, argument="argument"):
+    """Restrict input type to the positive integers (1, 2, 3...)"""
     value = _get_integer(value)
     if value < 1:
-        msg = 'Invalid {arg}: {value}. {arg} must be a positive integer'
+        msg = "Invalid {arg}: {value}. {arg} must be a positive integer"
         raise ValueError(msg.format(arg=argument, value=value))
     return value
 
 
-positive.__schema__ = {'type': 'integer', 'minimum': 0, 'exclusiveMinimum': True}
+positive.__schema__ = {"type": "integer", "minimum": 0, "exclusiveMinimum": True}
 
 
 class int_range(object):
-    '''Restrict input to an integer in a range (inclusive)'''
-    def __init__(self, low, high, argument='argument'):
+    """Restrict input to an integer in a range (inclusive)"""
+
+    def __init__(self, low, high, argument="argument"):
         self.low = low
         self.high = high
         self.argument = argument
@@ -469,21 +489,23 @@ class int_range(object):
     def __call__(self, value):
         value = _get_integer(value)
         if value < self.low or value > self.high:
-            msg = 'Invalid {arg}: {val}. {arg} must be within the range {lo} - {hi}'
-            raise ValueError(msg.format(arg=self.argument, val=value, lo=self.low, hi=self.high))
+            msg = "Invalid {arg}: {val}. {arg} must be within the range {lo} - {hi}"
+            raise ValueError(
+                msg.format(arg=self.argument, val=value, lo=self.low, hi=self.high)
+            )
         return value
 
     @property
     def __schema__(self):
         return {
-            'type': 'integer',
-            'minimum': self.low,
-            'maximum': self.high,
+            "type": "integer",
+            "minimum": self.low,
+            "maximum": self.high,
         }
 
 
 def boolean(value):
-    '''
+    """
     Parse the string ``"true"`` or ``"false"`` as a boolean (case insensitive).
 
     Also accepts ``"1"`` and ``"0"`` as ``True``/``False`` (respectively).
@@ -492,27 +514,27 @@ def boolean(value):
     and will be passed through without further parsing.
 
     :raises ValueError: if the boolean value is invalid
-    '''
+    """
     if isinstance(value, bool):
         return value
 
     if value is None:
-        raise ValueError('boolean type must be non-null')
+        raise ValueError("boolean type must be non-null")
     elif not value:
         return False
     value = str(value).lower()
-    if value in ('true', '1', 'on',):
+    if value in ("true", "1", "on",):
         return True
-    if value in ('false', '0',):
+    if value in ("false", "0",):
         return False
-    raise ValueError('Invalid literal for boolean(): {0}'.format(value))
+    raise ValueError("Invalid literal for boolean(): {0}".format(value))
 
 
-boolean.__schema__ = {'type': 'boolean'}
+boolean.__schema__ = {"type": "boolean"}
 
 
 def datetime_from_rfc822(value):
-    '''
+    """
     Turns an RFC822 formatted date into a datetime object.
 
     Example::
@@ -524,10 +546,10 @@ def datetime_from_rfc822(value):
     :rtype: datetime
     :raises ValueError: if value is an invalid date literal
 
-    '''
+    """
     raw = value
     if not time_regex.search(value):
-        value = ' '.join((value, '00:00:00'))
+        value = " ".join((value, "00:00:00"))
     try:
         timetuple = parsedate_tz(value)
         timestamp = mktime_tz(timetuple)
@@ -540,7 +562,7 @@ def datetime_from_rfc822(value):
 
 
 def datetime_from_iso8601(value):
-    '''
+    """
     Turns an ISO8601 formatted date into a datetime object.
 
     Example::
@@ -552,7 +574,7 @@ def datetime_from_iso8601(value):
     :rtype: datetime
     :raises ValueError: if value is an invalid date literal
 
-    '''
+    """
     try:
         try:
             return aniso8601.parse_datetime(value)
@@ -563,11 +585,11 @@ def datetime_from_iso8601(value):
         raise ValueError('Invalid date literal "{0}"'.format(value))
 
 
-datetime_from_iso8601.__schema__ = {'type': 'string', 'format': 'date-time'}
+datetime_from_iso8601.__schema__ = {"type": "string", "format": "date-time"}
 
 
 def date_from_iso8601(value):
-    '''
+    """
     Turns an ISO8601 formatted date into a date object.
 
     Example::
@@ -581,8 +603,8 @@ def date_from_iso8601(value):
     :rtype: date
     :raises ValueError: if value is an invalid date literal
 
-    '''
+    """
     return datetime_from_iso8601(value).date()
 
 
-date_from_iso8601.__schema__ = {'type': 'string', 'format': 'date'}
+date_from_iso8601.__schema__ = {"type": "string", "format": "date"}

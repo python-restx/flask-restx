@@ -3,26 +3,29 @@ from __future__ import unicode_literals
 
 import re
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from copy import deepcopy
 from six import iteritems
 
 from ._http import HTTPStatus
 
 
-FIRST_CAP_RE = re.compile('(.)([A-Z][a-z]+)')
-ALL_CAP_RE = re.compile('([a-z0-9])([A-Z])')
+FIRST_CAP_RE = re.compile("(.)([A-Z][a-z]+)")
+ALL_CAP_RE = re.compile("([a-z0-9])([A-Z])")
 
 
-__all__ = ('merge', 'camel_to_dash', 'default_id', 'not_none', 'not_none_sorted', 'unpack')
+__all__ = (
+    "merge",
+    "camel_to_dash",
+    "default_id",
+    "not_none",
+    "not_none_sorted",
+    "unpack",
+)
 
 
 def merge(first, second):
-    '''
+    """
     Recursively merges two dictionaries.
 
     Second dictionary values will take precedence over those from the first one.
@@ -32,7 +35,7 @@ def merge(first, second):
     :param dict second: The second dictionary
     :return: the resulting merged dictionary
     :rtype: dict
-    '''
+    """
     if not isinstance(second, dict):
         return second
     result = deepcopy(first)
@@ -45,46 +48,46 @@ def merge(first, second):
 
 
 def camel_to_dash(value):
-    '''
+    """
     Transform a CamelCase string into a low_dashed one
 
     :param str value: a CamelCase string to transform
     :return: the low_dashed string
     :rtype: str
-    '''
-    first_cap = FIRST_CAP_RE.sub(r'\1_\2', value)
-    return ALL_CAP_RE.sub(r'\1_\2', first_cap).lower()
+    """
+    first_cap = FIRST_CAP_RE.sub(r"\1_\2", value)
+    return ALL_CAP_RE.sub(r"\1_\2", first_cap).lower()
 
 
 def default_id(resource, method):
-    '''Default operation ID generator'''
-    return '{0}_{1}'.format(method, camel_to_dash(resource))
+    """Default operation ID generator"""
+    return "{0}_{1}".format(method, camel_to_dash(resource))
 
 
 def not_none(data):
-    '''
+    """
     Remove all keys where value is None
 
     :param dict data: A dictionary with potentially some values set to None
     :return: The same dictionary without the keys with values to ``None``
     :rtype: dict
-    '''
+    """
     return dict((k, v) for k, v in iteritems(data) if v is not None)
 
 
 def not_none_sorted(data):
-    '''
+    """
     Remove all keys where value is None
 
     :param OrderedDict data: A dictionary with potentially some values set to None
     :return: The same dictionary without the keys with values to ``None``
     :rtype: OrderedDict
-    '''
+    """
     return OrderedDict((k, v) for k, v in sorted(iteritems(data)) if v is not None)
 
 
 def unpack(response, default_code=HTTPStatus.OK):
-    '''
+    """
     Unpack a Flask standard response.
 
     Flask response can be:
@@ -102,7 +105,7 @@ def unpack(response, default_code=HTTPStatus.OK):
     :return: a 3-tuple ``(data, code, headers)``
     :rtype: tuple
     :raise ValueError: if the response does not have one of the expected format
-    '''
+    """
     if not isinstance(response, tuple):
         # data only
         return response, default_code, {}
@@ -118,4 +121,4 @@ def unpack(response, default_code=HTTPStatus.OK):
         data, code, headers = response
         return data, code or default_code, headers
     else:
-        raise ValueError('Too many response values')
+        raise ValueError("Too many response values")

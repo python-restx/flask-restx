@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from functools import wraps
 from six import iteritems
 
@@ -92,8 +88,9 @@ def marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fal
                     _append(key, value)
                     while True:
                         value = field.output(dkey, data, ordered=ordered)
-                        if value is None or \
-                                value == field.container.format(field.default):
+                        if value is None or value == field.container.format(
+                            field.default
+                        ):
                             break
                         key = field.key
                         _append(key, value)
@@ -157,8 +154,8 @@ def _marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fa
     # ugly local import to avoid dependency loop
     from .fields import Wildcard
 
-    mask = mask or getattr(fields, '__mask__', None)
-    fields = getattr(fields, 'resolved', fields)
+    mask = mask or getattr(fields, "__mask__", None)
+    fields = getattr(fields, "resolved", fields)
     if mask:
         fields = apply_mask(fields, mask, skip=True)
 
@@ -168,12 +165,12 @@ def _marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fa
             out = OrderedDict([(envelope, out)]) if ordered else {envelope: out}
         return out, False
 
-    has_wildcards = {'present': False}
+    has_wildcards = {"present": False}
 
     def __format_field(key, val):
         field = make(val)
         if isinstance(field, Wildcard):
-            has_wildcards['present'] = True
+            has_wildcards["present"] = True
         value = field.output(key, data, ordered=ordered)
         return (key, value)
 
@@ -185,15 +182,16 @@ def _marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fa
     )
 
     if skip_none:
-        items = ((k, v) for k, v in items
-                 if v is not None and v != OrderedDict() and v != {})
+        items = (
+            (k, v) for k, v in items if v is not None and v != OrderedDict() and v != {}
+        )
 
     out = OrderedDict(items) if ordered else dict(items)
 
     if envelope:
         out = OrderedDict([(envelope, out)]) if ordered else {envelope: out}
 
-    return out, has_wildcards['present']
+    return out, has_wildcards["present"]
 
 
 class marshal_with(object):
@@ -228,7 +226,10 @@ class marshal_with(object):
 
     see :meth:`flask_restx.marshal`
     """
-    def __init__(self, fields, envelope=None, skip_none=False, mask=None, ordered=False):
+
+    def __init__(
+        self, fields, envelope=None, skip_none=False, mask=None, ordered=False
+    ):
         """
         :param fields: a dict of whose keys will make up the final
                        serialized response output
@@ -247,17 +248,27 @@ class marshal_with(object):
             resp = f(*args, **kwargs)
             mask = self.mask
             if has_app_context():
-                mask_header = current_app.config['RESTX_MASK_HEADER']
+                mask_header = current_app.config["RESTX_MASK_HEADER"]
                 mask = request.headers.get(mask_header) or mask
             if isinstance(resp, tuple):
                 data, code, headers = unpack(resp)
                 return (
-                    marshal(data, self.fields, self.envelope, self.skip_none, mask, self.ordered),
+                    marshal(
+                        data,
+                        self.fields,
+                        self.envelope,
+                        self.skip_none,
+                        mask,
+                        self.ordered,
+                    ),
                     code,
-                    headers
+                    headers,
                 )
             else:
-                return marshal(resp, self.fields, self.envelope, self.skip_none, mask, self.ordered)
+                return marshal(
+                    resp, self.fields, self.envelope, self.skip_none, mask, self.ordered
+                )
+
         return wrapper
 
 
@@ -275,6 +286,7 @@ class marshal_with_field(object):
 
     see :meth:`flask_restx.marshal_with`
     """
+
     def __init__(self, field):
         """
         :param field: a single field with which to marshal the output.

@@ -5,37 +5,36 @@ import logging
 import re
 import six
 
-try:
-    from collections.abc import OrderedDict
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import OrderedDict
+from collections import OrderedDict
 from inspect import isclass
 
 from .errors import RestError
 
 log = logging.getLogger(__name__)
 
-LEXER = re.compile(r'\{|\}|\,|[\w_:\-\*]+')
+LEXER = re.compile(r"\{|\}|\,|[\w_:\-\*]+")
 
 
 class MaskError(RestError):
-    '''Raised when an error occurs on mask'''
+    """Raised when an error occurs on mask"""
+
     pass
 
 
 class ParseError(MaskError):
-    '''Raised when the mask parsing failed'''
+    """Raised when the mask parsing failed"""
+
     pass
 
 
 class Mask(OrderedDict):
-    '''
+    """
     Hold a parsed mask.
 
     :param str|dict|Mask mask: A mask, parsed or not
     :param bool skip: If ``True``, missing fields won't appear in result
-    '''
+    """
+
     def __init__(self, mask=None, skip=False, **kwargs):
         self.skip = skip
         if isinstance(mask, six.string_types):
@@ -48,7 +47,7 @@ class Mask(OrderedDict):
             super(Mask, self).__init__(**kwargs)
 
     def parse(self, mask):
-        '''
+        """
         Parse a fields mask.
         Expect something in the form::
 
@@ -63,7 +62,7 @@ class Mask(OrderedDict):
         :param str mask: the mask string to parse
         :raises ParseError: when a mask is unparseable/invalid
 
-        '''
+        """
         if not mask:
             return
 
@@ -73,46 +72,47 @@ class Mask(OrderedDict):
         stack = []
 
         for token in LEXER.findall(mask):
-            if token == '{':
+            if token == "{":
                 if previous not in fields:
-                    raise ParseError('Unexpected opening bracket')
+                    raise ParseError("Unexpected opening bracket")
                 fields[previous] = Mask(skip=self.skip)
                 stack.append(fields)
                 fields = fields[previous]
-            elif token == '}':
+            elif token == "}":
                 if not stack:
-                    raise ParseError('Unexpected closing bracket')
+                    raise ParseError("Unexpected closing bracket")
                 fields = stack.pop()
-            elif token == ',':
-                if previous in (',', '{', None):
-                    raise ParseError('Unexpected comma')
+            elif token == ",":
+                if previous in (",", "{", None):
+                    raise ParseError("Unexpected comma")
             else:
                 fields[token] = True
 
             previous = token
 
         if stack:
-            raise ParseError('Missing closing bracket')
+            raise ParseError("Missing closing bracket")
 
     def clean(self, mask):
-        '''Remove unnecessary characters'''
-        mask = mask.replace('\n', '').strip()
+        """Remove unnecessary characters"""
+        mask = mask.replace("\n", "").strip()
         # External brackets are optional
-        if mask[0] == '{':
-            if mask[-1] != '}':
-                raise ParseError('Missing closing bracket')
+        if mask[0] == "{":
+            if mask[-1] != "}":
+                raise ParseError("Missing closing bracket")
             mask = mask[1:-1]
         return mask
 
     def apply(self, data):
-        '''
+        """
         Apply a fields mask to the data.
 
         :param data: The data or model to apply mask on
         :raises MaskError: when unable to apply the mask
 
-        '''
+        """
         from . import fields
+
         # Should handle lists
         if isinstance(data, (list, tuple, set)):
             return [self.apply(d) for d in data]
@@ -122,27 +122,31 @@ class Mask(OrderedDict):
             return fields.Raw(default=data.default, attribute=data.attribute, mask=self)
         elif data == fields.Raw:
             return fields.Raw(mask=self)
-        elif isinstance(data, fields.Raw) or isclass(data) and issubclass(data, fields.Raw):
+        elif (
+            isinstance(data, fields.Raw)
+            or isclass(data)
+            and issubclass(data, fields.Raw)
+        ):
             # Not possible to apply a mask on these remaining fields types
-            raise MaskError('Mask is inconsistent with model')
+            raise MaskError("Mask is inconsistent with model")
         # Should handle objects
-        elif (not isinstance(data, (dict, OrderedDict)) and hasattr(data, '__dict__')):
+        elif not isinstance(data, (dict, OrderedDict)) and hasattr(data, "__dict__"):
             data = data.__dict__
 
         return self.filter_data(data)
 
     def filter_data(self, data):
-        '''
+        """
         Handle the data filtering given a parsed mask
 
         :param dict data: the raw data to filter
         :param list mask: a parsed mask to filter against
         :param bool skip: whether or not to skip missing fields
 
-        '''
+        """
         out = {}
         for field, content in six.iteritems(self):
-            if field == '*':
+            if field == "*":
                 continue
             elif isinstance(content, Mask):
                 nested = data.get(field, None)
@@ -157,21 +161,25 @@ class Mask(OrderedDict):
             else:
                 out[field] = data.get(field, None)
 
-        if '*' in self.keys():
+        if "*" in self.keys():
             for key, value in six.iteritems(data):
                 if key not in out:
                     out[key] = value
         return out
 
     def __str__(self):
-        return '{{{0}}}'.format(','.join([
-            ''.join((k, str(v))) if isinstance(v, Mask) else k
-            for k, v in six.iteritems(self)
-        ]))
+        return "{{{0}}}".format(
+            ",".join(
+                [
+                    "".join((k, str(v))) if isinstance(v, Mask) else k
+                    for k, v in six.iteritems(self)
+                ]
+            )
+        )
 
 
 def apply(data, mask, skip=False):
-    '''
+    """
     Apply a fields mask to the data.
 
     :param data: The data or model to apply mask on
@@ -179,5 +187,5 @@ def apply(data, mask, skip=False):
     :param bool skip: If rue, missing field won't appear in result
     :raises MaskError: when unable to apply the mask
 
-    '''
+    """
     return Mask(mask, skip).apply(data)

@@ -41,7 +41,7 @@ There are some rules to follow:
 
 - your contribution should be documented (if needed)
 - your contribution should be tested and the test suite should pass successfully
-- your code should be mostly PEP8 compatible with a 120 characters line length
+- your code should be properly formatted (use ``black .`` to format)
 - your contribution should support both Python 2 and 3 (use ``tox`` to test)
 
 You need to install some dependencies to develop on flask-restx:

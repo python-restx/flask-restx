@@ -11,7 +11,7 @@ from .utils import unpack
 
 
 class Resource(MethodView):
-    '''
+    """
     Represents an abstract RESTX resource.
 
     Concrete resources should extend from this class
@@ -21,7 +21,7 @@ class Resource(MethodView):
     Otherwise the appropriate method is called and passed all arguments
     from the url rule used when adding the resource to an Api instance.
     See :meth:`~flask_restx.Api.add_resource` for details.
-    '''
+    """
 
     representations = None
     method_decorators = []
@@ -32,9 +32,9 @@ class Resource(MethodView):
     def dispatch_request(self, *args, **kwargs):
         # Taken from flask
         meth = getattr(self, request.method.lower(), None)
-        if meth is None and request.method == 'HEAD':
-            meth = getattr(self, 'get', None)
-        assert meth is not None, 'Unimplemented method %r' % request.method
+        if meth is None and request.method == "HEAD":
+            meth = getattr(self, "get", None)
+        assert meth is not None, "Unimplemented method %r" % request.method
 
         for decorator in self.method_decorators:
             meth = decorator(meth)
@@ -52,17 +52,17 @@ class Resource(MethodView):
         if mediatype in representations:
             data, code, headers = unpack(resp)
             resp = representations[mediatype](data, code, headers)
-            resp.headers['Content-Type'] = mediatype
+            resp.headers["Content-Type"] = mediatype
             return resp
 
         return resp
 
     def __validate_payload(self, expect, collection=False):
-        '''
+        """
         :param ModelBase expect: the expected model for the input payload
         :param bool collection: False if a single object of a resource is
         expected, True if a collection of objects of a resource is expected.
-        '''
+        """
         # TODO: proper content negotiation
         data = request.get_json()
         if collection:
@@ -73,13 +73,13 @@ class Resource(MethodView):
             expect.validate(data, self.api.refresolver, self.api.format_checker)
 
     def validate_payload(self, func):
-        '''Perform a payload validation on expected model if necessary'''
-        if getattr(func, '__apidoc__', False) is not False:
+        """Perform a payload validation on expected model if necessary"""
+        if getattr(func, "__apidoc__", False) is not False:
             doc = func.__apidoc__
-            validate = doc.get('validate', None)
+            validate = doc.get("validate", None)
             validate = validate if validate is not None else self.api._validate
             if validate:
-                for expect in doc.get('expect', []):
+                for expect in doc.get("expect", []):
                     # TODO: handle third party handlers
                     if isinstance(expect, list) and len(expect) == 1:
                         if isinstance(expect[0], ModelBase):

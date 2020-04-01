@@ -2,14 +2,14 @@
 Flask RESTX
 ===========
 
-.. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?tag=0.1.1&event=push
+.. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?branch=master&event=push
     :target: https://github.com/python-restx/flask-restx/actions?query=workflow%3ATests
     :alt: Tests status
-.. image:: https://coveralls.io/repos/github/python-restx/flask-restx/badge.svg?tag=0.1.1
-    :target: https://coveralls.io/github/python-restx/flask-restx?tag=0.1.1
+.. image:: https://codecov.io/gh/python-restx/flask-restx/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/python-restx/flask-restx
     :alt: Code coverage
-.. image:: https://readthedocs.org/projects/flask-restx/badge/?version=0.1.1
-    :target: https://flask-restx.readthedocs.io/en/0.1.1/
+.. image:: https://readthedocs.org/projects/flask-restx/badge/?version=latest
+    :target: https://flask-restx.readthedocs.io/en/latest/
     :alt: Documentation status
 .. image:: https://img.shields.io/pypi/l/flask-restx.svg
     :target: https://pypi.org/project/flask-restx
@@ -18,8 +18,11 @@ Flask RESTX
     :target: https://pypi.org/project/flask-restx
     :alt: Supported Python versions
 .. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/python-restx
-   :target: https://gitter.im/python-restx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+    :target: https://gitter.im/python-restx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+    :alt: Join the chat at https://gitter.im/python-restx
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+    :alt: Code style: black
 
 
 Flask-RESTX is a community driven fork of `Flask-RESTPlus <https://github.com/noirbizarre/flask-restplus>`_.
