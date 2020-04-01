@@ -1152,6 +1152,71 @@ class SwaggerTest(object):
         assert parameters['bool-array']['type'] == 'array'
         assert parameters['bool-array']['items']['type'] == 'boolean'
 
+    def test_doc_overwrite(self, api, client):
+        doc_consumes = ["application/json"]
+        doc_parameters = [
+            {
+                "in": "body",
+                "name": "user",
+                "description": "The user to create.",
+                "schema": {
+                    "type": "object",
+                    "required": [
+                        "userName"
+                    ],
+                    "properties": {
+                        "userName": {
+                            "type": "string"
+                        },
+                        "firstName": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        ]
+
+        api.model('ErrorModel', {
+            'message': restx.fields.String,
+        })
+
+        @api.route('/test/')
+        class ByNameResource(restx.Resource):
+            @api.doc(
+                raw_doc_keys=['consumes', 'parameters'],
+                consumes=doc_consumes,
+                parameters=doc_parameters,
+                responses={
+                    404: 'Not found',
+                    405: ('Some message', 'ErrorModel')}
+            )
+            def post(self):
+                return {}
+
+        data = client.get_specs('')
+        paths = data['paths']
+        assert len(paths.keys()) == 1
+
+        op = paths['/test/']['post']
+
+        assert op['consumes'] == doc_consumes
+        assert op['parameters'] == doc_parameters
+        assert op['tags'] == ['default']
+        assert op['responses'] == {
+            '404': {
+                'description': 'Not found',
+            },
+            '405': {
+                'description': 'Some message',
+                'schema': {
+                    '$ref': '#/definitions/ErrorModel',
+                }
+            }
+        }
+
+        assert 'definitions' in data
+        assert 'ErrorModel' in data['definitions']
+
     def test_response_on_method(self, api, client):
         api.model('ErrorModel', {
             'message': restx.fields.String,
