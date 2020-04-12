@@ -3256,3 +3256,49 @@ class SwaggerDeprecatedTest(object):
         assert result["schema"]["type"] == "object"
         assert result["schema"]["properties"]["test1"]["type"] == "integer"
         assert result["schema"]["properties"]["test2"]["type"] == "string"
+
+    def test_expect_unused_model(self, app, api, client):
+        from flask_restx import fields
+
+        api.model(
+            "SomeModel", {"param": fields.String, "count": fields.Integer,},
+        )
+
+        @api.route("/with-parser/", endpoint="with-parser")
+        class WithParserResource(restx.Resource):
+            def get(self):
+                return {}
+
+        app.config["RESTX_INCLUDE_ALL_MODELS"] = True
+        data = client.get_specs()
+        assert "/with-parser/" in data["paths"]
+
+        path = data["paths"]["/with-parser/"]
+        assert "parameters" not in path
+
+        model = data["definitions"]["SomeModel"]
+        assert model == {
+            "properties": {"count": {"type": "integer"}, "param": {"type": "string"}},
+            "type": "object",
+        }
+
+    def test_not_expect_unused_model(self, app, api, client):
+        # This is the default configuration, RESTX_INCLUDE_ALL_MODELS=False
+
+        from flask_restx import fields
+
+        api.model(
+            "SomeModel", {"param": fields.String, "count": fields.Integer,},
+        )
+
+        @api.route("/with-parser/", endpoint="with-parser")
+        class WithParserResource(restx.Resource):
+            def get(self):
+                return {}
+
+        data = client.get_specs()
+        assert "/with-parser/" in data["paths"]
+        assert "definitions" not in data
+
+        path = data["paths"]["/with-parser/"]
+        assert "parameters" not in path

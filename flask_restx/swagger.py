@@ -241,6 +241,11 @@ class Swagger(object):
                     )
                     paths[path] = serialized
 
+        # register all models if required
+        if current_app.config["RESTX_INCLUDE_ALL_MODELS"]:
+            for m in self.api.models:
+                self.register_model(m)
+
         # merge in the top-level authorizations
         for ns in self.api.namespaces:
             if ns.authorizations:
