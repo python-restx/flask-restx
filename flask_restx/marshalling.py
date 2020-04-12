@@ -1,4 +1,4 @@
-from collections.abc import OrderedDict
+from collections import OrderedDict
 from functools import wraps
 
 from flask import request, current_app, has_app_context
