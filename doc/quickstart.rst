@@ -202,7 +202,7 @@ You can also match parts of the path as variables to your resource methods.
     If a request does not match any of your application's endpoints,
     Flask-RESTX will return a 404 error message with suggestions of other
     endpoints that closely match the requested endpoint.
-    This can be disabled by setting ``ERROR_404_HELP`` to ``False`` in your application config.
+    This can be disabled by setting ``RESTX_ERROR_404_HELP`` to ``False`` in your application config.
 
 
 Argument Parsing
