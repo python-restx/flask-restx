@@ -248,6 +248,7 @@ class Api(object):
         )
         app.config.setdefault("RESTX_MASK_HEADER", "X-Fields")
         app.config.setdefault("RESTX_MASK_SWAGGER", True)
+        app.config.setdefault("RESTX_INCLUDE_ALL_MODELS", False)
 
     def __getattr__(self, name):
         try:
