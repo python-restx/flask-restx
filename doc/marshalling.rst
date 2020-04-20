@@ -521,7 +521,7 @@ You can define models using `JSON Schema <http://json-schema.org/examples.html>`
         'type': 'object'
     })
 
-    person = address = api.schema_model('Person', {
+    person = api.schema_model('Person', {
         'required': ['address'],
         'properties': {
             'name': {
