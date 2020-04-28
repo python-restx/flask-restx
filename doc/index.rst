@@ -55,6 +55,7 @@ Flask-RESTX with Flask.
     postman
     scaling
     example
+    configuration
 
 
 API Reference
