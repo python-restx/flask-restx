@@ -1380,7 +1380,7 @@ class FieldsHelpersTest(object):
         assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42
 
     def test_get_value_int_indexable_tuple_with_str(self):
-        assert fields.get_value('bar.abc', {'bar': (42, 43)}) == None
+        assert fields.get_value('bar.abc', {'bar': (42, 43)}) is None
 
     def test_get_value_int_indexable_tuple(self):
         assert fields.get_value('bar.0', {'bar': (42, 43)}) == 42
