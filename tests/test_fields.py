@@ -276,9 +276,13 @@ class IntegerFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
     def test_value(self, value, expected):
         self.assert_field(fields.Integer(), value, expected)
 
-    def test_decode_error(self):
+    def test_decode_error_on_invalid_value(self):
         field = fields.Integer()
         self.assert_field_raises(field, "an int")
+
+    def test_decode_error_on_invalid_type(self):
+        field = fields.Integer()
+        self.assert_field_raises(field, {"a": "dict"})
 
 
 class BooleanFieldTest(BaseFieldTestMixin, FieldTestCase):
@@ -330,9 +334,13 @@ class FloatFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
     def test_raises(self):
         self.assert_field_raises(fields.Float(), "bar")
 
-    def test_decode_error(self):
+    def test_decode_error_on_invalid_value(self):
         field = fields.Float()
         self.assert_field_raises(field, "not a float")
+
+    def test_decode_error_on_invalid_type(self):
+        field = fields.Float()
+        self.assert_field_raises(field, {"a": "dict"})
 
 
 PI_STR = (

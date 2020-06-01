@@ -536,14 +536,13 @@ For ``POST`` and ``PUT`` methods, use the ``body`` keyword argument to specify t
 
 .. code-block:: python
 
-    fields = api.model('MyModel', {
+    my_model = api.model('MyModel', {
         'name': fields.String(description='The name', required=True),
         'type': fields.String(description='The object type', enum=['A', 'B']),
         'age': fields.Integer(min=0),
     })
 
 
-    @api.model(fields={'name': fields.String, 'age': fields.Integer})
     class Person(fields.Raw):
         def format(self, value):
             return {'name': value.name, 'age': value.age}
@@ -552,11 +551,11 @@ For ``POST`` and ``PUT`` methods, use the ``body`` keyword argument to specify t
     @api.route('/my-resource/<id>', endpoint='my-resource')
     @api.doc(params={'id': 'An ID'})
     class MyResource(Resource):
-        @api.doc(model=fields)
+        @api.doc(model=my_model)
         def get(self, id):
             return {}
 
-        @api.doc(model='MyModel', body=Person)
+        @api.doc(model=my_model, body=Person)
         def post(self, id):
             return {}
 
