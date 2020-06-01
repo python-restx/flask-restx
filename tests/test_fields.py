@@ -1374,7 +1374,7 @@ class FieldsHelpersTest(object):
         assert fields.get_value('bar.0', {'bar': [42]}) == 42
 
     def test_get_value_int_indexable_list_with_str(self):
-        assert fields.get_value('bar.abc', {'bar': [42]}) == None
+        assert fields.get_value('bar.abc', {'bar': [42]}) is None
 
     def test_get_value_int_indexable_nested_list(self):
         assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42
