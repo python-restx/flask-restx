@@ -20,5 +20,5 @@ The development version can be downloaded from
     pip install -e .[dev,test]
 
 
-Flask-RESTX requires Python version 2.7, 3.3, 3.4 or 3.5.
+Flask-RESTX requires Python version 2.7, 3.5, 3.6, 3.7, and 3.8.
 It's also working with PyPy and PyPy3.
