@@ -52,7 +52,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"Flask-RESTX"
-copyright = u"2014, Axel Haustant"
+copyright = u"2020, python-restx Authors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -263,7 +263,7 @@ latex_documents = [
         "index",
         "Flask-RESTX.tex",
         u"Flask-RESTX Documentation",
-        u"Axel Haustant",
+        u"python-restx Authors",
         "manual",
     ),
 ]
@@ -294,7 +294,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ("index", "flask-restx", u"Flask-RESTX Documentation", [u"Axel Haustant"], 1)
+    ("index", "flask-restx", u"Flask-RESTX Documentation", [u"python-restx Authors"], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -311,7 +311,7 @@ texinfo_documents = [
         "index",
         "Flask-RESTX",
         u"Flask-RESTX Documentation",
-        u"Axel Haustant",
+        u"python-restx Authors",
         "Flask-RESTX",
         "One line description of project.",
         "Miscellaneous",
