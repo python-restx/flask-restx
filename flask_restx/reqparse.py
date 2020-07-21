@@ -307,7 +307,6 @@ class Argument(object):
             param["collectionFormat"] = "csv"
         if self.choices:
             param["enum"] = self.choices
-            param["collectionFormat"] = "multi"
         return param
 
 
