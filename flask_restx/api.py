@@ -116,6 +116,7 @@ class Api(object):
         validate=None,
         tags=None,
         prefix="",
+        swagger_json_url="",
         ordered=False,
         default_mediatype="application/json",
         decorators=None,
@@ -158,6 +159,7 @@ class Api(object):
         self.representations = OrderedDict(DEFAULT_REPRESENTATIONS)
         self.urls = {}
         self.prefix = prefix
+        self.swagger_json_url=swagger_json_url
         self.default_mediatype = default_mediatype
         self.decorators = decorators if decorators else []
         self.catch_all_404s = catch_all_404s
@@ -507,6 +509,8 @@ class Api(object):
 
         :rtype: str
         """
+        if self.swagger_json_url != "":
+            return self.swagger_json_url
         return url_for(self.endpoint("specs"), _external=True)
 
     @property
