@@ -83,9 +83,9 @@ class MarshallingTest(object):
         model = OrderedDict(
             [("foo", fields.Raw), ("bat", fields.Raw), ("qux", fields.Raw)]
         )
-        marshal_dict = OrderedDict([("foo", "bar"), ("bat", None)])
+        marshal_dict = OrderedDict([("foo", "bar"), ("bat", None), ("qux", {})])
         output = marshal(marshal_dict, model, skip_none=True)
-        assert output == {"foo": "bar"}
+        assert output == {"foo": "bar", "qux": {}}
 
     def test_marshal_wildcard_with_skip_none(self):
         wild = fields.Wildcard(fields.String)
@@ -286,14 +286,27 @@ class MarshallingTest(object):
                 (
                     "fee",
                     fields.Nested(
-                        OrderedDict([("fye", fields.String)]), skip_none=True
+                        OrderedDict([("fye", fields.String)]), skip_none=True, allow_null=True
+                    ),
+                ),
+                (
+                    "bee",
+                    fields.Nested(
+                        OrderedDict([("bye", fields.String)]), skip_none=True
                     ),
                 ),
             ]
         )
-        marshal_fields = OrderedDict([("foo", "bar"), ("bat", "baz"), ("fee", None)])
+        marshal_fields = OrderedDict(
+            [
+                ("foo", "bar"),
+                ("bat", "baz"),
+                ("fee", None),
+                ("bee", {}),
+            ]
+        )
         output = marshal(marshal_fields, model, skip_none=True)
-        expected = OrderedDict([("foo", "bar")])
+        expected = OrderedDict([("foo", "bar"), ("bee", {})])
         assert output == expected
 
     def test_allow_null_presents_data(self):

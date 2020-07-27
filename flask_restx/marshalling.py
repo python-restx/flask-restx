@@ -80,7 +80,7 @@ def marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fal
                 if is_wildcard:
 
                     def _append(k, v):
-                        if skip_none and (v is None or v == OrderedDict() or v == {}):
+                        if skip_none and (v is None or v == OrderedDict()):
                             return
                         items.append((k, v))
 
@@ -97,7 +97,7 @@ def marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fal
                     continue
 
             keys.append(key)
-            if skip_none and (value is None or value == OrderedDict() or value == {}):
+            if skip_none and (value is None or (isinstance(value, OrderedDict) and value == OrderedDict())):
                 continue
             items.append((key, value))
 
@@ -183,7 +183,7 @@ def _marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fa
 
     if skip_none:
         items = (
-            (k, v) for k, v in items if v is not None and v != OrderedDict() and v != {}
+            (k, v) for k, v in items if v is not None and (not isinstance(v, OrderedDict) or v != OrderedDict())
         )
 
     out = OrderedDict(items) if ordered else dict(items)
