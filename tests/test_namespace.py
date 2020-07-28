@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import re
 
 import flask_restx as restx
 
@@ -174,9 +175,4 @@ class NamespaceTest(object):
         }
 
         resp = client.post_json("/apples/validation/", data, status=400)
-        assert resp == {
-            "errors": {
-                "": "Additional properties are not allowed ('agge' was unexpected)"
-            },
-            "message": "Input payload validation failed",
-        }
+        assert re.match("Additional properties are not allowed \(u*'agge' was unexpected\)", resp["errors"][""])
