@@ -249,7 +249,7 @@ and to set the type to :class:`~werkzeug.datastructures.FileStorage`.
             url = do_something_with_file(uploaded_file)
             return {'url': url}, 201
 
-See the `dedicated Flask documentation section <http://flask.pocoo.org/docs/0.10/patterns/fileuploads/>`_.
+See the `dedicated Flask documentation section <https://flask.palletsprojects.com/en/1.1.x/patterns/fileuploads/>`_.
 
 
 Error Handling
