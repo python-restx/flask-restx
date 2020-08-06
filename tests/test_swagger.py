@@ -3323,3 +3323,25 @@ class SwaggerDeprecatedTest(object):
 
         path = data["paths"]["/with-parser/"]
         assert "parameters" not in path
+
+    def test_nondefault_swagger_filename(self, app, client):
+        api = restx.Api(doc="/doc/test", default_swagger_filename="test.json")
+        ns = restx.Namespace("ns1")
+
+        @ns.route("/test1")
+        class Ns(restx.Resource):
+            @ns.doc("Docs")
+            def get(self):
+                pass
+
+        api.add_namespace(ns)
+        api.init_app(app)
+
+        resp = client.get("/test.json")
+        assert resp.status_code == 200
+        assert resp.content_type == "application/json"
+        resp = client.get("/doc/test")
+        assert resp.status_code == 200
+        assert resp.content_type == "text/html; charset=utf-8"
+        resp = client.get("/ns1/test1")
+        assert resp.status_code == 200
