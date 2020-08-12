@@ -158,6 +158,7 @@ class Api(object):
         self.representations = OrderedDict(DEFAULT_REPRESENTATIONS)
         self.urls = {}
         self.prefix = prefix
+        self._preauthorize_apikey = None
         self.default_mediatype = default_mediatype
         self.decorators = decorators if decorators else []
         self.catch_all_404s = catch_all_404s
@@ -409,6 +410,16 @@ class Api(object):
             return resp
         else:
             raise InternalServerError()
+
+    def apikey_preauthorization(self, func):
+        """
+        A decorator to specify a function returning preauthorization info
+
+        The decorated function should returns False if not preauthorization
+        wanted, else returns a tuple(Authorization_Name, KEY)
+        """
+        self._preauthorize_apikey = func
+        return func
 
     def documentation(self, func):
         """A decorator to specify a view function for the documentation"""

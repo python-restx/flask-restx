@@ -68,7 +68,12 @@
                 {%- endif %}
                 displayOperationId: {{ config.SWAGGER_UI_OPERATION_ID|default(False)|tojson }},
                 displayRequestDuration: {{ config.SWAGGER_UI_REQUEST_DURATION|default(False)|tojson }},
-                docExpansion: "{{ config.SWAGGER_UI_DOC_EXPANSION | default('none') }}"
+                docExpansion: "{{ config.SWAGGER_UI_DOC_EXPANSION | default('none') }}",
+                {% if preauthorize_apikey and preauthorize_apikey() -%}
+                onComplete: function() {
+                    ui.preauthorizeApiKey("{{preauthorize_apikey()[0]|safe}}", "{{preauthorize_apikey()[1]|safe}}");
+                }
+                {%- endif %}
             })
 
             {% if config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
