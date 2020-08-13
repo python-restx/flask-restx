@@ -14,7 +14,7 @@ from collections import OrderedDict
 from functools import wraps, partial
 from types import MethodType
 
-from flask import url_for, request, current_app
+from flask import url_for, request, current_app, Response
 from flask import make_response as original_flask_make_response
 from flask.helpers import _endpoint_from_view_func
 from flask.signals import got_request_exception
@@ -651,12 +651,9 @@ class Api(object):
 
         # When propagate_exceptions is set, do not return the exception to the
         # client if a handler is configured for the exception.
-        if (
-            not isinstance(e, HTTPException)
-            and current_app.propagate_exceptions
-            and not isinstance(e, tuple(self.error_handlers.keys()))
+        if not isinstance(e, HTTPException) and not isinstance(
+            e, tuple(self.error_handlers.keys())
         ):
-
             exc_type, exc_value, tb = sys.exc_info()
             if exc_value is e:
                 raise
@@ -695,46 +692,50 @@ class Api(object):
                         "message": code.phrase,
                     }
 
-        if include_message_in_response:
-            default_data["message"] = default_data.get("message", str(e))
+        if isinstance(default_data, Response):
+            resp = default_data
+        else:
+            if include_message_in_response:
+                default_data["message"] = default_data.get("message", str(e))
 
-        data = getattr(e, "data", default_data)
-        fallback_mediatype = None
+            data = getattr(e, "data", default_data)
+            fallback_mediatype = None
 
-        if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
-            exc_info = sys.exc_info()
-            if exc_info[1] is None:
-                exc_info = None
-            current_app.log_exception(exc_info)
+            if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
+                exc_info = sys.exc_info()
+                if exc_info[1] is None:
+                    exc_info = None
+                current_app.log_exception(exc_info)
 
-        elif (
-            code == HTTPStatus.NOT_FOUND
-            and current_app.config.get("ERROR_404_HELP", True)
-            and include_message_in_response
-        ):
-            data["message"] = self._help_on_404(data.get("message", None))
+            elif (
+                code == HTTPStatus.NOT_FOUND
+                and current_app.config.get("ERROR_404_HELP", True)
+                and include_message_in_response
+            ):
+                data["message"] = self._help_on_404(data.get("message", None))
 
-        elif code == HTTPStatus.NOT_ACCEPTABLE and self.default_mediatype is None:
-            # if we are handling NotAcceptable (406), make sure that
-            # make_response uses a representation we support as the
-            # default mediatype (so that make_response doesn't throw
-            # another NotAcceptable error).
-            supported_mediatypes = list(self.representations.keys())
-            fallback_mediatype = (
-                supported_mediatypes[0] if supported_mediatypes else "text/plain"
+            elif code == HTTPStatus.NOT_ACCEPTABLE and self.default_mediatype is None:
+                # if we are handling NotAcceptable (406), make sure that
+                # make_response uses a representation we support as the
+                # default mediatype (so that make_response doesn't throw
+                # another NotAcceptable error).
+                supported_mediatypes = list(self.representations.keys())
+                fallback_mediatype = (
+                    supported_mediatypes[0] if supported_mediatypes else "text/plain"
+                )
+
+            # Remove blacklisted headers
+            for header in HEADERS_BLACKLIST:
+                headers.pop(header, None)
+
+            resp = self.make_response(
+                data, code, headers, fallback_mediatype=fallback_mediatype
             )
-
-        # Remove blacklisted headers
-        for header in HEADERS_BLACKLIST:
-            headers.pop(header, None)
-
-        resp = self.make_response(
-            data, code, headers, fallback_mediatype=fallback_mediatype
-        )
 
         if code == HTTPStatus.UNAUTHORIZED:
             resp = self.unauthorized(resp)
         return resp
+
 
     def _help_on_404(self, message=None):
         rules = dict(
