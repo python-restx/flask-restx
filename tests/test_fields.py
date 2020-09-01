@@ -298,6 +298,14 @@ class BooleanFieldTest(BaseFieldTestMixin, FieldTestCase):
         assert not field.required
         assert field.__schema__ == {"type": "boolean", "default": True}
 
+    def test_with_example(self):
+        field = fields.Boolean(default=True, example=False)
+        assert field.__schema__ == {
+            "type": "boolean",
+            "default": True,
+            "example": False,
+        }
+
     @pytest.mark.parametrize(
         "value,expected",
         [
