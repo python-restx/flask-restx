@@ -156,7 +156,7 @@ class Raw(object):
         self.description = description
         self.required = required
         self.readonly = readonly
-        self.example = example or self.__schema_example__
+        self.example = example if example is not None else self.__schema_example__
         self.mask = mask
 
     def format(self, value):
@@ -459,7 +459,7 @@ class Integer(NumberMixin, Raw):
             if value is None:
                 return self.default
             return int(value)
-        except ValueError as ve:
+        except (ValueError, TypeError) as ve:
             raise MarshallingError(ve)
 
 
@@ -473,7 +473,7 @@ class Float(NumberMixin, Raw):
     def format(self, value):
         try:
             return float(value)
-        except ValueError as ve:
+        except (ValueError, TypeError) as ve:
             raise MarshallingError(ve)
 
 

@@ -10,6 +10,29 @@ and that you have already installed both Flask and Flask-RESTX.
 If not, then follow the steps in the :ref:`installation` section.
 
 
+Migrate from Flask-RESTPlus
+---------------------------
+
+.. warning:: The *migration* commands provided below are for illustration
+             purposes.
+             You may need to adapt them to properly fit your needs.
+             We also recommend you make a backup of your project prior running them.
+
+At this point, Flask-RESTX remains 100% compatible with Flask-RESTPlus' API.
+All you need to do is update your requirements to use Flask-RESTX instead of
+Flask-RESTPlus. Then you need to update all your imports.
+This can be done using something like:
+
+::
+   find . -type f -name "*.py" | xargs sed -i "s/flask_restplus/flask_restx/g"
+
+Finally, you will need to update your configuration options (described `here
+<quickstart.html#configuration>`_). Example:
+
+::
+   find . -type f -name "*.py" | xargs sed -i "s/RESTPLUS_/RESTX_/g"
+
+
 Initialization
 --------------
 

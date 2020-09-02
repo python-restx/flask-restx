@@ -7,7 +7,7 @@ Here is a full example of a `TodoMVC <http://todomvc.com/>`_ API.
 
     from flask import Flask
     from flask_restx import Api, Resource, fields
-    from werkzeug.contrib.fixers import ProxyFix
+    from werkzeug.middleware.proxy_fix import ProxyFix
 
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app)

@@ -943,7 +943,6 @@ class RequestParserSchemaTest(object):
                 "type": "string",
                 "in": "query",
                 "enum": ["a", "b"],
-                "collectionFormat": "multi",
             }
         ]
 
