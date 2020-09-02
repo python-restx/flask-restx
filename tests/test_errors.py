@@ -480,7 +480,7 @@ class ErrorsTest(object):
             assert response.status_code == 404
             assert "did you mean /foo ?" in response.data.decode()
 
-        app.config["ERROR_404_HELP"] = False
+        app.config["RESTX_ERROR_404_HELP"] = False
 
         response = api.handle_error(NotFound())
         assert response.status_code == 404
