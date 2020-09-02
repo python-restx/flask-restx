@@ -132,12 +132,14 @@ class RawModel(ModelBase):
 
     :param str name: The model public name
     :param str mask: an optional default model mask
+    :param bool strict: validation should raise error when there is param not provided in schema
     """
 
     wrapper = dict
 
     def __init__(self, name, *args, **kwargs):
         self.__mask__ = kwargs.pop("mask", None)
+        self.__strict__ = kwargs.pop("strict", False)
         if self.__mask__ and not isinstance(self.__mask__, Mask):
             self.__mask__ = Mask(self.__mask__)
         super(RawModel, self).__init__(name, *args, **kwargs)
@@ -160,15 +162,18 @@ class RawModel(ModelBase):
             if getattr(field, "discriminator", False):
                 discriminator = name
 
-        return not_none(
-            {
-                "required": sorted(list(required)) or None,
-                "properties": properties,
-                "discriminator": discriminator,
-                "x-mask": str(self.__mask__) if self.__mask__ else None,
-                "type": "object",
-            }
-        )
+        definition = {
+            "required": sorted(list(required)) or None,
+            "properties": properties,
+            "discriminator": discriminator,
+            "x-mask": str(self.__mask__) if self.__mask__ else None,
+            "type": "object",
+        }
+
+        if self.__strict__:
+            definition['additionalProperties'] = False
+
+        return not_none(definition)
 
     @cached_property
     def resolved(self):
@@ -240,6 +245,7 @@ class RawModel(ModelBase):
             self.name,
             [(key, copy.deepcopy(value, memo)) for key, value in iteritems(self)],
             mask=self.__mask__,
+            strict=self.__strict__,
         )
         obj.__parents__ = self.__parents__
         return obj
