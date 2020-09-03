@@ -75,7 +75,7 @@ With Flask-RESTX, you only import the api instance to route and document your en
     ns = api.namespace('todos', description='TODO operations')
 
     todo = api.model('Todo', {
-        'id': fields.Integer(readOnly=True, description='The task unique identifier'),
+        'id': fields.Integer(readonly=True, description='The task unique identifier'),
         'task': fields.String(required=True, description='The task details')
     })
 
