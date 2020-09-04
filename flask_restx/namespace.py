@@ -162,14 +162,17 @@ class Namespace(object):
             api.models[name] = definition
         return definition
 
-    def model(self, name=None, model=None, mask=None, **kwargs):
+    def model(self, name=None, model=None, mask=None, strict=False, **kwargs):
         """
         Register a model
+
+        :param bool strict - should model validation raise error when non-specified param
+                             is provided?
 
         .. seealso:: :class:`Model`
         """
         cls = OrderedModel if self.ordered else Model
-        model = cls(name, model, mask=mask)
+        model = cls(name, model, mask=mask, strict=strict)
         model.__apidoc__.update(kwargs)
         return self.add_model(name, model)
 

@@ -9,6 +9,7 @@ import operator
 import re
 import six
 import sys
+import warnings
 
 from collections import OrderedDict
 from functools import wraps, partial
@@ -219,6 +220,7 @@ class Api(object):
         else:
             self.blueprint = app
 
+
     def _init_app(self, app):
         """
         Perform initialization actions with the given :class:`flask.Flask` object.
@@ -249,6 +251,16 @@ class Api(object):
         app.config.setdefault("RESTX_MASK_HEADER", "X-Fields")
         app.config.setdefault("RESTX_MASK_SWAGGER", True)
         app.config.setdefault("RESTX_INCLUDE_ALL_MODELS", False)
+
+        # check for deprecated config variable names
+        if "ERROR_404_HELP" in app.config:
+            app.config['RESTX_ERROR_404_HELP'] = app.config['ERROR_404_HELP']
+            warnings.warn(
+                "'ERROR_404_HELP' config setting is deprecated and will be "
+                "removed in the future. Use 'RESTX_ERROR_404_HELP' instead.",
+                DeprecationWarning
+            )
+
 
     def __getattr__(self, name):
         try:
@@ -503,11 +515,11 @@ class Api(object):
     @property
     def specs_url(self):
         """
-        The Swagger specifications absolute url (ie. `swagger.json`)
+        The Swagger specifications relative url (ie. `swagger.json`)
 
         :rtype: str
         """
-        return url_for(self.endpoint("specs"), _external=True)
+        return url_for(self.endpoint("specs"))
 
     @property
     def base_url(self):
@@ -709,7 +721,7 @@ class Api(object):
 
         elif (
             code == HTTPStatus.NOT_FOUND
-            and current_app.config.get("ERROR_404_HELP", True)
+            and current_app.config.get("RESTX_ERROR_404_HELP", True)
             and include_message_in_response
         ):
             data["message"] = self._help_on_404(data.get("message", None))
