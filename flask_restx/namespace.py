@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import inspect
 import warnings
 import logging
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 import six
 from flask import request
@@ -57,7 +57,7 @@ class Namespace(object):
         self.urls = {}
         self.decorators = decorators if decorators else []
         self.resources = []  # List[ResourceRoute]
-        self.error_handlers = {}
+        self.error_handlers = OrderedDict()
         self.default_error_handler = None
         self.authorizations = authorizations
         self.ordered = ordered
@@ -162,14 +162,17 @@ class Namespace(object):
             api.models[name] = definition
         return definition
 
-    def model(self, name=None, model=None, mask=None, **kwargs):
+    def model(self, name=None, model=None, mask=None, strict=False, **kwargs):
         """
         Register a model
+
+        :param bool strict - should model validation raise error when non-specified param
+                             is provided?
 
         .. seealso:: :class:`Model`
         """
         cls = OrderedModel if self.ordered else Model
-        model = cls(name, model, mask=mask)
+        model = cls(name, model, mask=mask, strict=strict)
         model.__apidoc__.update(kwargs)
         return self.add_model(name, model)
 
