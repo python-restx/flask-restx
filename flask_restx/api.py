@@ -144,10 +144,10 @@ class Api(object):
         self._default_error_handler = None
         self.tags = tags or []
 
-        self.error_handlers = {
+        self.error_handlers = OrderedDict({
             ParseError: mask_parse_error_handler,
             MaskError: mask_error_handler,
-        }
+        })
         self._schema = None
         self.models = {}
         self._refresolver = None
@@ -559,7 +559,7 @@ class Api(object):
 
     @property
     def _own_and_child_error_handlers(self):
-        rv = {}
+        rv = OrderedDict()
         rv.update(self.error_handlers)
         for ns in self.namespaces:
             for exception, handler in six.iteritems(ns.error_handlers):

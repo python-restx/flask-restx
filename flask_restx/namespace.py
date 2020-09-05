@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import inspect
 import warnings
 import logging
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 
 import six
 from flask import request
@@ -57,7 +57,7 @@ class Namespace(object):
         self.urls = {}
         self.decorators = decorators if decorators else []
         self.resources = []  # List[ResourceRoute]
-        self.error_handlers = {}
+        self.error_handlers = OrderedDict()
         self.default_error_handler = None
         self.authorizations = authorizations
         self.ordered = ordered
