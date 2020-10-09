@@ -62,3 +62,9 @@ doc/_build/
 # Specifics
 flask_restx/static
 node_modules
+
+# pyenv
+.python-version
+
+# Jet Brains
+.idea

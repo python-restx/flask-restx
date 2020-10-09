@@ -94,6 +94,9 @@ class Api(object):
     :param FormatChecker format_checker: A jsonschema.FormatChecker object that is hooked into
         the Model validator. A default or a custom FormatChecker can be provided (e.g., with custom
         checkers), otherwise the default action is to not enforce any format validation.
+    :param specs_url_scheme: If set to a string (e.g. http, https), then the specs_url will explicitly use this scheme
+        regardless of how the application is deployed. This is necessary for some deployments such as behind an
+        AWS elastic load balancer so that the user recieves the full swagger URL.
     """
 
     def __init__(
@@ -123,6 +126,7 @@ class Api(object):
         catch_all_404s=False,
         serve_challenge_on_401=False,
         format_checker=None,
+        specs_url_scheme=None,
         **kwargs
     ):
         self.version = version
@@ -144,10 +148,12 @@ class Api(object):
         self._default_error_handler = None
         self.tags = tags or []
 
-        self.error_handlers = OrderedDict({
-            ParseError: mask_parse_error_handler,
-            MaskError: mask_error_handler,
-        })
+        self.error_handlers = OrderedDict(
+            {
+                ParseError: mask_parse_error_handler,
+                MaskError: mask_error_handler,
+            }
+        )
         self._schema = None
         self.models = {}
         self._refresolver = None
@@ -178,6 +184,7 @@ class Api(object):
             api=self,
             path="/",
         )
+        self.specs_url_scheme = specs_url_scheme
         if app is not None:
             self.app = app
             self.init_app(app)
@@ -220,7 +227,6 @@ class Api(object):
         else:
             self.blueprint = app
 
-
     def _init_app(self, app):
         """
         Perform initialization actions with the given :class:`flask.Flask` object.
@@ -254,13 +260,12 @@ class Api(object):
 
         # check for deprecated config variable names
         if "ERROR_404_HELP" in app.config:
-            app.config['RESTX_ERROR_404_HELP'] = app.config['ERROR_404_HELP']
+            app.config["RESTX_ERROR_404_HELP"] = app.config["ERROR_404_HELP"]
             warnings.warn(
                 "'ERROR_404_HELP' config setting is deprecated and will be "
                 "removed in the future. Use 'RESTX_ERROR_404_HELP' instead.",
-                DeprecationWarning
+                DeprecationWarning,
             )
-
 
     def __getattr__(self, name):
         try:
@@ -407,7 +412,8 @@ class Api(object):
             kwargs.pop("fallback_mediatype", None) or self.default_mediatype
         )
         mediatype = request.accept_mimetypes.best_match(
-            self.representations, default=default_mediatype,
+            self.representations,
+            default=default_mediatype,
         )
         if mediatype is None:
             raise NotAcceptable()
@@ -515,11 +521,16 @@ class Api(object):
     @property
     def specs_url(self):
         """
-        The Swagger specifications relative url (ie. `swagger.json`)
+        The Swagger specifications relative url (ie. `swagger.json`). If
+        the spec_url_scheme attribute is set, then the full url is provided instead
+        (e.g. http://localhost/swaggger.json).
 
         :rtype: str
         """
-        return url_for(self.endpoint("specs"))
+        external = None if self.specs_url_scheme is None else True
+        return url_for(
+            self.endpoint("specs"), _scheme=self.specs_url_scheme, _external=external
+        )
 
     @property
     def base_url(self):
