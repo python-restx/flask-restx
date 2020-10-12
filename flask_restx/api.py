@@ -94,9 +94,9 @@ class Api(object):
     :param FormatChecker format_checker: A jsonschema.FormatChecker object that is hooked into
         the Model validator. A default or a custom FormatChecker can be provided (e.g., with custom
         checkers), otherwise the default action is to not enforce any format validation.
-    :param specs_url_scheme: If set to a string (e.g. http, https), then the specs_url will explicitly use this scheme
-        regardless of how the application is deployed. This is necessary for some deployments such as behind an
-        AWS elastic load balancer so that the user recieves the full swagger URL.
+    :param url_scheme: If set to a string (e.g. http, https), then the specs_url and base_url will explicitly use this
+        scheme regardless of how the application is deployed. This is necessary for some deployments behind a reverse
+        proxy.
     """
 
     def __init__(
@@ -126,7 +126,7 @@ class Api(object):
         catch_all_404s=False,
         serve_challenge_on_401=False,
         format_checker=None,
-        specs_url_scheme=None,
+        url_scheme=None,
         **kwargs
     ):
         self.version = version
@@ -184,7 +184,7 @@ class Api(object):
             api=self,
             path="/",
         )
-        self.specs_url_scheme = specs_url_scheme
+        self.url_scheme = url_scheme
         if app is not None:
             self.app = app
             self.init_app(app)
@@ -205,7 +205,9 @@ class Api(object):
         :param str contact: A contact email for the API (used in Swagger documentation)
         :param str license: The license associated to the API (used in Swagger documentation)
         :param str license_url: The license page URL (used in Swagger documentation)
-
+        :param url_scheme: If set to a string (e.g. http, https), then the specs_url and base_url will explicitly use
+            this scheme regardless of how the application is deployed. This is necessary for some deployments behind a
+            reverse proxy.
         """
         self.app = app
         self.title = kwargs.get("title", self.title)
@@ -216,6 +218,7 @@ class Api(object):
         self.contact_email = kwargs.get("contact_email", self.contact_email)
         self.license = kwargs.get("license", self.license)
         self.license_url = kwargs.get("license_url", self.license_url)
+        self.url_scheme = kwargs.get("url_scheme", self.url_scheme)
         self._add_specs = kwargs.get("add_specs", True)
 
         # If app is a blueprint, defer the initialization
@@ -527,9 +530,9 @@ class Api(object):
 
         :rtype: str
         """
-        external = None if self.specs_url_scheme is None else True
+        external = None if self.url_scheme is None else True
         return url_for(
-            self.endpoint("specs"), _scheme=self.specs_url_scheme, _external=external
+            self.endpoint("specs"), _scheme=self.url_scheme, _external=external
         )
 
     @property
@@ -539,7 +542,7 @@ class Api(object):
 
         :rtype: str
         """
-        return url_for(self.endpoint("root"), _external=True)
+        return url_for(self.endpoint("root"), _scheme=self.url_scheme, _external=True)
 
     @property
     def base_path(self):
