@@ -352,4 +352,3 @@ class APITest(object):
         api = restx.Api(app, url_scheme="https")
         assert api.specs_url == "https://localhost/swagger.json"
         assert api.base_url == "https://localhost/"
-
