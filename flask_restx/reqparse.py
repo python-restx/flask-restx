@@ -106,10 +106,7 @@ class Argument(object):
         required=False,
         ignore=False,
         type=text_type,
-        location=(
-            "json",
-            "values",
-        ),
+        location=("json", "values",),
         choices=(),
         action="store",
         help=None,

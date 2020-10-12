@@ -171,7 +171,7 @@ class RawModel(ModelBase):
         }
 
         if self.__strict__:
-            definition["additionalProperties"] = False
+            definition['additionalProperties'] = False
 
         return not_none(definition)
 
