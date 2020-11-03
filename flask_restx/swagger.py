@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import
 
 import itertools
 import re
+from contextlib import suppress
 
 from inspect import isclass, getdoc
 from collections import OrderedDict
@@ -545,25 +546,14 @@ class Swagger(object):
         return params
 
     def responses_for(self, doc, method):
-        # TODO: simplify/refactor responses/model handling
         responses = {}
+        exc_name_to_code = dict(self._exception_to_code_mappings())
 
         for d in doc, doc[method]:
             if "responses" in d:
                 for code, response in iteritems(d["responses"]):
                     code = str(code)
-                    if isinstance(response, string_types):
-                        description = response
-                        model = None
-                        kwargs = {}
-                    elif len(response) == 3:
-                        description, model, kwargs = response
-                    elif len(response) == 2:
-                        description, model = response
-                        kwargs = {}
-                    else:
-                        raise ValueError("Unsupported response specification")
-                    description = description or DEFAULT_RESPONSE_DESCRIPTION
+                    description, kwargs, model = self._parse_response(response)
                     if code in responses:
                         responses[code].update(description=description)
                     else:
@@ -587,24 +577,35 @@ class Swagger(object):
 
             if "docstring" in d:
                 for name, description in iteritems(d["docstring"]["raises"]):
-                    for exception, handler in iteritems(self.api.error_handlers):
-                        error_responses = getattr(handler, "__apidoc__", {}).get(
-                            "responses", {}
-                        )
-                        code = (
-                            str(list(error_responses.keys())[0])
-                            if error_responses
-                            else None
-                        )
-                        if code and exception.__name__ == name:
-                            responses[code] = {"$ref": "#/responses/{0}".format(name)}
-                            break
+                    with suppress(KeyError):
+                        code = exc_name_to_code[name]
+                        responses[code] = {"$ref": "#/responses/{0}".format(name)}
 
         if not responses:
             responses[str(HTTPStatus.OK.value)] = self.process_headers(
                 DEFAULT_RESPONSE.copy(), doc, method
             )
         return responses
+
+    def _exception_to_code_mappings(self):
+        for exception, handler in iteritems(self.api.error_handlers):
+            error_responses = getattr(handler, "__apidoc__", {}).get("responses", {})
+            yield exception.__name__, (
+                str(list(error_responses.keys())[0]) if error_responses else None
+            )
+
+    def _parse_response(self, response):
+        model, kwargs = None, {}
+        if isinstance(response, string_types):
+            description = response
+        elif len(response) == 2:
+            description, model = response
+        elif len(response) == 3:
+            description, model, kwargs = response
+        else:
+            raise ValueError("Unsupported response specification")
+        description = description or DEFAULT_RESPONSE_DESCRIPTION
+        return description, kwargs, model
 
     def process_headers(self, response, doc, method=None, headers=None):
         method_doc = doc.get(method, {})
