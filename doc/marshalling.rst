@@ -540,3 +540,23 @@ You can define models using `JSON Schema <http://json-schema.org/examples.html>`
         },
         'type': 'object'
     })
+
+Use other representations than JSON
+-------------------------------
+
+Default representation in JSON. Flask RestX provides two encoders:
+``output_json`` and ``output_yaml``.
+Representation can be changed in a following way:
+
+.. code-block:: python
+
+    >>> from flask_restx.representations import output_yaml
+    >>>
+    >>> @api.route('/foo')
+    >>> class FooResource(Resource):
+    ...     representations = {'application/yaml': output_yaml}
+    ...
+    ...     def get(self):
+    ...         return {'foo': 'bar}
+
+Note that you need PyYAML to use ``output_yaml``
