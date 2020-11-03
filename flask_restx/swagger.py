@@ -3,7 +3,6 @@ from __future__ import unicode_literals, absolute_import
 
 import itertools
 import re
-from contextlib import suppress
 
 from inspect import isclass, getdoc
 from collections import OrderedDict
@@ -577,9 +576,11 @@ class Swagger(object):
 
             if "docstring" in d:
                 for name, description in iteritems(d["docstring"]["raises"]):
-                    with suppress(KeyError):
+                    try:
                         code = exc_name_to_code[name]
                         responses[code] = {"$ref": "#/responses/{0}".format(name)}
+                    except KeyError:
+                        pass
 
         if not responses:
             responses[str(HTTPStatus.OK.value)] = self.process_headers(
