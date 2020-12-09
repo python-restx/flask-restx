@@ -87,9 +87,7 @@ class Argument(object):
         iterator. The last item listed takes precedence in the result set.
     :param choices: A container of the allowable values for the argument.
     :param help: A brief description of the argument, returned in the
-        response when the argument is invalid. May optionally contain
-        an "{error_msg}" interpolation token, which will be replaced with
-        the text of the error raised by the type converter.
+        response when the argument is invalid.
     :param bool case_sensitive: Whether argument values in the request are
         case sensitive or not (this will convert all values to lowercase)
     :param bool store_missing: Whether the arguments default value should
