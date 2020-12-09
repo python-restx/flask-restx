@@ -315,11 +315,7 @@ to ``Argument`` (and also ``RequestParser.add_argument``).
 
 If no help parameter is provided, the error message for the field will be
 the string representation of the type error itself. If ``help`` is provided,
-then the error message will be the value of ``help``.
-
-``help`` may include an interpolation token, ``{error_msg}``, that will be
-replaced with the string representation of the type error. This allows the
-message to be customized while preserving the original error::
+then the error message will be the value of ``help`` plus the string representation of the type error.
 
     from flask_restx import reqparse
 
@@ -328,7 +324,7 @@ message to be customized while preserving the original error::
     parser.add_argument(
         'foo',
         choices=('one', 'two'),
-        help='Bad choice: {error_msg}'
+        help='Bad choice:'
     )
 
     # If a request comes in with a value of "three" for `foo`:
