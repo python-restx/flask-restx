@@ -176,3 +176,16 @@ class NamespaceTest(object):
 
         resp = client.post_json("/apples/validation/", data, status=400)
         assert re.match("Additional properties are not allowed \(u*'agge' was unexpected\)", resp["errors"][""])
+
+    def test_expect_content_type(self, app, client):
+        api = restx.Api(app, validate=True)
+        ns = restx.Namespace("apples")
+        api.add_namespace(ns)
+
+        class Res(restx.Resource):
+
+            @ns.expect_content_type("application/json")
+            def post(self):
+                return {}
+
+        assert Res.post.__apidoc__ == {"consumes": ["application/json"]}

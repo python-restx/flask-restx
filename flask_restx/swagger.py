@@ -462,17 +462,22 @@ class Swagger(object):
         # Handle deprecated annotation
         if doc.get("deprecated") or doc[method].get("deprecated"):
             operation["deprecated"] = True
+        # Check content-type
+        consumes = doc[method].get("consumes", [])
         # Handle form exceptions:
         doc_params = list(doc.get("params", {}).values())
         all_params = doc_params + (operation["parameters"] or [])
         if all_params and any(p["in"] == "formData" for p in all_params):
             if any(p["type"] == "file" for p in all_params):
-                operation["consumes"] = ["multipart/form-data"]
+                consumes.append("multipart/form-data")
             else:
-                operation["consumes"] = [
+
+                consumes.extend([
                     "application/x-www-form-urlencoded",
                     "multipart/form-data",
-                ]
+                ])
+        if consumes:
+            operation["consumes"] = consumes
         operation.update(self.vendor_fields(doc, method))
         return not_none(operation)
 
