@@ -1,4 +1,5 @@
-aniso8601>=0.82
+aniso8601==8.0.0; python_version < '3.5'
+aniso8601>=0.82; python_version >= '3.5'
 jsonschema
 Flask>=0.8
 werkzeug
