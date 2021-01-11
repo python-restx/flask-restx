@@ -45,6 +45,7 @@ Bug Fixes
    * Add support for recursive models (#110) [peterjwest, buggyspace, Drarok, edwardfung123]
    * generate choices schema without collectionFormat (#164) [leopold-p]
    * Catch TypeError in marshalling (#75) [robyoung]
+   * Unable to access nested list propert (#91) [arajkumar]
 
 .. _enhancements-0.3.0:
 
