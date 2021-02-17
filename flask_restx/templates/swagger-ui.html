@@ -74,6 +74,7 @@
             {% if config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
             ui.initOAuth({
                 clientId: "{{ config.SWAGGER_UI_OAUTH_CLIENT_ID }}",
+                clientSecret: "{{ config.SWAGGER_UI_OAUTH_CLIENT_SECRET }}",
                 realm: "{{ config.SWAGGER_UI_OAUTH_REALM }}",
                 appName: "{{ config.SWAGGER_UI_OAUTH_APP_NAME }}"
             })

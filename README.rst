@@ -24,7 +24,6 @@ Flask RESTX
     :target: https://github.com/psf/black
     :alt: Code style: black
 
-
 Flask-RESTX is a community driven fork of `Flask-RESTPlus <https://github.com/noirbizarre/flask-restplus>`_.
 
 
