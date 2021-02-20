@@ -666,7 +666,7 @@ class Api(object):
         if (
             not isinstance(e, HTTPException)
             and current_app.propagate_exceptions
-            and not isinstance(e, tuple(self.error_handlers.keys()))
+            and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
 
             exc_type, exc_value, tb = sys.exc_info()

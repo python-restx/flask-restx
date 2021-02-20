@@ -653,3 +653,30 @@ class ErrorsTest(object):
             "message": "error",
             "test": "value",
         }
+
+    def test_namespace_errorhandler_with_propagate_true(self, app, client):
+        """Exceptions with errorhandler on a namespace should not be
+        returned to client, even if PROPAGATE_EXCEPTIONS is set."""
+        app.config["PROPAGATE_EXCEPTIONS"] = True
+        api = restx.Api(app)
+        namespace = restx.Namespace('test_namespace')
+        api.add_namespace(namespace)
+
+        @namespace.route("/test/", endpoint="test")
+        class TestResource(restx.Resource):
+            def get(self):
+                raise RuntimeError("error")
+
+        @namespace.errorhandler(RuntimeError)
+        def handle_custom_exception(error):
+            return {"message": str(error), "test": "value"}, 400
+
+        response = client.get("/test_namespace/test/")
+        assert response.status_code == 400
+        assert response.content_type == "application/json"
+
+        data = json.loads(response.data.decode("utf8"))
+        assert data == {
+            "message": "error",
+            "test": "value",
+        }
