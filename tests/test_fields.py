@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from datetime import date, datetime
 from decimal import Decimal
+from enum import Enum
 from functools import partial
 
 import pytz
@@ -195,6 +196,19 @@ class StringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         field = fields.String(enum=enum)
         assert not field.required
         assert field.__schema__ == {"type": "string", "enum": enum, "example": enum[0]}
+
+    def test_with_enum_using_enum_class(self):
+        class E(Enum):
+            RED = "RED"
+            BLUE = "BLUE"
+
+        field = fields.String(enum=E)
+        assert not field.required
+        assert field.__schema__ == {
+            "type": "string",
+            "enum": ["RED", "BLUE"],
+            "example": "RED",
+        }
 
     def test_with_empty_enum(self):
         field = fields.String(enum=[])
