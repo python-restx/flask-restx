@@ -1,2 +1,2 @@
-tox==3.13.2
-black==19.10b0; python_version >= '3.6'
+tox
+black; python_version >= '3.6'
