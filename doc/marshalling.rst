@@ -7,7 +7,7 @@ Response marshalling
 
 
 Flask-RESTX provides an easy way to control what data you actually render in
-your response or expect as in input payload.
+your response or expect as an input payload.
 With the :mod:`~.fields` module, you can use whatever objects (ORM
 models/custom classes/etc.) you want in your resource.
 :mod:`~.fields` also lets you format and filter the response
