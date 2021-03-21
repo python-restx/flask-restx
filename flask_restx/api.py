@@ -659,8 +659,6 @@ class Api(object):
         :param Exception e: the raised Exception object
 
         """
-        got_request_exception.send(current_app._get_current_object(), exception=e)
-
         # When propagate_exceptions is set, do not return the exception to the
         # client if a handler is configured for the exception.
         if (
@@ -690,6 +688,10 @@ class Api(object):
                 )
                 break
         else:
+            # Flask docs say: "This signal is not sent for HTTPException or other exceptions that have error handlers
+            # registered, unless the exception was raised from an error handler."
+            got_request_exception.send(current_app._get_current_object(), exception=e)
+
             if isinstance(e, HTTPException):
                 code = HTTPStatus(e.code)
                 if include_message_in_response:
