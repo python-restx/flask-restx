@@ -3,6 +3,7 @@ source = flask_restx
 branch = True
 omit =
     /tests/*
+    /example/*    
 
 [report]
 # Regexes for lines to exclude from consideration
