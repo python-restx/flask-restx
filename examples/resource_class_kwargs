@@ -69,5 +69,10 @@ for res in namesp.resources:
 api.add_namespace(namesp)
 
 app = Flask('test')
+from flask import redirect
+@app.route('/', methods=['POST', 'GET'])
+def home():
+    return redirect('/api/v1/ui')
+
 app.register_blueprint(blueprint)
 app.run(debug=False, port=8002)
