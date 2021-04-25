@@ -16,7 +16,7 @@ Multiple namespaces
 
 There are many different ways to organize your Flask-RESTX app,
 but here we'll describe one that scales pretty well with larger apps
-and maintains a nice level organization.
+and maintains a nice level of organization.
 
 Flask-RESTX provides a way to use almost the same pattern as Flask's `blueprint`.
 The main idea is to split your app into reusable namespaces.
