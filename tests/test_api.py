@@ -342,3 +342,13 @@ class APITest(object):
         assert decorator1.called is True
         assert decorator2.called is True
         assert decorator3.called is True
+
+    def test_specs_url(self, app):
+        api = restx.Api(app)
+        specs_url = api.specs_url
+        assert specs_url == "/swagger.json"
+
+    def test_url_scheme(self, app):
+        api = restx.Api(app, url_scheme="https")
+        assert api.specs_url == "https://localhost/swagger.json"
+        assert api.base_url == "https://localhost/"
