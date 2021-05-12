@@ -25,6 +25,32 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-0.4.0:
+0.4.0
+-----
+
+.. _bug_fixes-0.4.0
+
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fix Namespace error handlers when propogate_exceptions=True (#285) [mjreiss]
+   * pin flask and werkzeug due to breaking changes (#308) [jchittum]
+   * The Flask/Blueprint API moved to the Scaffold base class (#308) [jloehel]
+
+
+.. _enhancements-0.4.0:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+   * added specs-url-scheme option for API (#237) [DustinMoriarty]
+   * Doc enhancements [KAUTH, Abdur-rahmaanJ]
+   * New example with loosely couple implementation [maurerle]
+
 .. _section-0.3.0:
 
 0.3.0
