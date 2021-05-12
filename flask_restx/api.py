@@ -17,7 +17,10 @@ from types import MethodType
 
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
-from flask.helpers import _endpoint_from_view_func
+try:
+    from flask.helpers import _endpoint_from_view_func
+except ImportError:
+    from flask.scaffold import _endpoint_from_view_func
 from flask.signals import got_request_exception
 
 from jsonschema import RefResolver
