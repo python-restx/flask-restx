@@ -65,6 +65,7 @@ node_modules
 
 # pyenv
 .python-version
+.venv
 
 # Jet Brains
 .idea
