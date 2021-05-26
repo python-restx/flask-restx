@@ -333,6 +333,12 @@ class FloatFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
         assert not field.required
         assert field.__schema__ == {"type": "number", "default": 0.5}
 
+    def test_default_on_none(self):
+        field = fields.Float(default=0.5)
+        assert not field.required
+        assert field.__schema__ == {"type": "number", "default": 0.5}
+        self.assert_field(field, None, 0.5)
+
     @pytest.mark.parametrize(
         "value,expected", [("-3.13", -3.13), (str(-3.13), -3.13), (3, 3.0),]
     )
