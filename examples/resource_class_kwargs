@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+
+from flask_restx import Resource, Namespace
+from flask import Blueprint, Flask
+from flask_restx import Api, fields, Model
+
+### models.py contain models for data validation ###
+# just a simple model
+MyTest = Model('MyTest', {
+    'data': fields.String(required=True,readonly=True),
+})
+
+### namespaces.py contains definition of routes
+namesp = Namespace(name="tests", validate=True)
+# register model
+namesp.models[MyTest.name] = MyTest
+@namesp.route('/<string:message>')
+class get_session(Resource):
+
+    def __init__(self, api=None, *args, **kwargs):
+        # sessions is a black box dependency
+        self.answer_service = kwargs['answer_service']
+        super().__init__(api,*args, **kwargs)
+
+    @namesp.marshal_with(MyTest)
+    def get(self, message):
+        # ducktyping
+        # any used answer_service must implement this method somehow
+        return self.answer_service.answer(message)
+
+
+### managers.py contain logic what should happen on request ###
+
+# loosly coupled and independent from communication
+# could be implemented with database, log file what so ever
+class AnswerService:
+    def __init__(self,msg):
+        self.msg=msg
+    def answer(self, request:str):
+        return {'data': request+self.msg}
+
+#### main.py ###
+blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
+
+api = Api(
+    blueprint,
+    version="1.0",
+    doc="/ui",
+    validate=False,
+)
+
+# main glues communication and managers together
+ans= AnswerService('~nice to meet you')
+injected_objects={'answer_service': ans}
+
+### could also be defined without namespace ###
+#api.models[MyTest.name] = MyTest
+#api.add_resource(get_session, '/answer',
+#    resource_class_kwargs=injected_objects)
+
+
+# inject the objects containing logic here
+for res in namesp.resources:
+    res.kwargs['resource_class_kwargs'] = injected_objects
+    print(res)
+# finally add namespace to api
+api.add_namespace(namesp)
+
+app = Flask('test')
+from flask import redirect
+@app.route('/', methods=['POST', 'GET'])
+def home():
+    return redirect('/api/v1/ui')
+
+app.register_blueprint(blueprint)
+app.run(debug=False, port=8002)

@@ -298,6 +298,14 @@ class BooleanFieldTest(BaseFieldTestMixin, FieldTestCase):
         assert not field.required
         assert field.__schema__ == {"type": "boolean", "default": True}
 
+    def test_with_example(self):
+        field = fields.Boolean(default=True, example=False)
+        assert field.__schema__ == {
+            "type": "boolean",
+            "default": True,
+            "example": False,
+        }
+
     @pytest.mark.parametrize(
         "value,expected",
         [
@@ -1377,3 +1385,21 @@ class FieldsHelpersTest(object):
 
         obj = Test("hi")
         assert fields.get_value("value", obj) == "hi"
+
+    def test_get_value_int_indexable_list(self):
+        assert fields.get_value('bar.0', {'bar': [42]}) == 42
+
+    def test_get_value_int_indexable_list_with_str(self):
+        assert fields.get_value('bar.abc', {'bar': [42]}) is None
+
+    def test_get_value_int_indexable_nested_list(self):
+        assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42
+
+    def test_get_value_int_indexable_tuple_with_str(self):
+        assert fields.get_value('bar.abc', {'bar': (42, 43)}) is None
+
+    def test_get_value_int_indexable_tuple(self):
+        assert fields.get_value('bar.0', {'bar': (42, 43)}) == 42
+
+    def test_get_value_int_indexable_nested_tuple(self):
+        assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42

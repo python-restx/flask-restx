@@ -221,6 +221,21 @@ class MarshallingTest(object):
 
         assert output == expected
 
+    def test_marshal_ordered(self):
+        model = OrderedDict(
+            [("foo", fields.Raw), ("baz", fields.Raw), ("bar", fields.Raw)]
+        )
+        marshal_fields = {
+            "foo": 1,
+            "baz": 2,
+            "bar": 3
+        }
+        expected_ordered = OrderedDict([("foo", 1), ("baz", 2), ("bar", 3)])
+        ordered_output = marshal(marshal_fields, model, ordered=True)
+        assert ordered_output == expected_ordered
+        unordered_output = marshal(marshal_fields, model)
+        assert not isinstance(unordered_output, OrderedDict)
+
     def test_marshal_nested_ordered(self):
         model = OrderedDict(
             [("foo", fields.Raw), ("fee", fields.Nested({"fye": fields.String,}))]

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import re
 
 import flask_restx as restx
 
@@ -143,3 +144,35 @@ class NamespaceTest(object):
         client.post_json("/apples/validation/", data)
 
         assert Payload.payload == data
+
+    def test_api_payload_strict_verification(self, app, client):
+        api = restx.Api(app, validate=True)
+        ns = restx.Namespace("apples")
+        api.add_namespace(ns)
+
+        fields = ns.model(
+            "Person",
+            {
+                "name": restx.fields.String(required=True),
+                "age": restx.fields.Integer,
+                "birthdate": restx.fields.DateTime,
+            },
+            strict=True,
+        )
+
+        @ns.route("/validation/")
+        class Payload(restx.Resource):
+            payload = None
+
+            @ns.expect(fields)
+            def post(self):
+                Payload.payload = ns.payload
+                return {}
+
+        data = {
+            "name": "John Doe",
+            "agge": 15,  # typo
+        }
+
+        resp = client.post_json("/apples/validation/", data, status=400)
+        assert re.match("Additional properties are not allowed \(u*'agge' was unexpected\)", resp["errors"][""])

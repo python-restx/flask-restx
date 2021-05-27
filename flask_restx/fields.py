@@ -66,6 +66,10 @@ def is_indexable_but_not_string(obj):
     return not hasattr(obj, "strip") and hasattr(obj, "__iter__")
 
 
+def is_integer_indexable(obj):
+    return isinstance(obj, list) or isinstance(obj, tuple)
+
+
 def get_value(key, obj, default=None):
     """Helper for pulling a keyed value off various types of objects"""
     if isinstance(key, int):
@@ -90,6 +94,11 @@ def _get_value_for_key(key, obj, default):
         try:
             return obj[key]
         except (IndexError, TypeError, KeyError):
+            pass
+    if is_integer_indexable(obj):
+        try:
+            return obj[int(key)]
+        except (IndexError, TypeError, ValueError):
             pass
     return getattr(obj, key, default)
 
@@ -156,7 +165,7 @@ class Raw(object):
         self.description = description
         self.required = required
         self.readonly = readonly
-        self.example = example or self.__schema_example__
+        self.example = example if example is not None else self.__schema_example__
         self.mask = mask
 
     def format(self, value):
@@ -853,7 +862,12 @@ class Wildcard(Raw):
                     # we are using pop() so that we don't
                     # loop over the whole object every time dropping the
                     # complexity to O(n)
-                    (objkey, val) = self._flat.pop()
+                    if ordered:
+                        # Get first element if respecting order
+                        (objkey, val) = self._flat.pop(0)
+                    else:
+                        # Previous default retained
+                        (objkey, val) = self._flat.pop()
                     if (
                         objkey not in self._cache
                         and objkey not in self.exclude

@@ -225,7 +225,7 @@ You can also match parts of the path as variables to your resource methods.
     If a request does not match any of your application's endpoints,
     Flask-RESTX will return a 404 error message with suggestions of other
     endpoints that closely match the requested endpoint.
-    This can be disabled by setting ``ERROR_404_HELP`` to ``False`` in your application config.
+    This can be disabled by setting ``RESTX_ERROR_404_HELP`` to ``False`` in your application config.
 
 
 Argument Parsing
@@ -249,7 +249,7 @@ using a library similar to :mod:`python:argparse`.
     Unlike the :mod:`python:argparse` module, :meth:`~reqparse.RequestParser.parse_args`
     returns a Python dictionary instead of a custom data structure.
 
-Using the :class:`~reqparse.RequestParser` class also gives you sane error messages for free.
+Using the :class:`~reqparse.RequestParser` class also gives you same error messages for free.
 If an argument fails to pass validation,
 Flask-RESTX will respond with a 400 Bad Request and a response highlighting the error.
 

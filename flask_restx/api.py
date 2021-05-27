@@ -9,6 +9,7 @@ import operator
 import re
 import six
 import sys
+import warnings
 
 from collections import OrderedDict
 from functools import wraps, partial
@@ -16,7 +17,10 @@ from types import MethodType
 
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
-from flask.helpers import _endpoint_from_view_func
+try:
+    from flask.helpers import _endpoint_from_view_func
+except ImportError:
+    from flask.scaffold import _endpoint_from_view_func
 from flask.signals import got_request_exception
 
 from jsonschema import RefResolver
@@ -93,6 +97,9 @@ class Api(object):
     :param FormatChecker format_checker: A jsonschema.FormatChecker object that is hooked into
         the Model validator. A default or a custom FormatChecker can be provided (e.g., with custom
         checkers), otherwise the default action is to not enforce any format validation.
+    :param url_scheme: If set to a string (e.g. http, https), then the specs_url and base_url will explicitly use this
+        scheme regardless of how the application is deployed. This is necessary for some deployments behind a reverse
+        proxy.
     """
 
     def __init__(
@@ -122,6 +129,7 @@ class Api(object):
         catch_all_404s=False,
         serve_challenge_on_401=False,
         format_checker=None,
+        url_scheme=None,
         **kwargs
     ):
         self.version = version
@@ -143,10 +151,10 @@ class Api(object):
         self._default_error_handler = None
         self.tags = tags or []
 
-        self.error_handlers = {
+        self.error_handlers = OrderedDict({
             ParseError: mask_parse_error_handler,
             MaskError: mask_error_handler,
-        }
+        })
         self._schema = None
         self.models = {}
         self._refresolver = None
@@ -177,6 +185,7 @@ class Api(object):
             api=self,
             path="/",
         )
+        self.url_scheme = url_scheme
         if app is not None:
             self.app = app
             self.init_app(app)
@@ -197,7 +206,9 @@ class Api(object):
         :param str contact: A contact email for the API (used in Swagger documentation)
         :param str license: The license associated to the API (used in Swagger documentation)
         :param str license_url: The license page URL (used in Swagger documentation)
-
+        :param url_scheme: If set to a string (e.g. http, https), then the specs_url and base_url will explicitly use
+            this scheme regardless of how the application is deployed. This is necessary for some deployments behind a
+            reverse proxy.
         """
         self.app = app
         self.title = kwargs.get("title", self.title)
@@ -208,6 +219,7 @@ class Api(object):
         self.contact_email = kwargs.get("contact_email", self.contact_email)
         self.license = kwargs.get("license", self.license)
         self.license_url = kwargs.get("license_url", self.license_url)
+        self.url_scheme = kwargs.get("url_scheme", self.url_scheme)
         self._add_specs = kwargs.get("add_specs", True)
 
         # If app is a blueprint, defer the initialization
@@ -249,6 +261,15 @@ class Api(object):
         app.config.setdefault("RESTX_MASK_HEADER", "X-Fields")
         app.config.setdefault("RESTX_MASK_SWAGGER", True)
         app.config.setdefault("RESTX_INCLUDE_ALL_MODELS", False)
+
+        # check for deprecated config variable names
+        if "ERROR_404_HELP" in app.config:
+            app.config['RESTX_ERROR_404_HELP'] = app.config['ERROR_404_HELP']
+            warnings.warn(
+                "'ERROR_404_HELP' config setting is deprecated and will be "
+                "removed in the future. Use 'RESTX_ERROR_404_HELP' instead.",
+                DeprecationWarning
+            )
 
     def __getattr__(self, name):
         try:
@@ -503,11 +524,16 @@ class Api(object):
     @property
     def specs_url(self):
         """
-        The Swagger specifications absolute url (ie. `swagger.json`)
+        The Swagger specifications relative url (ie. `swagger.json`). If
+        the spec_url_scheme attribute is set, then the full url is provided instead
+        (e.g. http://localhost/swaggger.json).
 
         :rtype: str
         """
-        return url_for(self.endpoint("specs"), _external=True)
+        external = None if self.url_scheme is None else True
+        return url_for(
+            self.endpoint("specs"), _scheme=self.url_scheme, _external=external
+        )
 
     @property
     def base_url(self):
@@ -516,7 +542,7 @@ class Api(object):
 
         :rtype: str
         """
-        return url_for(self.endpoint("root"), _external=True)
+        return url_for(self.endpoint("root"), _scheme=self.url_scheme, _external=True)
 
     @property
     def base_path(self):
@@ -547,7 +573,7 @@ class Api(object):
 
     @property
     def _own_and_child_error_handlers(self):
-        rv = {}
+        rv = OrderedDict()
         rv.update(self.error_handlers)
         for ns in self.namespaces:
             for exception, handler in six.iteritems(ns.error_handlers):
@@ -654,7 +680,7 @@ class Api(object):
         if (
             not isinstance(e, HTTPException)
             and current_app.propagate_exceptions
-            and not isinstance(e, tuple(self.error_handlers.keys()))
+            and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
 
             exc_type, exc_value, tb = sys.exc_info()
@@ -709,7 +735,7 @@ class Api(object):
 
         elif (
             code == HTTPStatus.NOT_FOUND
-            and current_app.config.get("ERROR_404_HELP", True)
+            and current_app.config.get("RESTX_ERROR_404_HELP", True)
             and include_message_in_response
         ):
             data["message"] = self._help_on_404(data.get("message", None))
