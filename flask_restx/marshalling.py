@@ -76,7 +76,7 @@ def marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fal
                     if keys:
                         field.exclude |= set(keys)
                         keys = []
-                value = field.output(dkey, data)
+                value = field.output(dkey, data, ordered=ordered)
                 if is_wildcard:
 
                     def _append(k, v):
