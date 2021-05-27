@@ -334,7 +334,7 @@ class FloatFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
         assert field.__schema__ == {"type": "number", "default": 0.5}
 
     def test_none_uses_default(self):
-        field = fields.float(default=0.5)
+        field = fields.Float(default=0.5)
         assert not field.required
         assert field.__schema__ == {"type": "number", "default": 0.5}
         assert field.format(None) == 0.5
