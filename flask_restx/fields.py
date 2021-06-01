@@ -481,6 +481,8 @@ class Float(NumberMixin, Raw):
 
     def format(self, value):
         try:
+            if value is None:
+                return self.default
             return float(value)
         except (ValueError, TypeError) as ve:
             raise MarshallingError(ve)
