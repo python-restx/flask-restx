@@ -1,7 +1,7 @@
 Full example
 ============
 
-Here is a full example of a `TodoMVC <http://todomvc.com/>`_ API.
+Here is a full example of a `TodoMVC <https://todomvc.com/>`_ API.
 
 .. code-block:: python
 

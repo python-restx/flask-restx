@@ -5,7 +5,7 @@ Quick start
 
 .. currentmodule:: flask_restx
 
-This guide assumes you have a working understanding of `Flask <http://flask.pocoo.org>`_,
+This guide assumes you have a working understanding of `Flask <https://flask.palletsprojects.com/>`_,
 and that you have already installed both Flask and Flask-RESTX.
 If not, then follow the steps in the :ref:`installation` section.
 
@@ -82,7 +82,7 @@ A minimal Flask-RESTX API looks like this:
 
 
 Save this as api.py and run it using your Python interpreter.
-Note that we've enabled `Flask debugging <http://flask.pocoo.org/docs/quickstart/#debug-mode>`_
+Note that we've enabled `Flask debugging <https://flask.palletsprojects.com/quickstart/#debug-mode>`_
 mode to provide code reloading and better error messages.
 
 .. code-block:: console
@@ -152,7 +152,7 @@ You can try it like this:
     {"todo2": "Change my brakepads"}
 
 
-Or from python if you have the `Requests <http://docs.python-requests.org/>`_ library installed:
+Or from python if you have the `Requests <https://docs.python-requests.org/>`_ library installed:
 
 .. code-block:: python
 

@@ -18,7 +18,7 @@ PYPI_RST_FILTERS = (
     # replace doc references
     (
         r":doc:`(.+) <(.*)>`",
-        r"`\1 <http://flask-restx.readthedocs.org/en/stable\2.html>`_",
+        r"`\1 <https://flask-restx.readthedocs.io/en/stable\2.html>`_",
     ),
     # replace issues references
     (

@@ -1067,4 +1067,4 @@ To disable Swagger UI entirely, set ``doc=False``:
     api = Api(app, doc=False)
 
 
-.. _vendor extensions: http://swagger.io/specification/#specification-extensions-128
+.. _vendor extensions: https://swagger.io/specification/#specification-extensions

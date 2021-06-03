@@ -50,7 +50,7 @@ You need to install some dependencies to develop on flask-restx:
 
     $ pip install -e .[dev]
 
-An [Invoke](http://www.pyinvoke.org/) ``tasks.py`` is provided to simplify the common tasks:
+An `Invoke <https://www.pyinvoke.org/>`_ ``tasks.py`` is provided to simplify the common tasks:
 
 .. code-block:: console
 
