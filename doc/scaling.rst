@@ -38,7 +38,7 @@ Here's an example directory structure::
 
 
 The `app` module will serve as a main application entry point following one of the classic
-Flask patterns (See :ref:`flask:larger-applications` and :ref:`flask:app-factories`).
+Flask patterns (See :doc:`flask:patterns/packages` and :doc:`flask:patterns/appfactories`).
 
 The `core` module is an example, it contains the business logic.
 In fact, you call it whatever you want, and there can be many packages.
@@ -151,7 +151,7 @@ Using this pattern, you simply have to register your API in `app.py` like that:
 Use With Blueprints
 -------------------
 
-See :ref:`blueprints` in the Flask documentation for what blueprints are and why you should use them.
+See :doc:`flask:blueprints` in the Flask documentation for what blueprints are and why you should use them.
 Here's an example of how to link an :class:`Api` up to a :class:`~flask.Blueprint`.
 
 .. code-block:: python

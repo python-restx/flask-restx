@@ -23,13 +23,15 @@ All you need to do is update your requirements to use Flask-RESTX instead of
 Flask-RESTPlus. Then you need to update all your imports.
 This can be done using something like:
 
-::
+.. code-block:: bash
+
    find . -type f -name "*.py" | xargs sed -i "s/flask_restplus/flask_restx/g"
 
 Finally, you will need to update your configuration options (described `here
-<quickstart.html#configuration>`_). Example:
+<configuration.html>`_). Example:
 
-::
+.. code-block:: bash
+
    find . -type f -name "*.py" | xargs sed -i "s/RESTPLUS_/RESTX_/g"
 
 
@@ -112,7 +114,7 @@ See :ref:`swaggerui` for a complete documentation on the automatic documentation
 Resourceful Routing
 -------------------
 The main building block provided by Flask-RESTX are resources.
-Resources are built on top of :ref:`Flask pluggable views <flask:views>`,
+Resources are built on top of :doc:`Flask pluggable views <flask:views>`,
 giving you easy access to multiple HTTP methods just by defining methods on your resource.
 A basic CRUD resource for a todo application (of course) looks like this:
 
