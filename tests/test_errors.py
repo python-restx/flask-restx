@@ -444,6 +444,27 @@ class ErrorsTest(object):
         finally:
             got_request_exception.disconnect(record, app)
 
+    def test_handle_error_signal_does_not_call_got_request_exception(self, app):
+        api = restx.Api(app)
+
+        exception = BadRequest()
+
+        recorded = []
+
+        def record(sender, exception):
+            recorded.append(exception)
+
+        @api.errorhandler(BadRequest)
+        def handle_bad_request(error):
+          return {"message": str(error), "value": "test"}, 400
+
+        got_request_exception.connect(record, app)
+        try:
+            api.handle_error(exception)
+            assert len(recorded) == 0
+        finally:
+            got_request_exception.disconnect(record, app)
+
     def test_handle_error(self, app):
         api = restx.Api(app)
 
