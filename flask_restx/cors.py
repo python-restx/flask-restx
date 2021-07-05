@@ -17,7 +17,7 @@ def crossdomain(
     credentials=False,
 ):
     """
-    http://flask.pocoo.org/snippets/56/
+    https://web.archive.org/web/20190128010149/http://flask.pocoo.org/snippets/56/
     """
     if methods is not None:
         methods = ", ".join(sorted(x.upper() for x in methods))

@@ -480,7 +480,7 @@ class Swagger(object):
         """
         Extract custom 3rd party Vendor fields prefixed with ``x-``
 
-        See: http://swagger.io/specification/#specification-extensions-128
+        See: https://swagger.io/specification/#specification-extensions
         """
         return dict(
             (k if k.startswith("x-") else "x-{0}".format(k), v)

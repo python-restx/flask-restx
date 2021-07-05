@@ -332,7 +332,7 @@ texinfo_documents = [
 
 
 intersphinx_mapping = {
-    "flask": ("http://flask.pocoo.org/docs/", None),
-    "python": ("http://docs.python.org/", None),
-    "werkzeug": ("http://werkzeug.pocoo.org/docs/", None),
+    "flask": ("https://flask.palletsprojects.com/", None),
+    "python": ("https://docs.python.org/", None),
+    "werkzeug": ("https://werkzeug.palletsprojects.com/", None),
 }

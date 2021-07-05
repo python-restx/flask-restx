@@ -5,7 +5,7 @@ Quick start
 
 .. currentmodule:: flask_restx
 
-This guide assumes you have a working understanding of `Flask <http://flask.pocoo.org>`_,
+This guide assumes you have a working understanding of `Flask <https://flask.palletsprojects.com/>`_,
 and that you have already installed both Flask and Flask-RESTX.
 If not, then follow the steps in the :ref:`installation` section.
 
@@ -23,13 +23,15 @@ All you need to do is update your requirements to use Flask-RESTX instead of
 Flask-RESTPlus. Then you need to update all your imports.
 This can be done using something like:
 
-::
+.. code-block:: bash
+
    find . -type f -name "*.py" | xargs sed -i "s/flask_restplus/flask_restx/g"
 
 Finally, you will need to update your configuration options (described `here
-<quickstart.html#configuration>`_). Example:
+<configuration.html>`_). Example:
 
-::
+.. code-block:: bash
+
    find . -type f -name "*.py" | xargs sed -i "s/RESTPLUS_/RESTX_/g"
 
 
@@ -82,7 +84,7 @@ A minimal Flask-RESTX API looks like this:
 
 
 Save this as api.py and run it using your Python interpreter.
-Note that we've enabled `Flask debugging <http://flask.pocoo.org/docs/quickstart/#debug-mode>`_
+Note that we've enabled `Flask debugging <https://flask.palletsprojects.com/quickstart/#debug-mode>`_
 mode to provide code reloading and better error messages.
 
 .. code-block:: console
@@ -112,7 +114,7 @@ See :ref:`swaggerui` for a complete documentation on the automatic documentation
 Resourceful Routing
 -------------------
 The main building block provided by Flask-RESTX are resources.
-Resources are built on top of :ref:`Flask pluggable views <flask:views>`,
+Resources are built on top of :doc:`Flask pluggable views <flask:views>`,
 giving you easy access to multiple HTTP methods just by defining methods on your resource.
 A basic CRUD resource for a todo application (of course) looks like this:
 
@@ -152,7 +154,7 @@ You can try it like this:
     {"todo2": "Change my brakepads"}
 
 
-Or from python if you have the `Requests <http://docs.python-requests.org/>`_ library installed:
+Or from python if you have the `Requests <https://docs.python-requests.org/>`_ library installed:
 
 .. code-block:: python
 

@@ -175,8 +175,8 @@ Documentation
 The documentation is hosted `on Read the Docs <http://flask-restx.readthedocs.io/en/latest/>`_
 
 
-.. _Flask: http://flask.pocoo.org/
-.. _Swagger: http://swagger.io/
+.. _Flask: https://flask.palletsprojects.com/
+.. _Swagger: https://swagger.io/
 
 
 Contribution
