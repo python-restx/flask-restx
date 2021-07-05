@@ -34,7 +34,13 @@ from werkzeug.exceptions import (
     NotAcceptable,
     InternalServerError,
 )
-from werkzeug.wrappers import BaseResponse
+
+from werkzeug import __version__ as werkzeug_version
+
+if werkzeug_version.split('.')[0] >= '2':
+    from werkzeug.wrappers import Response as BaseResponse
+else:
+    from werkzeug.wrappers import BaseResponse
 
 from . import apidoc
 from .mask import ParseError, MaskError
