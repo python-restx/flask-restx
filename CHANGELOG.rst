@@ -25,6 +25,36 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-0.5.0:
+0.5.0
+-----
+
+.. _bug_fixes-0.5.0
+
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fix Marshaled nested wildcard field with ordered=True (#326) [bdscharf]
+   * Fix Float Field Handling of None (#327) [bdscharf, TVLIgnacy]
+   * Fix Werkzeug and Flask > 2.0 issues (#341) [hbusul]
+   * Hotfix package.json [xuhdev]
+
+.. _enhancements-0.5.0:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Stop calling got_request_exception when handled explicitly (#349) [chandlernine, VolkaRancho]
+   * Update doc links (#332) [EtiennePelletier]
+   * Structure demo zoo app (#328) [mehul-anshumali]
+   * Update Contributing.rst (#323) [physikerwelt]
+   * Upgrade swagger-ui (#316) [xuhdev]
+
+
 .. _section-0.4.0:
 0.4.0
 -----
