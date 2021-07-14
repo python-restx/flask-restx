@@ -195,7 +195,7 @@ def _marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fa
 
 
 class marshal_with(object):
-    """A decorator that apply marshalling to the return values of your methods.
+    """A decorator that applies marshalling to the return values of your methods.
 
     >>> from flask_restx import fields, marshal_with
     >>> mfields = { 'a': fields.Raw }
