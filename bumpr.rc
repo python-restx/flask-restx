@@ -9,7 +9,6 @@ clean =
     inv clean
 files =
     README.rst
-    package.json
 
 [bump]
 unsuffix = true

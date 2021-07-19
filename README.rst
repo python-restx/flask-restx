@@ -40,6 +40,31 @@ Compatibility
 
 Flask-RESTX requires Python 2.7 or 3.4+.
 
+On Flask Compatibility
+======================
+
+Flask and Werkzeug moved to versions 2.0 in March 2020. This caused a breaking change in Flask-RESTX.
+
+.. list-table:: RESTX and Flask / Werkzeug Compatibility
+    :widths: 25 25 25
+    :header-rows: 1
+
+
+    * - Flask-RESTX version
+      - Flask version
+      - Note
+    * - <= 0.3.0
+      - < 2.0.0
+      - unpinned in Flask-RESTX. Pin your projects!
+    * - == 0.4.0
+      - < 2.0.0
+      - pinned in Flask-RESTX.
+    * - >= 0.5.0
+      - All (For Now)
+      - unpinned, import statements wrapped for compatibility
+    * - trunk branch in Github
+      - All (and updated more often)
+      - unpinned, will address issues faster than releases.
 
 Installation
 ============
