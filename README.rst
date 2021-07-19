@@ -2,14 +2,14 @@
 Flask RESTX
 ===========
 
-.. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?tag=0.5.0&event=push
+.. image:: https://github.com/python-restx/flask-restx/workflows/Tests/badge.svg?branch=master&event=push
     :target: https://github.com/python-restx/flask-restx/actions?query=workflow%3ATests
     :alt: Tests status
 .. image:: https://codecov.io/gh/python-restx/flask-restx/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/python-restx/flask-restx
     :alt: Code coverage
-.. image:: https://readthedocs.org/projects/flask-restx/badge/?version=0.5.0
-    :target: https://flask-restx.readthedocs.io/en/0.5.0/
+.. image:: https://readthedocs.org/projects/flask-restx/badge/?version=latest
+    :target: https://flask-restx.readthedocs.io/en/latest/
     :alt: Documentation status
 .. image:: https://img.shields.io/pypi/l/flask-restx.svg
     :target: https://pypi.org/project/flask-restx
@@ -59,7 +59,7 @@ Flask and Werkzeug moved to versions 2.0 in March 2020. This caused a breaking c
     * - == 0.4.0
       - < 2.0.0
       - pinned in Flask-RESTX.
-    * - >= 0.5.0
+    * - >= 0.5.1.dev
       - All (For Now)
       - unpinned, import statements wrapped for compatibility
     * - trunk branch in Github
