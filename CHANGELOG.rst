@@ -66,7 +66,7 @@ Bug Fixes
 
 ::
 
-   * Fix Namespace error handlers when propogate_exceptions=True (#285) [mjreiss]
+   * Fix Namespace error handlers when propagate_exceptions=True (#285) [mjreiss]
    * pin flask and werkzeug due to breaking changes (#308) [jchittum]
    * The Flask/Blueprint API moved to the Scaffold base class (#308) [jloehel]
 
