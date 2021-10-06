@@ -466,7 +466,8 @@ class Swagger(object):
         doc_params = list(doc.get("params", {}).values())
         all_params = doc_params + (operation["parameters"] or [])
         if all_params and any(p["in"] == "formData" for p in all_params):
-            if any(p["type"] == "file" for p in all_params):
+            # if any(p["type"] == "file" for p in all_params): This doesn't allow multiple file upload
+            if any(p["type"] == "file" or (p["type"] == "array" and p["items"]["type"]=="file") for p in all_params):
                 operation["consumes"] = ["multipart/form-data"]
             else:
                 operation["consumes"] = [
