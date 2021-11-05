@@ -25,6 +25,19 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-0.5.1:
+0.5.1
+-----
+
+.. _bug_fixes-0.5.1
+
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Optimize email regex (#372) [kevinbackhouse]
+
 .. _section-0.5.0:
 0.5.0
 -----

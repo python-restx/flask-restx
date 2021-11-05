@@ -48,7 +48,7 @@ netloc_regex = re.compile(
 
 
 email_regex = re.compile(
-    r"^" "(?P<local>[^@]*[^@.])" r"@" r"(?P<server>[^@]+(?:\.[^@]+)*)" r"$",
+    r"^" "(?P<local>[^@]*[^@.])" r"@" r"(?P<server>[^@\.]+(?:\.[^@\.]+)*)" r"$",
     re.IGNORECASE,
 )
 
