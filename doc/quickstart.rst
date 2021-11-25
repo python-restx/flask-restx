@@ -219,7 +219,7 @@ You can also match parts of the path as variables to your resource methods.
     # or
 
     @api.route('/todo/<int:todo_id>', endpoint='todo_ep')
-    class HelloWorld(Resource):
+    class Todo(Resource):
         pass
 
 .. note ::
