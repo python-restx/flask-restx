@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from http import HTTPStatus
 import re
+from six import iteritems
 
 import flask_restx as restx
 
-from flask_restx import Namespace, Model, OrderedModel
+from flask_restx import Namespace, Model, OrderedModel, fields
 
 
 class NamespaceTest(object):
@@ -22,6 +24,78 @@ class NamespaceTest(object):
 
         assert hasattr(TestResource, "__apidoc__")
         assert TestResource.__apidoc__ == {"params": params}
+
+    def test_doc_with_responses(self):
+        api = Namespace("test")
+
+        person = api.model("Person", {
+            "name": fields.String(description="Name of person")
+        })
+        
+        @api.route("int_response/")
+        class IntResponseCodeResource(restx.Resource):
+            @api.doc("get_int_response")
+            @api.marshal_with(person, code=200)
+            def get(self, **kwargs):
+                """Get name of person"""
+                return {}, 200
+
+            @api.response(200, "Doing great")
+            def post(self, **kwargs):
+                return {}, 200
+
+        @api.route("str_response/")
+        class StrResponseCodeResource(restx.Resource):
+            @api.doc("get_str_response")
+            @api.marshal_with(person, code='200')
+            def get(self, **kwargs):
+                """Get name of person"""
+                return {}, '200'
+
+            @api.response('200', "Doing great")
+            def post(self, **kwargs):
+                return {}, '200'
+
+        @api.route("enum_response/")
+        class EnumResponseCodeResource(restx.Resource):
+            @api.doc("get_enum_response")
+            @api.marshal_with(person, code=HTTPStatus.OK)
+            def get(self, **kwargs):
+                """Get name of person"""
+                return {}, HTTPStatus.OK
+                
+            @api.response(HTTPStatus.OK, "Doing great")
+            def post(self, **kwargs):
+                return {}, HTTPStatus.OK
+
+        @api.route("default_response/")
+        class DefaultResponseCodeResource(restx.Resource):
+            @api.doc("get_int_response")
+            @api.marshal_with(person, code='default')
+            def get(self, **kwargs):
+                """Get name of person"""
+                return {}, 200
+
+            @api.response('default', "Doing great")
+            def post(self, **kwargs):
+                return {}, 200
+        
+        # Extract first response code from apidoc, for each of the three get functions defined above
+        response_code_dict = {
+            resource_class.__name__:
+                {"get": [
+                    code for code in resource_class.get.__apidoc__["responses"]
+                ][0],
+                "post":
+                [
+                    code for code in resource_class.post.__apidoc__["responses"]
+                ][0],}
+            for resource_class in [IntResponseCodeResource, StrResponseCodeResource, EnumResponseCodeResource, DefaultResponseCodeResource]
+        }
+        
+        for response_name, response_method_dict in iteritems(response_code_dict):
+            for method_name, response_code in iteritems(response_method_dict):
+                assert response_code in ['200', 'default'], f"{response_name}.{method_name} does not return the correct status code"
 
     def test_doc_with_inheritance(self):
         api = Namespace("test")
