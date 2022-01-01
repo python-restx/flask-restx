@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from enum import IntEnum
 import inspect
 import warnings
 import logging
@@ -257,7 +258,7 @@ class Namespace(object):
         def wrapper(func):
             doc = {
                 "responses": {
-                    str(code): (description, [fields], kwargs)
+                    str(code.value if isinstance(code, IntEnum) else code): (description, [fields], kwargs)
                     if as_list
                     else (description, fields, kwargs)
                 },
@@ -314,7 +315,7 @@ class Namespace(object):
         :param ModelBase model: an optional response model
 
         """
-        return self.doc(responses={str(code): (description, model, kwargs)})
+        return self.doc(responses={str(code.value if isinstance(code, IntEnum) else code): (description, model, kwargs)})
 
     def header(self, name, description=None, **kwargs):
         """
