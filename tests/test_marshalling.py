@@ -64,6 +64,21 @@ class MarshallingTest(object):
             }
         }
 
+    def test_marshal_wildcard_includes_empty_lists(self):
+        wild = fields.Wildcard(fields.List(fields.String))
+        wildcard_fields = OrderedDict([("*", wild)])
+        model = OrderedDict([("preview", fields.Nested(wildcard_fields))])
+        sub_dict = OrderedDict([("1:1", [1, 2, 3]), ("16:9", []), ("9:16", [7, 8, 9])])
+        marshal_dict = OrderedDict([("preview", sub_dict)])
+        output = marshal(marshal_dict, model)
+        assert output == {
+            "preview": {
+                "9:16": ["7", "8", "9"],
+                "16:9": [],
+                "1:1": ["1", "2", "3"],
+            }
+        }
+
     def test_marshal_with_envelope(self):
         model = OrderedDict([("foo", fields.Raw)])
         marshal_dict = OrderedDict([("foo", "bar"), ("bat", "baz")])
@@ -95,6 +110,15 @@ class MarshallingTest(object):
         )
         output = marshal(marshal_dict, model, skip_none=True)
         assert output == {"baz": "biz"}
+
+    def test_marshal_wildcard_includes_null_values(self):
+        wild = fields.Wildcard(fields.String)
+        model = OrderedDict([("foo", fields.Raw), ("*", wild)])
+        marshal_dict = OrderedDict(
+            [("foo", None), ("bat", None), ("baz", "biz"), ("bar", None)]
+        )
+        output = marshal(marshal_dict, model)
+        assert output == {"foo": None, "bat": None, "baz": "biz", "bar": None}
 
     def test_marshal_decorator(self):
         model = OrderedDict([("foo", fields.Raw)])
