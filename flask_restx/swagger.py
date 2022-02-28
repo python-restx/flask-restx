@@ -166,10 +166,14 @@ def build_request_body_parameters_schema(body_params):
                 'type': 'object',
                 'properties': [
                     'parameter1': {
-                        'type': 'integer'
+                        'type': 'integer',
+                        'description': 'Some description',
+                        'enum': [0, 1]
                     },
                     'parameter2': {
-                        'type': 'string'
+                        'type': 'string',
+                        'description': 'Some description',
+                        'enum': ['a', 'b', 'c']
                     }
                 ]
             }
@@ -178,7 +182,11 @@ def build_request_body_parameters_schema(body_params):
 
     properties = {}
     for param in body_params:
-        properties[param["name"]] = {"type": param.get("type", "string")}
+        properties[param["name"]] = {
+            "type": param.get("type", "string"),
+            "description": param.get("description"),
+            "enum": param.get("enum")
+        }
 
     return {
         "name": "payload",
