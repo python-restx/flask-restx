@@ -181,6 +181,7 @@ def build_request_body_parameters_schema(body_params):
     """
 
     properties = {}
+    required_params = []
     for param in body_params:
         properties[param["name"]] = {
             "type": param.get("type", "string"),
@@ -188,11 +189,20 @@ def build_request_body_parameters_schema(body_params):
             "enum": param.get("enum")
         }
 
+        if param.get("required"):
+            required_params.append(param["name"])
+
+    schema = {
+        "type": "object",
+        "required": required_params if required_params else None,
+        "properties": properties,
+    }
+
     return {
         "name": "payload",
         "required": True,
         "in": "body",
-        "schema": {"type": "object", "properties": properties},
+        "schema": schema,
     }
 
 
