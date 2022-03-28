@@ -41,8 +41,9 @@ class ReqParseTest(object):
         )
         parser = RequestParser()
         parser.add_argument("foo", choices=("one", "two"), help="Bad choice.")
-        req = mocker.Mock(["values"])
+        req = mocker.Mock(["values", "get_json"])
         req.values = MultiDict([("foo", "three")])
+        req.get_json.return_value = None
         with pytest.raises(BadRequest):
             parser.parse_args(req)
         expected = {
@@ -58,7 +59,8 @@ class ReqParseTest(object):
         )
         parser = RequestParser()
         parser.add_argument("foo", choices=["one", "two"])
-        req = mocker.Mock(["values"])
+        req = mocker.Mock(["values", "get_json"])
+        req.get_json.return_value = None
         req.values = MultiDict([("foo", "three")])
         with pytest.raises(BadRequest):
             parser.parse_args(req)
@@ -76,9 +78,9 @@ class ReqParseTest(object):
         args = parser.parse_args(req)
         assert args["foo"] == "bar"
 
-        req = mocker.Mock()
+        req = mocker.Mock(["get_json"])
         req.values = ()
-        req.json = None
+        req.get_json.return_value = None
         req.view_args = {"foo": "bar"}
         parser = RequestParser()
         parser.add_argument("foo", store_missing=True)
@@ -101,11 +103,12 @@ class ReqParseTest(object):
             args = parser.parse_args()
             assert args["foo"] == "barß"
 
-    @pytest.mark.request_context("/bubble", method="post")
+    @pytest.mark.request_context(
+        "/bubble", method="post", content_type="application/json"
+    )
     def test_json_location(self):
         parser = RequestParser()
         parser.add_argument("foo", location="json", store_missing=True)
-
         args = parser.parse_args()
         assert args["foo"] is None
 
@@ -856,7 +859,8 @@ class ArgumentTest(object):
         assert len(arg.source(req)) == 0  # yes, basically you don't find it
 
     def test_source_default_location(self, mocker):
-        req = mocker.Mock(["values"])
+        req = mocker.Mock(["values", "get_json"])
+        req.get_json.return_value = None
         req._get_child_mock = lambda **kwargs: MultiDict()
         arg = Argument("foo")
         assert arg.source(req) == req.values
