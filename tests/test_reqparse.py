@@ -914,28 +914,47 @@ class RequestParserSchemaTest(object):
         parser = RequestParser()
         parser.add_argument("unknown", type=lambda v: v)
         assert parser.__schema__ == [
-            {"name": "unknown", "type": "string", "in": "query",}
+            {
+                "name": "unknown",
+                "type": "string",
+                "in": "query",
+            }
         ]
 
     def test_required(self):
         parser = RequestParser()
         parser.add_argument("int", type=int, required=True)
         assert parser.__schema__ == [
-            {"name": "int", "type": "integer", "in": "query", "required": True,}
+            {
+                "name": "int",
+                "type": "integer",
+                "in": "query",
+                "required": True,
+            }
         ]
 
     def test_default(self):
         parser = RequestParser()
         parser.add_argument("int", type=int, default=5)
         assert parser.__schema__ == [
-            {"name": "int", "type": "integer", "in": "query", "default": 5,}
+            {
+                "name": "int",
+                "type": "integer",
+                "in": "query",
+                "default": 5,
+            }
         ]
 
     def test_default_as_false(self):
         parser = RequestParser()
         parser.add_argument("bool", type=inputs.boolean, default=False)
         assert parser.__schema__ == [
-            {"name": "bool", "type": "boolean", "in": "query", "default": False,}
+            {
+                "name": "bool",
+                "type": "boolean",
+                "in": "query",
+                "default": False,
+            }
         ]
 
     def test_choices(self):
@@ -958,31 +977,59 @@ class RequestParserSchemaTest(object):
         parser.add_argument("in_headers", type=int, location="headers")
         parser.add_argument("in_cookie", type=int, location="cookie")
         assert parser.__schema__ == [
-            {"name": "default", "type": "integer", "in": "query",},
-            {"name": "in_values", "type": "integer", "in": "query",},
-            {"name": "in_query", "type": "integer", "in": "query",},
-            {"name": "in_headers", "type": "integer", "in": "header",},
+            {
+                "name": "default",
+                "type": "integer",
+                "in": "query",
+            },
+            {
+                "name": "in_values",
+                "type": "integer",
+                "in": "query",
+            },
+            {
+                "name": "in_query",
+                "type": "integer",
+                "in": "query",
+            },
+            {
+                "name": "in_headers",
+                "type": "integer",
+                "in": "header",
+            },
         ]
 
     def test_location_json(self):
         parser = RequestParser()
         parser.add_argument("in_json", type=str, location="json")
         assert parser.__schema__ == [
-            {"name": "in_json", "type": "string", "in": "body",}
+            {
+                "name": "in_json",
+                "type": "string",
+                "in": "body",
+            }
         ]
 
     def test_location_form(self):
         parser = RequestParser()
         parser.add_argument("in_form", type=int, location="form")
         assert parser.__schema__ == [
-            {"name": "in_form", "type": "integer", "in": "formData",}
+            {
+                "name": "in_form",
+                "type": "integer",
+                "in": "formData",
+            }
         ]
 
     def test_location_files(self):
         parser = RequestParser()
         parser.add_argument("in_files", type=FileStorage, location="files")
         assert parser.__schema__ == [
-            {"name": "in_files", "type": "file", "in": "formData",}
+            {
+                "name": "in_files",
+                "type": "file",
+                "in": "formData",
+            }
         ]
 
     def test_form_and_body_location(self):
@@ -1012,7 +1059,13 @@ class RequestParserSchemaTest(object):
         )
         parser = RequestParser()
         parser.add_argument("todo", type=todo_fields)
-        assert parser.__schema__ == [{"name": "todo", "type": "Todo", "in": "body",}]
+        assert parser.__schema__ == [
+            {
+                "name": "todo",
+                "type": "Todo",
+                "in": "body",
+            }
+        ]
 
     def test_lists(self):
         parser = RequestParser()
@@ -1065,5 +1118,10 @@ class RequestParserSchemaTest(object):
         parser = RequestParser()
         parser.add_argument("int", type=int, default=lambda: 5)
         assert parser.__schema__ == [
-            {"name": "int", "type": "integer", "in": "query", "default": 5,}
+            {
+                "name": "int",
+                "type": "integer",
+                "in": "query",
+                "default": 5,
+            }
         ]
