@@ -373,13 +373,17 @@ class APITest(object):
     def test_redirect(self, api, client):
         class FooResource(restx.Resource):
             def get(self):
-                return redirect("/")
+                response = redirect("/")
+                # Response.autocorrect_location_header = False is now the default in Werkzeug >= 2.1
+                # It is explicitly set here so the test remains backwards compatible with previous versions of Werkzeug.
+                response.autocorrect_location_header = False
+                return response
 
         api.add_resource(FooResource, "/api")
 
         resp = client.get("/api")
         assert resp.status_code == 302
-        assert resp.headers["Location"] == "http://localhost/"
+        assert resp.headers["Location"] == "/"
 
     def test_calling_owns_endpoint_before_api_init(self):
         api = restx.Api()
