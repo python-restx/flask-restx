@@ -16,7 +16,7 @@ try:
 except ImportError:
     # TODO Remove this to drop Python2 support
     from collections import Mapping
-from jsonschema import Draft4Validator
+from jsonschema import Draft7Validator
 
 from flask_restx import errors
 
@@ -55,7 +55,7 @@ class LazySchema(Mapping):
     .. versionadded:: 0.12.1
     """
 
-    def __init__(self, filename, validator=Draft4Validator):
+    def __init__(self, filename, validator=Draft7Validator):
         super(LazySchema, self).__init__()
         self.filename = filename
         self._schema = None

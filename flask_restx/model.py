@@ -18,7 +18,7 @@ from werkzeug.utils import cached_property
 from .mask import Mask
 from .errors import abort
 
-from jsonschema import Draft4Validator
+from jsonschema import Draft7Validator
 from jsonschema.exceptions import ValidationError
 
 from .utils import not_none
@@ -97,7 +97,7 @@ class ModelBase(object):
         return model
 
     def validate(self, data, resolver=None, format_checker=None):
-        validator = Draft4Validator(
+        validator = Draft7Validator(
             self.__schema__, resolver=resolver, format_checker=format_checker
         )
         try:
