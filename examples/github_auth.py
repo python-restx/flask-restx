@@ -14,7 +14,7 @@ authorizations = {
         'type': 'oauth2',
         'flow': 'accessCode',
         'authorizationUrl': 'https://github.com/login/oauth/authorize',
-        'tokenUrl': '/',
+        'tokenUrl': '/auth',
         'scopes': {
             'user:email': 'Read user email addresses'
         }
@@ -24,6 +24,7 @@ authorizations = {
 api = Api(app, version="1.0", title="Todo API", description="A simple TODO API", authorizations=authorizations)
 
 ns = api.namespace("todos", description="TODO operations")
+auth_ns = api.namespace("auth", description="Auth operations")
 
 TODOS = {
     "todo1": {"task": "build an API"},
@@ -102,6 +103,13 @@ class TodoList(Resource):
         TODOS[todo_id] = {"task": args["task"]}
         return TODOS[todo_id], 201
 
+@auth_ns.route("/")
+class Auth(Resource):
+    """Dummy Auth handler"""
+
+    def post(self):
+        """Finish auth"""
+        return True
 
 if __name__ == "__main__":
     app.run(debug=True)
