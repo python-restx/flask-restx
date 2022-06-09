@@ -72,7 +72,7 @@ def createApiModel(api, table, modelname='', readonlyfields=[], show=[]):
         if col.default is not None:
             if isinstance(col.default.arg, (str, float, int, bytearray, bytes)):
                 params['default'] = col.default.arg
-        _tipo = str(tipo).replace('(','').replace(')','')
+        _tipo = str(tipo).split('(')[0]
         if _tipo in fieldtypes:
             if hasattr(tipo, 'length'):
                 params['max_length'] = tipo.length
