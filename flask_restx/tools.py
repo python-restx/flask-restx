@@ -91,23 +91,22 @@ def createApiModel(api, table, modelname='', readonlyfields=[], show=[]):
         try:
             col = list(relationship.local_columns)[0]
             tipo = col.type
-            for fieldType in fieldtypes:
-                if isinstance(tipo, getattr(types, fieldType)):
-                    outparams = {}
-                    if hasattr(tipo, 'length'):
-                        params['max_length'] = tipo.length
-                    if field in readonlyfields:
-                        outparams['readonly'] = True
-                    if col.foreign_keys is not None:
-                        foreignsmapped.extend(list(col.foreign_keys))
-                    if relationship.uselist:
-                        res[field] = fields.List(
-                            getattr(types, fieldType)(**params), **outparams)
-                    else:
-                        for key, value in outparams.items():
-                            params[key] = value
-                        res[field] = getattr(fields, fieldType)(**params)
-                    break
+            _tipo = str(tipo).split('(')[0]
+            if _tipo in fieldtypes:
+                outparams = {}
+                if hasattr(tipo, 'length'):
+                    params['max_length'] = tipo.length
+                if field in readonlyfields:
+                    outparams['readonly'] = True
+                if col.foreign_keys is not None:
+                    foreignsmapped.extend(list(col.foreign_keys))
+                if relationship.uselist:
+                    res[field] = fields.List(
+                        getattr(fields, conversion[_tipo])(**params), **outparams)
+                else:
+                    for key, value in outparams.items():
+                        params[key] = value
+                    res[field] = getattr(fields, conversion[_tipo])(**params)
         except:
             continue
     if modelname in ('', None):
