@@ -228,10 +228,8 @@ class Namespace(object):
         :param bool validate: whether to perform validation or not
 
         """
-        expect = []
+        expect = [param for param in inputs]
         params = {"validate": kwargs.get("validate", self._validate), "expect": expect}
-        for param in inputs:
-            expect.append(param)
         return self.doc(**params)
 
     def parser(self):
