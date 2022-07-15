@@ -44,7 +44,7 @@ class APITest(object):
     def test_handle_error_401_no_challenge_by_default(self, api):
         resp = api.handle_error(Unauthorized())
         assert resp.status_code == 401
-        assert "WWW-Autheneticate" not in resp.headers
+        assert "WWW-Authenticate" not in resp.headers
 
     @pytest.mark.api(serve_challenge_on_401=True)
     def test_handle_error_401_sends_challege_default_realm(self, api):
