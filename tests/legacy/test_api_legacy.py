@@ -379,7 +379,10 @@ class APITest(object):
 
         resp = client.get("/api")
         assert resp.status_code == 302
-        assert resp.headers["Location"] == "http://localhost/"
+        if flask.__version__ >= "2.1.0":
+            assert resp.headers["Location"] == "/"
+        else:
+            assert resp.headers["Location"] == "http://localhost/"
 
     def test_calling_owns_endpoint_before_api_init(self):
         api = restx.Api()
