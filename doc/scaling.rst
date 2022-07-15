@@ -234,15 +234,13 @@ Each `apivX` module will have the following pattern:
     from flask import Blueprint
     from flask_restx import Api
 
-    api = Api(blueprint)
-
     from .apis.namespace1 import api as ns1
     from .apis.namespace2 import api as ns2
     # ...
     from .apis.namespaceX import api as nsX
 
     blueprint = Blueprint('api', __name__, url_prefix='/api/1')
-    api = Api(blueprint
+    api = Api(blueprint,
         title='My Title',
         version='1.0',
         description='A description',
