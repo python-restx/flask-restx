@@ -706,6 +706,8 @@ class Api(object):
         for typecheck, handler in six.iteritems(self._own_and_child_error_handlers):
             if isinstance(e, typecheck):
                 result = handler(e)
+                if not result is None and issubclass(result.__class__, BaseResponse):
+                    return result
                 default_data, code, headers = unpack(
                     result, HTTPStatus.INTERNAL_SERVER_ERROR
                 )
