@@ -15,7 +15,6 @@ except ImportError:
 from six import string_types, itervalues, iteritems, iterkeys
 
 from flask import current_app
-from werkzeug.routing import parse_rule
 
 from . import fields
 from .model import Model, ModelBase, OrderedModel
@@ -36,7 +35,6 @@ PATH_TYPES = {
     "default": "string",
 }
 
-
 #: Maps Python primitives types to Swagger ones
 PY_TYPES = {
     int: "integer",
@@ -53,6 +51,21 @@ DEFAULT_RESPONSE = {"description": DEFAULT_RESPONSE_DESCRIPTION}
 
 RE_RAISES = re.compile(
     r"^:raises\s+(?P<name>[\w\d_]+)\s*:\s*(?P<description>.*)$", re.MULTILINE
+)
+
+RE_PARSE_RULE = re.compile(
+    r"""
+    (?P<static>[^<]*)                           # static rule data
+    <
+    (?:
+        (?P<converter>[a-zA-Z_][a-zA-Z0-9_]*)   # converter name
+        (?:\((?P<args>.*?)\))?                  # converter arguments
+        \:                                      # variable delimiter
+    )?
+    (?P<variable>[a-zA-Z_][a-zA-Z0-9_]*)        # variable name
+    >
+    """,
+    re.VERBOSE,
 )
 
 
@@ -72,6 +85,36 @@ def extract_path(path):
     Transform a Flask/Werkzeug URL pattern in a Swagger one.
     """
     return RE_URL.sub(r"{\1}", path)
+
+
+def parse_rule(rule):
+    """
+    This originally lived in werkzeug.routing.parse_rule until it was removed in werkzeug 2.2.0. Copying it here to
+    avoid depending on the older version of werkzeug.
+    """
+    pos = 0
+    end = len(rule)
+    do_match = RE_PARSE_RULE.match
+    used_names = set()
+    while pos < end:
+        m = do_match(rule, pos)
+        if m is None:
+            break
+        data = m.groupdict()
+        if data["static"]:
+            yield None, None, data["static"]
+        variable = data["variable"]
+        converter = data["converter"] or "default"
+        if variable in used_names:
+            raise ValueError(f"variable name {variable!r} used twice.")
+        used_names.add(variable)
+        yield converter, data["args"] or None, variable
+        pos = m.end()
+    if pos < end:
+        remaining = rule[pos:]
+        if ">" in remaining or "<" in remaining:
+            raise ValueError(f"malformed url rule: {rule!r}")
+        yield None, None, remaining
 
 
 def extract_path_params(path):
