@@ -89,8 +89,11 @@ def extract_path(path):
 
 def parse_rule(rule):
     """
-    This originally lived in werkzeug.routing.parse_rule until it was removed in werkzeug 2.2.0. Copying it here to
-    avoid depending on the older version of werkzeug.
+    Parse a rule and return it as generator. Each iteration yields tuples in the form
+    ``(converter, arguments, variable)``. If the converter is `None` it's a static url part, otherwise it's a dynamic
+    one.
+
+    Note: This originally lived in werkzeug.routing.parse_rule until it was removed in werkzeug 2.2.0.
     """
     pos = 0
     end = len(rule)
