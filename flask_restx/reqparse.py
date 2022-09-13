@@ -106,7 +106,10 @@ class Argument(object):
         required=False,
         ignore=False,
         type=text_type,
-        location=("json", "values",),
+        location=(
+            "json",
+            "values",
+        ),
         choices=(),
         action="store",
         help=None,
@@ -138,7 +141,10 @@ class Argument(object):
         :param request: The flask request object to parse arguments from
         """
         if isinstance(self.location, six.string_types):
-            value = getattr(request, self.location, MultiDict())
+            if self.location in {"json", "get_json"}:
+                value = request.get_json(silent=True)
+            else:
+                value = getattr(request, self.location, MultiDict())
             if callable(value):
                 value = value()
             if value is not None:
@@ -146,7 +152,10 @@ class Argument(object):
         else:
             values = MultiDict()
             for l in self.location:
-                value = getattr(request, l, None)
+                if l in {"json", "get_json"}:
+                    value = request.get_json(silent=True)
+                else:
+                    value = getattr(request, l, None)
                 if callable(value):
                     value = value()
                 if value is not None:
