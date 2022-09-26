@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+try:
+    from collections.abc import Mapping
+except ImportError:
+    from collections import Mapping
 import re
 import fnmatch
 import inspect
@@ -114,7 +118,7 @@ def to_marshallable_type(obj):
     if hasattr(obj, "__marshallable__"):
         return obj.__marshallable__()
 
-    if hasattr(obj, "__getitem__"):
+    if isinstance(obj, Mapping):
         return obj  # it is indexable it is ok
 
     return dict(obj.__dict__)
