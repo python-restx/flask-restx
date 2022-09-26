@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 
+from enum import IntEnum
 import itertools
 import re
 
@@ -597,7 +598,7 @@ class Swagger(object):
         for d in doc, doc[method]:
             if "responses" in d:
                 for code, response in iteritems(d["responses"]):
-                    code = str(code)
+                    code = str(code.value if isinstance(code, IntEnum) else code)
                     if isinstance(response, string_types):
                         description = response
                         model = None

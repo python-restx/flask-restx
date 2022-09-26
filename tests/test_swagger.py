@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from http import HTTPStatus
 
 import pytest
 
@@ -349,6 +350,44 @@ class SwaggerTest(object):
 
         assert url_for("api.test") == "/api/ns/"
 
+    
+    @pytest.mark.api(prefix="/api")
+    def test_enum_in_response_in_documentation(self, api, client):
+        ns = api.namespace("ns", "Test namespace")
+
+        @ns.route("/", endpoint="test")
+        class TestResource(restx.Resource):
+            @api.doc(
+                "get_int_test_resource",
+                responses={200: "OK"}
+            )
+            def get(self):
+                return {}
+
+            @api.doc(
+                "post_str_test_resource",
+                responses={'200': "OK"}
+            )
+            def post(self):
+                return {}
+            
+            @api.doc(
+                "put_enum_test_resource",
+                responses={HTTPStatus.OK: "OK"}
+            )
+            def put(self):
+                return {}
+
+
+        data = client.get_specs("/api")
+        paths = data["paths"]
+        assert len(paths.keys()) == 1
+
+        assert "/ns/" in paths
+        assert len(paths["/ns/"]) == 3
+        for op, response_op in paths["/ns/"].items():
+            assert response_op["responses"] == {"200": {"description": "OK",}}, f"{op} has wrong response"
+
     @pytest.mark.api(prefix="/api", version="1.0")
     def test_default_ns_resource_documentation(self, api, client):
         @api.route("/test/", endpoint="test")
@@ -492,6 +531,42 @@ class SwaggerTest(object):
                 method.lower()
             )
             # assert operation['parameters'] == []
+
+    # def test_docstring_raises_response_with_enum(self, api, client):
+    #     @api.route("/test/", endpoint="test")
+    #     class TestResource(restx.Resource):
+    #         def get(self):
+    #             """
+    #             GET operation
+    #             """
+    #             return {}
+
+    #         def post(self):
+    #             """POST operation.
+
+    #             Should be ignored
+    #             """
+    #             return {}
+
+    #         def put(self):
+    #             """PUT operation. Should be ignored"""
+    #             return {}
+
+    #         def delete(self):
+    #             """
+    #             DELETE operation.
+    #             Should be ignored.
+    #             """
+    #             return {}
+
+    #     data = client.get_specs()
+    #     path = data["paths"]["/test/"]
+
+    #     assert len(path.keys()) == 4
+
+    #     for method in path.keys():
+    #         operation = path[method]
+
 
     def test_path_parameter_no_type(self, api, client):
         @api.route("/id/<id>/", endpoint="by-id")

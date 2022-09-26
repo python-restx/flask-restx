@@ -25,6 +25,19 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-0.5.2:
+0.5.0
+-----
+
+.. _enhancements-0.5.2:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Added support for HTTPStatus as status code in swagger documnetation (#373) [mahoyen, maisergodt]
+
 .. _section-0.5.1:
 0.5.1
 -----
