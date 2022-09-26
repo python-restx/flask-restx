@@ -234,6 +234,12 @@ class Namespace(object):
             expect.append(param)
         return self.doc(**params)
 
+    def expect_content_type(self, *content_types):
+        """
+        A decorator to Specify the expected Content-Type
+        """
+        return self.doc(consumes=list(content_types))
+
     def parser(self):
         """Instanciate a :class:`~RequestParser`"""
         return RequestParser()
