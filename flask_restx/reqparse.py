@@ -192,9 +192,7 @@ class Argument(object):
             bundled
         """
         error_str = str(error)
-        error_msg = (
-            " ".join([str(self.help), error_str]) if self.help else error_str
-        )
+        error_msg = " ".join([str(self.help), error_str]) if self.help else error_str
         errors = {self.name: error_msg}
 
         if bundle_errors:

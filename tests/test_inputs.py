@@ -145,7 +145,7 @@ class URLTest(object):
         with pytest.raises(ValueError) as cm:
             validator(value)
         if details:
-            assert str(cm.value) == '. '.join((msg, details)).format(value)
+            assert str(cm.value) == ". ".join((msg, details)).format(value)
         else:
             assert str(cm.value).startswith(msg.format(value))
 
@@ -454,7 +454,7 @@ class UrlTest(object):
     def test_bad_url(self, url):
         with pytest.raises(ValueError) as cm:
             inputs.url(url)
-        assert str(cm.value).startswith('{0} is not a valid URL'.format(url))
+        assert str(cm.value).startswith("{0} is not a valid URL".format(url))
 
     @pytest.mark.parametrize(
         "url",

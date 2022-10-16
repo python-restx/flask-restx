@@ -180,9 +180,7 @@ class RawModel(ModelBase):
             resolved.update(parent.resolved)
 
         # Handle discriminator
-        candidates = [
-            f for f in resolved.values() if getattr(f, "discriminator", None)
-        ]
+        candidates = [f for f in resolved.values() if getattr(f, "discriminator", None)]
         # Ensure the is only one discriminator
         if len(candidates) > 1:
             raise ValueError("There can only be one discriminator by schema")
