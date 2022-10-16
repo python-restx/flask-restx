@@ -300,6 +300,8 @@ class Argument(object):
             )
         if self.action == "append":
             param["items"] = {"type": param["type"]}
+            if "pattern" in param:
+                param["items"]["pattern"] = param.pop("pattern")
             param["type"] = "array"
             param["collectionFormat"] = "multi"
         if self.action == "split":
