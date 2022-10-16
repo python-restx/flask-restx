@@ -64,12 +64,13 @@ class LoggingTest(object):
         assert len(matching) == 1
 
     def test_override_app_level(self, app, client, caplog):
-        caplog.set_level(logging.INFO, logger=app.logger.name)
+        caplog.set_level(logging.DEBUG, logger=app.logger.name)
 
         api = restx.Api(app)
         ns1 = api.namespace("ns1", path="/ns1")
         ns1.logger.setLevel(logging.DEBUG)
         ns2 = api.namespace("ns2", path="/ns2")
+        ns2.logger.setLevel(logging.INFO)
 
         @ns1.route("/")
         class Ns1(restx.Resource):

@@ -38,7 +38,7 @@ It looks for two arguments in the :attr:`flask.Request.values` dict: an integer 
 .. note ::
 
     The default argument type is a unicode string.
-    This will be ``str`` in python3 and ``unicode`` in python2.
+    This will be ``str``.
 
 If you specify the ``help`` value,
 it will be rendered as the error message when a type error is raised while parsing it.
