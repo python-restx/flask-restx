@@ -51,8 +51,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Flask-RESTX"
-copyright = u"2020, python-restx Authors"
+project = "Flask-RESTX"
+copyright = "2020, python-restx Authors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -124,7 +124,11 @@ html_theme_options = {
     "show_related": True,
     "page_width": "1000px",
     "sidebar_width": "260px",
-    "favicons": {64: "favicon-64.png", 128: "favicon-128.png", 196: "favicon-196.png",},
+    "favicons": {
+        64: "favicon-64.png",
+        128: "favicon-128.png",
+        196: "favicon-196.png",
+    },
     "badges": [
         (
             # Gitter.im
@@ -262,8 +266,8 @@ latex_documents = [
     (
         "index",
         "Flask-RESTX.tex",
-        u"Flask-RESTX Documentation",
-        u"python-restx Authors",
+        "Flask-RESTX Documentation",
+        "python-restx Authors",
         "manual",
     ),
 ]
@@ -294,7 +298,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ("index", "flask-restx", u"Flask-RESTX Documentation", [u"python-restx Authors"], 1)
+    ("index", "flask-restx", "Flask-RESTX Documentation", ["python-restx Authors"], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -310,8 +314,8 @@ texinfo_documents = [
     (
         "index",
         "Flask-RESTX",
-        u"Flask-RESTX Documentation",
-        u"python-restx Authors",
+        "Flask-RESTX Documentation",
+        "python-restx Authors",
         "Flask-RESTX",
         "One line description of project.",
         "Miscellaneous",
