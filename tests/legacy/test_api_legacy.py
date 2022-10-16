@@ -375,7 +375,8 @@ class APITest(object):
 
         resp = client.get("/api")
         assert resp.status_code == 302
-        assert resp.headers["Location"] == "/"
+        # FIXME: The behavior changed somewhere between Flask 2.0.3 and 2.2.x
+        assert resp.headers["Location"].endswith("/")
 
     def test_calling_owns_endpoint_before_api_init(self):
         api = restx.Api()
