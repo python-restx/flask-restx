@@ -299,10 +299,11 @@ class Argument(object):
                 self.default() if callable(self.default) else self.default
             )
         if self.action == "append":
-            param["items"] = {"type": param["type"], "pattern": param["pattern"]}
+            param["items"] = {"type": param["type"]}
+            if "pattern" in param:
+                param["items"]["pattern"] = param.pop("pattern")
             param["type"] = "array"
             param["collectionFormat"] = "multi"
-            del param["pattern"]
         if self.action == "split":
             param["items"] = {"type": param["type"]}
             param["type"] = "array"
