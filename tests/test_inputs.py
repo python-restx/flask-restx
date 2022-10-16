@@ -271,7 +271,12 @@ class URLTest(object):
 
     @pytest.mark.parametrize(
         "url",
-        ["http://localhost", "http://127.0.0.1", "http://127.0.1.1", "http://::1",],
+        [
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://127.0.1.1",
+            "http://::1",
+        ],
     )
     def test_reject_local(self, url):
         # Test with IP and port to ensure only auth is rejected
@@ -280,7 +285,12 @@ class URLTest(object):
 
     @pytest.mark.parametrize(
         "url",
-        ["http://localhost", "http://127.0.0.1", "http://127.0.1.1", "http://::1",],
+        [
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://127.0.1.1",
+            "http://::1",
+        ],
     )
     def test_allow_local(self, url):
         validator = inputs.URL(ip=True, local=True)
@@ -311,12 +321,24 @@ class URLTest(object):
         validator = inputs.URL(port=True)
         assert validator(url) == url
 
-    @pytest.mark.parametrize("url", ["sip://somewhere.com", "irc://somewhere.com",])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "sip://somewhere.com",
+            "irc://somewhere.com",
+        ],
+    )
     def test_valid_restricted_schemes(self, url):
         validator = inputs.URL(schemes=("sip", "irc"))
         assert validator(url) == url
 
-    @pytest.mark.parametrize("url", ["http://somewhere.com", "https://somewhere.com",])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "http://somewhere.com",
+            "https://somewhere.com",
+        ],
+    )
     def test_invalid_restricted_schemes(self, url):
         validator = inputs.URL(schemes=("sip", "irc"))
         self.assert_bad_url(validator, url, "Protocol is not allowed")
@@ -334,12 +356,24 @@ class URLTest(object):
         validator = inputs.URL(domains=["example.com", "www.example.com"])
         assert validator(url) == url
 
-    @pytest.mark.parametrize("url", ["http://somewhere.com", "https://somewhere.com",])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "http://somewhere.com",
+            "https://somewhere.com",
+        ],
+    )
     def test_invalid_restricted_domains(self, url):
         validator = inputs.URL(domains=["example.com", "www.example.com"])
         self.assert_bad_url(validator, url, "Domain is not allowed")
 
-    @pytest.mark.parametrize("url", ["http://somewhere.com", "https://somewhere.com",])
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "http://somewhere.com",
+            "https://somewhere.com",
+        ],
+    )
     def test_valid_excluded_domains(self, url):
         validator = inputs.URL(exclude=["example.com", "www.example.com"])
         assert validator(url) == url
@@ -448,7 +482,13 @@ class UrlTest(object):
 
 class IPTest(object):
     @pytest.mark.parametrize(
-        "value", ["200.8.9.10", "127.0.0.1", "2001:db8:85a3::8a2e:370:7334", "::1",]
+        "value",
+        [
+            "200.8.9.10",
+            "127.0.0.1",
+            "2001:db8:85a3::8a2e:370:7334",
+            "::1",
+        ],
     )
     def test_valid_value(self, value):
         assert inputs.ip(value) == value
@@ -482,7 +522,13 @@ class IPTest(object):
 
 
 class IPv4Test(object):
-    @pytest.mark.parametrize("value", ["200.8.9.10", "127.0.0.1",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "200.8.9.10",
+            "127.0.0.1",
+        ],
+    )
     def test_valid_value(self, value):
         assert inputs.ipv4(value) == value
 
@@ -517,7 +563,13 @@ class IPv4Test(object):
 
 
 class IPv6Test(object):
-    @pytest.mark.parametrize("value", ["2001:db8:85a3::8a2e:370:7334", "::1",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "2001:db8:85a3::8a2e:370:7334",
+            "::1",
+        ],
+    )
     def test_valid_value(self, value):
         assert inputs.ipv6(value) == value
 
@@ -584,14 +636,20 @@ class EmailTest(object):
             "me@::1",
             "me@200.8.9.10",
             "me@2001:db8:85a3::8a2e:370:7334",
-            "foo@bar.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?" +
-            ".?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?@",
+            "foo@bar.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?"
+            + ".?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?.?@",
         ],
     )
     def test_invalid_value_default(self, value):
         self.assert_bad_email(inputs.email(), value)
 
-    @pytest.mark.parametrize("value", ["test@gmail.com", "test@live.com",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "test@gmail.com",
+            "test@live.com",
+        ],
+    )
     def test_valid_value_check(self, value):
         email = inputs.email(check=True)
         assert email(value) == value
@@ -630,7 +688,13 @@ class EmailTest(object):
         assert email(value) == value
 
     @pytest.mark.parametrize(
-        "value", ["me@localhost", "me@127.0.0.1", "me@127.1.2.3", "me@::1",]
+        "value",
+        [
+            "me@localhost",
+            "me@127.0.0.1",
+            "me@127.1.2.3",
+            "me@::1",
+        ],
     )
     def test_invalid_value_ip(self, value):
         email = inputs.email(ip=True)
@@ -734,7 +798,13 @@ class EmailTest(object):
         email = inputs.email(exclude=("somewhere.com", "foo.bar"))
         assert email(value) == value
 
-    @pytest.mark.parametrize("value", ["me@somewhere.com", "me@foo.bar",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "me@somewhere.com",
+            "me@foo.bar",
+        ],
+    )
     def test_invalid_value_exclude(self, value):
         email = inputs.email(exclude=("somewhere.com", "foo.bar"))
         self.assert_bad_email(email, value, "{0} belongs to a forbidden domain")
@@ -759,12 +829,27 @@ class EmailTest(object):
 
 
 class RegexTest(object):
-    @pytest.mark.parametrize("value", ["123", "1234567890", "00000",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "123",
+            "1234567890",
+            "00000",
+        ],
+    )
     def test_valid_input(self, value):
         num_only = inputs.regex(r"^[0-9]+$")
         assert num_only(value) == value
 
-    @pytest.mark.parametrize("value", ["abc", "123abc", "abc123", "",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "abc",
+            "123abc",
+            "abc123",
+            "",
+        ],
+    )
     def test_bad_input(self, value):
         num_only = inputs.regex(r"^[0-9]+$")
         with pytest.raises(ValueError):
@@ -1059,7 +1144,15 @@ class IsoIntervalTest(object):
         expected = "Invalid argument: 2013-01-01/blah. argument must be a valid ISO8601 date/time interval."
         assert str(cm.value) == expected
 
-    @pytest.mark.parametrize("value", ["2013-01T14:", "", "asdf", "01/01/2013",])
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "2013-01T14:",
+            "",
+            "asdf",
+            "01/01/2013",
+        ],
+    )
     def test_bad_values(self, value):
         with pytest.raises(ValueError):
             inputs.iso8601interval(value)

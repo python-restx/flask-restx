@@ -225,11 +225,7 @@ class MarshallingTest(object):
         model = OrderedDict(
             [("foo", fields.Raw), ("baz", fields.Raw), ("bar", fields.Raw)]
         )
-        marshal_fields = {
-            "foo": 1,
-            "baz": 2,
-            "bar": 3
-        }
+        marshal_fields = {"foo": 1, "baz": 2, "bar": 3}
         expected_ordered = OrderedDict([("foo", 1), ("baz", 2), ("bar", 3)])
         ordered_output = marshal(marshal_fields, model, ordered=True)
         assert ordered_output == expected_ordered
@@ -238,7 +234,17 @@ class MarshallingTest(object):
 
     def test_marshal_nested_ordered(self):
         model = OrderedDict(
-            [("foo", fields.Raw), ("fee", fields.Nested({"fye": fields.String,}))]
+            [
+                ("foo", fields.Raw),
+                (
+                    "fee",
+                    fields.Nested(
+                        {
+                            "fye": fields.String,
+                        }
+                    ),
+                ),
+            ]
         )
 
         marshal_fields = {
@@ -466,7 +472,15 @@ class MarshallingTest(object):
         model = OrderedDict(
             [
                 ("foo", fields.Raw),
-                ("bar", OrderedDict([("a", fields.Raw), ("b", fields.Raw),])),
+                (
+                    "bar",
+                    OrderedDict(
+                        [
+                            ("a", fields.Raw),
+                            ("b", fields.Raw),
+                        ]
+                    ),
+                ),
             ]
         )
         marshal_fields = OrderedDict(

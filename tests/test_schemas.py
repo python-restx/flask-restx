@@ -27,7 +27,10 @@ class ValidationTest:
         assert schemas.validate(
             {
                 "swagger": "2.0",
-                "info": {"title": "An empty minimal specification", "version": "1.0",},
+                "info": {
+                    "title": "An empty minimal specification",
+                    "version": "1.0",
+                },
                 "paths": {},
             }
         )
@@ -35,7 +38,10 @@ class ValidationTest:
     def test_oas_20_invalid(self):
         with pytest.raises(schemas.SchemaValidationError) as excinfo:
             schemas.validate(
-                {"swagger": "2.0", "should": "not be here",}
+                {
+                    "swagger": "2.0",
+                    "should": "not be here",
+                }
             )
         for error in excinfo.value.errors:
             assert isinstance(error, ValidationError)
