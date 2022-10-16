@@ -25,18 +25,35 @@ class MaskMixin(object):
 
     def test_multiple_field(self):
         mask = Mask("field1, field2, field3")
-        assert_data(mask, {"field1": True, "field2": True, "field3": True,})
+        assert_data(
+            mask,
+            {
+                "field1": True,
+                "field2": True,
+                "field3": True,
+            },
+        )
 
     def test_nested_fields(self):
         parsed = Mask("nested{field1,field2}")
-        expected = {"nested": {"field1": True, "field2": True,}}
+        expected = {
+            "nested": {
+                "field1": True,
+                "field2": True,
+            }
+        }
         assert parsed == expected
 
     def test_complex(self):
         parsed = Mask("field1, nested{field, sub{subfield}}, field2")
         expected = {
             "field1": True,
-            "nested": {"field": True, "sub": {"subfield": True,}},
+            "nested": {
+                "field": True,
+                "sub": {
+                    "subfield": True,
+                },
+            },
             "field2": True,
         }
         assert_data(parsed, expected)
@@ -44,7 +61,10 @@ class MaskMixin(object):
     def test_star(self):
         parsed = Mask("nested{field1,field2},*")
         expected = {
-            "nested": {"field1": True, "field2": True,},
+            "nested": {
+                "field1": True,
+                "field2": True,
+            },
             "*": True,
         }
         assert_data(parsed, expected)
@@ -54,7 +74,16 @@ class MaskMixin(object):
         expected = OrderedDict(
             [
                 ("f_3", True),
-                ("nested", OrderedDict([("f_1", True), ("f_2", True), ("f_3", True),])),
+                (
+                    "nested",
+                    OrderedDict(
+                        [
+                            ("f_1", True),
+                            ("f_2", True),
+                            ("f_3", True),
+                        ]
+                    ),
+                ),
                 ("f_2", True),
                 ("f_1", True),
             ]
@@ -153,12 +182,24 @@ class ApplyMaskTest(object):
         assert result == data
 
     def test_with_objects(self):
-        data = DObject({"integer": 42, "string": "a string", "boolean": True,})
+        data = DObject(
+            {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            }
+        )
         result = mask.apply(data, "{integer, string}")
         assert result == {"integer": 42, "string": "a string"}
 
     def test_with_ordered_dict(self):
-        data = OrderedDict({"integer": 42, "string": "a string", "boolean": True,})
+        data = OrderedDict(
+            {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            }
+        )
         result = mask.apply(data, "{integer, string}")
         assert result == {"integer": 42, "string": "a string"}
 
@@ -167,21 +208,39 @@ class ApplyMaskTest(object):
             "integer": 42,
             "string": "a string",
             "boolean": True,
-            "nested": {"integer": 42, "string": "a string", "boolean": True,},
+            "nested": {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            },
         }
         result = mask.apply(data, "{nested}")
         assert result == {
-            "nested": {"integer": 42, "string": "a string", "boolean": True,}
+            "nested": {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            }
         }
 
     def test_nested_fields(self):
-        data = {"nested": {"integer": 42, "string": "a string", "boolean": True,}}
+        data = {
+            "nested": {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            }
+        }
         result = mask.apply(data, "{nested{integer}}")
         assert result == {"nested": {"integer": 42}}
 
     def test_nested_with_start(self):
         data = {
-            "nested": {"integer": 42, "string": "a string", "boolean": True,},
+            "nested": {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            },
             "other": "value",
         }
         result = mask.apply(data, "{nested{integer},*}")
@@ -274,7 +333,12 @@ class ApplyMaskTest(object):
         assert isinstance(result["members"].container, fields.Nested)
         assert set(result["members"].container.nested.keys()) == set(["name"])
 
-        data = {"members": [{"name": "John", "age": 42}, {"name": "Jane", "age": 42},]}
+        data = {
+            "members": [
+                {"name": "John", "age": 42},
+                {"name": "Jane", "age": 42},
+            ]
+        }
         expected = {"members": [{"name": "John"}, {"name": "Jane"}]}
 
         assert_data(marshal(data, result), expected)
@@ -313,7 +377,12 @@ class ApplyMaskTest(object):
 
         result = mask.apply(family_fields, "members{name}")
 
-        data = {"members": [{"name": "John", "age": 42}, {"name": "Jane", "age": 42},]}
+        data = {
+            "members": [
+                {"name": "John", "age": 42},
+                {"name": "Jane", "age": 42},
+            ]
+        }
         expected = {"members": [{"name": "John"}, {"name": "Jane"}]}
 
         assert_data(marshal(data, result), expected)
@@ -322,8 +391,16 @@ class ApplyMaskTest(object):
 
     def test_list(self):
         data = [
-            {"integer": 42, "string": "a string", "boolean": True,},
-            {"integer": 404, "string": "another string", "boolean": False,},
+            {
+                "integer": 42,
+                "string": "a string",
+                "boolean": True,
+            },
+            {
+                "integer": 404,
+                "string": "another string",
+                "boolean": False,
+            },
         ]
         result = mask.apply(data, "{integer, string}")
         assert result == [
@@ -335,23 +412,41 @@ class ApplyMaskTest(object):
         data = {
             "integer": 42,
             "list": [
-                {"integer": 42, "string": "a string",},
-                {"integer": 404, "string": "another string",},
+                {
+                    "integer": 42,
+                    "string": "a string",
+                },
+                {
+                    "integer": 404,
+                    "string": "another string",
+                },
             ],
         }
         result = mask.apply(data, "{list}")
         assert result == {
             "list": [
-                {"integer": 42, "string": "a string",},
-                {"integer": 404, "string": "another string",},
+                {
+                    "integer": 42,
+                    "string": "a string",
+                },
+                {
+                    "integer": 404,
+                    "string": "another string",
+                },
             ]
         }
 
     def test_nested_list_fields(self):
         data = {
             "list": [
-                {"integer": 42, "string": "a string",},
-                {"integer": 404, "string": "another string",},
+                {
+                    "integer": 42,
+                    "string": "a string",
+                },
+                {
+                    "integer": 404,
+                    "string": "another string",
+                },
             ]
         }
         result = mask.apply(data, "{list{integer}}")
@@ -390,7 +485,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -407,7 +506,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -421,8 +524,14 @@ class MaskAPI(object):
 
         data = client.get_json("/test/", headers={"X-Fields": "{name,age}"})
         assert data == [
-            {"name": "John Doe", "age": 42,},
-            {"name": "Jane Doe", "age": 33,},
+            {
+                "name": "John Doe",
+                "age": 42,
+            },
+            {
+                "name": "Jane Doe",
+                "age": 33,
+            },
         ]
 
     def test_marshal_with_honour_complex_field_mask_header(self, app, client):
@@ -487,7 +596,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         data = {"name": "John Doe", "age": 42, "boolean": True}
@@ -504,7 +617,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -514,14 +631,24 @@ class MaskAPI(object):
                 return {"name": "John Doe", "age": 42, "boolean": True}
 
         data = self.get_json("/test/")
-        self.assertEqual(data, {"name": "John Doe", "age": 42,})
+        self.assertEqual(
+            data,
+            {
+                "name": "John Doe",
+                "age": 42,
+            },
+        )
 
     def test_marshal_with_honour_default_model_mask(self, app, client):
         api = Api(app)
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
             mask="{name,age}",
         )
 
@@ -541,7 +668,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
             mask="{name,age}",
         )
 
@@ -561,7 +692,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
             mask="{name,boolean}",
         )
 
@@ -579,7 +714,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -598,7 +737,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
             mask="{name,boolean}",
         )
 
@@ -616,7 +759,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -635,7 +782,11 @@ class MaskAPI(object):
 
         model = api.model(
             "Person",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         class Person(object):
@@ -659,7 +810,13 @@ class MaskAPI(object):
     def test_marshal_with_skip_missing_fields(self, app, client):
         api = Api(app)
 
-        model = api.model("Test", {"name": fields.String, "age": fields.Integer,})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
         @api.route("/test/")
         class TestResource(Resource):
@@ -676,9 +833,21 @@ class MaskAPI(object):
     def test_marshal_handle_inheritance(self, app):
         api = Api(app)
 
-        person = api.model("Person", {"name": fields.String, "age": fields.Integer,})
+        person = api.model(
+            "Person",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child = api.inherit("Child", person, {"extra": fields.String,})
+        child = api.inherit(
+            "Child",
+            person,
+            {
+                "extra": fields.String,
+            },
+        )
 
         data = {"name": "John Doe", "age": 42, "extra": "extra"}
 
@@ -695,11 +864,28 @@ class MaskAPI(object):
     def test_marshal_with_handle_polymorph(self, app, client):
         api = Api(app)
 
-        parent = api.model("Person", {"name": fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -711,7 +897,12 @@ class MaskAPI(object):
 
         mapping = {Child1: child1, Child2: child2}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         @api.route("/thing-1/")
         class Thing1Resource(Resource):
@@ -737,7 +928,13 @@ class MaskAPI(object):
     def test_raise_400_on_invalid_mask(self, app, client):
         api = Api(app)
 
-        model = api.model("Test", {"name": fields.String, "age": fields.Integer,})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
         @api.route("/test/")
         class TestResource(Resource):
@@ -756,7 +953,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -785,7 +986,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -809,7 +1014,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -830,7 +1039,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -850,7 +1063,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
         )
 
         @api.route("/test/")
@@ -879,7 +1096,11 @@ class SwaggerMaskHeaderTest(object):
 
         model = api.model(
             "Test",
-            {"name": fields.String, "age": fields.Integer, "boolean": fields.Boolean,},
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+                "boolean": fields.Boolean,
+            },
             mask="{name,age}",
         )
 

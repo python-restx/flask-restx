@@ -17,6 +17,7 @@ from types import MethodType
 
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
+
 try:
     from flask.helpers import _endpoint_from_view_func
 except ImportError:
@@ -37,7 +38,7 @@ from werkzeug.exceptions import (
 
 from werkzeug import __version__ as werkzeug_version
 
-if werkzeug_version.split('.')[0] >= '2':
+if werkzeug_version.split(".")[0] >= "2":
     from werkzeug.wrappers import Response as BaseResponse
 else:
     from werkzeug.wrappers import BaseResponse
@@ -159,10 +160,12 @@ class Api(object):
         self._default_error_handler = None
         self.tags = tags or []
 
-        self.error_handlers = OrderedDict({
-            ParseError: mask_parse_error_handler,
-            MaskError: mask_error_handler,
-        })
+        self.error_handlers = OrderedDict(
+            {
+                ParseError: mask_parse_error_handler,
+                MaskError: mask_error_handler,
+            }
+        )
         self._schema = None
         self.models = {}
         self._refresolver = None
@@ -273,11 +276,11 @@ class Api(object):
 
         # check for deprecated config variable names
         if "ERROR_404_HELP" in app.config:
-            app.config['RESTX_ERROR_404_HELP'] = app.config['ERROR_404_HELP']
+            app.config["RESTX_ERROR_404_HELP"] = app.config["ERROR_404_HELP"]
             warnings.warn(
                 "'ERROR_404_HELP' config setting is deprecated and will be "
                 "removed in the future. Use 'RESTX_ERROR_404_HELP' instead.",
-                DeprecationWarning
+                DeprecationWarning,
             )
 
     def __getattr__(self, name):
@@ -425,7 +428,8 @@ class Api(object):
             kwargs.pop("fallback_mediatype", None) or self.default_mediatype
         )
         mediatype = request.accept_mimetypes.best_match(
-            self.representations, default=default_mediatype,
+            self.representations,
+            default=default_mediatype,
         )
         if mediatype is None:
             raise NotAcceptable()

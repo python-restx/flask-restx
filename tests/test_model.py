@@ -54,7 +54,12 @@ class ModelTest(object):
         }
 
     def test_model_as_nested_dict(self):
-        address = Model("Address", {"road": fields.String,})
+        address = Model(
+            "Address",
+            {
+                "road": fields.String,
+            },
+        )
 
         person = Model(
             "Person",
@@ -72,13 +77,17 @@ class ModelTest(object):
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
                 "birthdate": {"type": "string", "format": "date-time"},
-                "address": {"$ref": "#/definitions/Address",},
+                "address": {
+                    "$ref": "#/definitions/Address",
+                },
             },
             "type": "object",
         }
 
         assert address.__schema__ == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
@@ -102,7 +111,12 @@ class ModelTest(object):
         }
 
     def test_model_as_nested_dict_with_list(self):
-        address = Model("Address", {"road": fields.String,})
+        address = Model(
+            "Address",
+            {
+                "road": fields.String,
+            },
+        )
 
         person = Model(
             "Person",
@@ -122,14 +136,18 @@ class ModelTest(object):
                 "birthdate": {"type": "string", "format": "date-time"},
                 "addresses": {
                     "type": "array",
-                    "items": {"$ref": "#/definitions/Address",},
+                    "items": {
+                        "$ref": "#/definitions/Address",
+                    },
                 },
             },
             "type": "object",
         }
 
         assert address.__schema__ == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
@@ -154,7 +172,12 @@ class ModelTest(object):
         }
 
     def test_model_as_nested_dict_and_required(self):
-        address = Model("Address", {"road": fields.String,})
+        address = Model(
+            "Address",
+            {
+                "road": fields.String,
+            },
+        )
 
         person = Model(
             "Person",
@@ -172,24 +195,34 @@ class ModelTest(object):
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
                 "birthdate": {"type": "string", "format": "date-time"},
-                "address": {"$ref": "#/definitions/Address",},
+                "address": {
+                    "$ref": "#/definitions/Address",
+                },
             },
             "type": "object",
         }
 
         assert address.__schema__ == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
     def test_model_with_discriminator(self):
         model = Model(
             "Person",
-            {"name": fields.String(discriminator=True), "age": fields.Integer,},
+            {
+                "name": fields.String(discriminator=True),
+                "age": fields.Integer,
+            },
         )
 
         assert model.__schema__ == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "discriminator": "name",
             "required": ["name"],
             "type": "object",
@@ -205,7 +238,10 @@ class ModelTest(object):
         )
 
         assert model.__schema__ == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "discriminator": "name",
             "required": ["name"],
             "type": "object",
@@ -213,10 +249,19 @@ class ModelTest(object):
 
     def test_model_deepcopy(self):
         parent = Model(
-            "Person", {"name": fields.String, "age": fields.Integer(description="foo"),}
+            "Person",
+            {
+                "name": fields.String,
+                "age": fields.Integer(description="foo"),
+            },
         )
 
-        child = parent.inherit("Child", {"extra": fields.String,})
+        child = parent.inherit(
+            "Child",
+            {
+                "extra": fields.String,
+            },
+        )
 
         parent_copy = copy.deepcopy(parent)
 
@@ -227,7 +272,12 @@ class ModelTest(object):
         assert parent["age"].description == "foo"
         assert parent_copy["age"].description == "bar"
 
-        child = parent.inherit("Child", {"extra": fields.String,})
+        child = parent.inherit(
+            "Child",
+            {
+                "extra": fields.String,
+            },
+        )
 
         child_copy = copy.deepcopy(child)
         assert child_copy.__parents__[0] == parent
@@ -242,7 +292,12 @@ class ModelTest(object):
             },
         )
 
-        child = parent.clone("Child", {"extra": fields.String,})
+        child = parent.clone(
+            "Child",
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "properties": {
@@ -264,7 +319,13 @@ class ModelTest(object):
             },
         )
 
-        child = Model.clone("Child", parent, {"extra": fields.String,})
+        child = Model.clone(
+            "Child",
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "properties": {
@@ -277,7 +338,12 @@ class ModelTest(object):
         }
 
     def test_clone_from_instance_with_multiple_parents(self):
-        grand_parent = Model("GrandParent", {"grand_parent": fields.String,})
+        grand_parent = Model(
+            "GrandParent",
+            {
+                "grand_parent": fields.String,
+            },
+        )
 
         parent = Model(
             "Parent",
@@ -288,7 +354,13 @@ class ModelTest(object):
             },
         )
 
-        child = grand_parent.clone("Child", parent, {"extra": fields.String,})
+        child = grand_parent.clone(
+            "Child",
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "properties": {
@@ -302,7 +374,12 @@ class ModelTest(object):
         }
 
     def test_clone_from_class_with_multiple_parents(self):
-        grand_parent = Model("GrandParent", {"grand_parent": fields.String,})
+        grand_parent = Model(
+            "GrandParent",
+            {
+                "grand_parent": fields.String,
+            },
+        )
 
         parent = Model(
             "Parent",
@@ -313,7 +390,14 @@ class ModelTest(object):
             },
         )
 
-        child = Model.clone("Child", grand_parent, parent, {"extra": fields.String,})
+        child = Model.clone(
+            "Child",
+            grand_parent,
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "properties": {
@@ -327,12 +411,26 @@ class ModelTest(object):
         }
 
     def test_inherit_from_instance(self):
-        parent = Model("Parent", {"name": fields.String, "age": fields.Integer,})
+        parent = Model(
+            "Parent",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child = parent.inherit("Child", {"extra": fields.String,})
+        child = parent.inherit(
+            "Child",
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert parent.__schema__ == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "type": "object",
         }
         assert child.__schema__ == {
@@ -343,12 +441,27 @@ class ModelTest(object):
         }
 
     def test_inherit_from_class(self):
-        parent = Model("Parent", {"name": fields.String, "age": fields.Integer,})
+        parent = Model(
+            "Parent",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child = Model.inherit("Child", parent, {"extra": fields.String,})
+        child = Model.inherit(
+            "Child",
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert parent.__schema__ == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "type": "object",
         }
         assert child.__schema__ == {
@@ -359,11 +472,29 @@ class ModelTest(object):
         }
 
     def test_inherit_from_class_from_multiple_parents(self):
-        grand_parent = Model("GrandParent", {"grand_parent": fields.String,})
+        grand_parent = Model(
+            "GrandParent",
+            {
+                "grand_parent": fields.String,
+            },
+        )
 
-        parent = Model("Parent", {"name": fields.String, "age": fields.Integer,})
+        parent = Model(
+            "Parent",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child = Model.inherit("Child", grand_parent, parent, {"extra": fields.String,})
+        child = Model.inherit(
+            "Child",
+            grand_parent,
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "allOf": [
@@ -374,11 +505,28 @@ class ModelTest(object):
         }
 
     def test_inherit_from_instance_from_multiple_parents(self):
-        grand_parent = Model("GrandParent", {"grand_parent": fields.String,})
+        grand_parent = Model(
+            "GrandParent",
+            {
+                "grand_parent": fields.String,
+            },
+        )
 
-        parent = Model("Parent", {"name": fields.String, "age": fields.Integer,})
+        parent = Model(
+            "Parent",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child = grand_parent.inherit("Child", parent, {"extra": fields.String,})
+        child = grand_parent.inherit(
+            "Child",
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         assert child.__schema__ == {
             "allOf": [
@@ -413,11 +561,27 @@ class ModelTest(object):
         class Child2:
             pass
 
-        parent = Model("Person", {"name": fields.String, "age": fields.Integer,})
+        parent = Model(
+            "Person",
+            {
+                "name": fields.String,
+                "age": fields.Integer,
+            },
+        )
 
-        child1 = parent.inherit("Child1", {"extra1": fields.String,})
+        child1 = parent.inherit(
+            "Child1",
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = parent.inherit("Child2", {"extra2": fields.String,})
+        child2 = parent.inherit(
+            "Child2",
+            {
+                "extra2": fields.String,
+            },
+        )
 
         mapping = {
             Child1: child1,
@@ -428,7 +592,9 @@ class ModelTest(object):
 
         # Should use the common ancestor
         assert output.__schema__ == {
-            "properties": {"child": {"$ref": "#/definitions/Person"},},
+            "properties": {
+                "child": {"$ref": "#/definitions/Person"},
+            },
             "type": "object",
         }
 
@@ -456,7 +622,13 @@ class ModelTest(object):
 class ModelSchemaTestCase(object):
     def test_model_schema(self):
         address = SchemaModel(
-            "Address", {"properties": {"road": {"type": "string"},}, "type": "object"}
+            "Address",
+            {
+                "properties": {
+                    "road": {"type": "string"},
+                },
+                "type": "object",
+            },
         )
 
         person = SchemaModel(
@@ -467,7 +639,9 @@ class ModelSchemaTestCase(object):
                     "name": {"type": "string"},
                     "age": {"type": "integer"},
                     "birthdate": {"type": "string", "format": "date-time"},
-                    "address": {"$ref": "#/definitions/Address",},
+                    "address": {
+                        "$ref": "#/definitions/Address",
+                    },
                 },
                 "type": "object",
             },
@@ -479,13 +653,17 @@ class ModelSchemaTestCase(object):
                 "name": {"type": "string"},
                 "age": {"type": "integer"},
                 "birthdate": {"type": "string", "format": "date-time"},
-                "address": {"$ref": "#/definitions/Address",},
+                "address": {
+                    "$ref": "#/definitions/Address",
+                },
             },
             "type": "object",
         }
 
         assert address.__schema__ == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
@@ -502,7 +680,12 @@ class ModelDeprecattionsTest(object):
         )
 
         with pytest.warns(DeprecationWarning):
-            child = parent.extend("Child", {"extra": fields.String,})
+            child = parent.extend(
+                "Child",
+                {
+                    "extra": fields.String,
+                },
+            )
 
         assert child.__schema__ == {
             "properties": {

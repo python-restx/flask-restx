@@ -85,7 +85,11 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     dev_require=dev_require,
-    extras_require={"test": tests_require, "doc": doc_require, "dev": dev_require,},
+    extras_require={
+        "test": tests_require,
+        "doc": doc_require,
+        "dev": dev_require,
+    },
     license="BSD-3-Clause",
     zip_safe=False,
     keywords="flask restx rest api swagger openapi",

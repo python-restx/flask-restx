@@ -29,7 +29,10 @@ class PostmanTest(object):
 
     def test_export_infos(self, app):
         api = restx.Api(
-            app, version="1.0", title="My API", description="This is a testing API",
+            app,
+            version="1.0",
+            title="My API",
+            description="This is a testing API",
         )
 
         data = api.as_postman()
