@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 import os
 import sys
 
@@ -103,7 +100,10 @@ def demo(ctx):
 def test(ctx, profile=False):
     """Run tests suite"""
     header(test.__doc__)
-    kwargs = build_args("--benchmark-skip", "--profile" if profile else None,)
+    kwargs = build_args(
+        "--benchmark-skip",
+        "--profile" if profile else None,
+    )
     with ctx.cd(ROOT):
         ctx.run("pytest {0}".format(kwargs), pty=True)
 

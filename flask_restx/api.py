@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import difflib
 import inspect
 from itertools import chain
 import logging
 import operator
 import re
-import six
 import sys
 import warnings
 
@@ -17,6 +13,7 @@ from types import MethodType
 
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
+
 try:
     from flask.helpers import _endpoint_from_view_func
 except ImportError:
@@ -37,7 +34,7 @@ from werkzeug.exceptions import (
 
 from werkzeug import __version__ as werkzeug_version
 
-if werkzeug_version.split('.')[0] >= '2':
+if werkzeug_version.split(".")[0] >= "2":
     from werkzeug.wrappers import Response as BaseResponse
 else:
     from werkzeug.wrappers import BaseResponse
@@ -159,10 +156,12 @@ class Api(object):
         self._default_error_handler = None
         self.tags = tags or []
 
-        self.error_handlers = OrderedDict({
-            ParseError: mask_parse_error_handler,
-            MaskError: mask_error_handler,
-        })
+        self.error_handlers = OrderedDict(
+            {
+                ParseError: mask_parse_error_handler,
+                MaskError: mask_error_handler,
+            }
+        )
         self._schema = None
         self.models = {}
         self._refresolver = None
@@ -273,11 +272,11 @@ class Api(object):
 
         # check for deprecated config variable names
         if "ERROR_404_HELP" in app.config:
-            app.config['RESTX_ERROR_404_HELP'] = app.config['ERROR_404_HELP']
+            app.config["RESTX_ERROR_404_HELP"] = app.config["ERROR_404_HELP"]
             warnings.warn(
                 "'ERROR_404_HELP' config setting is deprecated and will be "
                 "removed in the future. Use 'RESTX_ERROR_404_HELP' instead.",
-                DeprecationWarning
+                DeprecationWarning,
             )
 
     def __getattr__(self, name):
@@ -425,7 +424,8 @@ class Api(object):
             kwargs.pop("fallback_mediatype", None) or self.default_mediatype
         )
         mediatype = request.accept_mimetypes.best_match(
-            self.representations, default=default_mediatype,
+            self.representations,
+            default=default_mediatype,
         )
         if mediatype is None:
             raise NotAcceptable()
@@ -508,7 +508,7 @@ class Api(object):
             urls = self.ns_urls(ns, r.urls)
             self.register_resource(ns, r.resource, *urls, **r.kwargs)
         # Register models
-        for name, definition in six.iteritems(ns.models):
+        for name, definition in ns.models.items():
             self.models[name] = definition
         if not self.blueprint and self.app is not None:
             self._configure_namespace_logger(self.app, ns)
@@ -585,7 +585,7 @@ class Api(object):
         rv = OrderedDict()
         rv.update(self.error_handlers)
         for ns in self.namespaces:
-            for exception, handler in six.iteritems(ns.error_handlers):
+            for exception, handler in ns.error_handlers.items():
                 rv[exception] = handler
         return rv
 
@@ -703,7 +703,7 @@ class Api(object):
 
         headers = Headers()
 
-        for typecheck, handler in six.iteritems(self._own_and_child_error_handlers):
+        for typecheck, handler in self._own_and_child_error_handlers.items():
             if isinstance(e, typecheck):
                 result = handler(e)
                 default_data, code, headers = unpack(

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from flask_restx.swagger import extract_path, extract_path_params, parse_docstring
 
 
