@@ -2,5 +2,6 @@ aniso8601==8.0.0; python_version < '3.5'
 aniso8601>=0.82; python_version >= '3.5'
 jsonschema
 Flask>=0.8, !=2.0.0
+six
 werkzeug !=2.0.0
 pytz
