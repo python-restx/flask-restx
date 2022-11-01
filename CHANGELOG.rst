@@ -25,6 +25,35 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.0.1:
+1.0.1
+-----
+
+.. _breaking-1.0.1
+
+Breaking
+~~~~~~~~
+
+Starting from this release, we only support python versions >= 3.7
+
+.. _bug_fixes-1.0.1
+
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fix compatibility issue with werkzeug 2.1.0 (#423) [stacywsmith]
+
+.. _enhancements-1.0.1:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Drop support for python <3.7
+
 .. _section-0.5.1:
 0.5.1
 -----
