@@ -33,13 +33,13 @@ development and to support our users.
 Compatibility
 =============
 
-flask-restx requires Python 2.7+ or 3.4+.
+Flask-RESTX requires Python 3.7+.
 
 
 Installation
 ============
 
-You can install flask-restx with pip:
+You can install Flask-RESTX with pip:
 
 .. code-block:: console
 
