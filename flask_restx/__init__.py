@@ -7,7 +7,6 @@ from .namespace import Namespace  # noqa
 from .resource import Resource  # noqa
 from .errors import abort, RestError, SpecsError, ValidationError
 from .swagger import Swagger
-from .tools import createApiModel
 from .__about__ import __version__, __description__
 
 __all__ = (

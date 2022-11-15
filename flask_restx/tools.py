@@ -4,6 +4,7 @@ __all__= ['createApiModel']
 from sqlalchemy.inspection import inspect
 from flask_restx import fields
 from sqlalchemy import types
+from flask_restx import Model
 
 _not_allowed = ['TypeEngine', 'TypeDecorator', 'UserDefinedType','PickleType']
 conversion = {'INT':'Integer',
@@ -51,13 +52,21 @@ conversion = {'INT':'Integer',
 
 fieldtypes = [r for r in types.__all__ if r not in _not_allowed]
 
-def createApiModel(api, table, modelname='', readonlyfields=[], show=[]):
+
+def createApiModel(api, table: str, modelname: str = None, readonlyfields: list = [], show: list = []) -> Model:
+    """Create Flask-restx ApiModel from a related api
+
+    Args:
+        api: 
+        table (str): Table name
+        modelname (Optional[str], optional): Custom model name. if it's is None then the modelname will be the capitalized tablename.
+        readonlyfields (Optional[list], optional): Set readonly fields. Defaults to [].
+        show (Optional[list], optional): Set shown fields. Defaults to [].
+    
+    Return:
+        Model
     """
-    api: an instance of API
-    table: sqltable
-    readonlyfields: optional - fields to be readonly
-    show: optiona-  - forcing fields to be a user input
-    """
+    
     res = {}
     foreignsmapped = []
     for fieldname, col in table.__table__.columns.items():
@@ -79,12 +88,13 @@ def createApiModel(api, table, modelname='', readonlyfields=[], show=[]):
             if len(col.foreign_keys) > 0:
                 foreignsmapped.extend(list(col.foreign_keys))
             res[fieldname] = getattr(fields, conversion[_tipo])(**params)
-   # cheking for relationships
+    # cheking for relationships
+    relationitems = []
     try:
         relationitems = inspect(table).relationships.items()
     except:
-        # It could faild in composed primary_keys
-        relationitems = []
+        # It could faild in composed primary keys
+        pass
     for field, relationship in relationitems:
         if relationship.backref != table.__tablename__:
             continue
