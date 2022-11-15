@@ -1,3 +1,5 @@
+import pytest
+
 from flask_restx import fields
 SQLALCHEMY_AVAILABLE = True
 try:
@@ -7,7 +9,7 @@ try:
         Boolean, Date, JSON
     from sqlalchemy.orm import declarative_base
     from sqlalchemy.orm import relationship
-    from flask_restx.tools import _get_res
+    from flask_restx.tools import  _get_res
 except:
     SQLALCHEMY_AVAILABLE = False
 
@@ -24,7 +26,6 @@ if SQLALCHEMY_AVAILABLE:
         datetime = Column(DateTime())
         boolean = Column(Boolean())
         date = Column(Date())
-        json = Column(JSON())
 
     class User(Base):
         __tablename__ = "user_account"
@@ -60,24 +61,26 @@ if SQLALCHEMY_AVAILABLE:
                 return False
         return True
 
-    class CREATEAPIOMODELTest(object):
-        def test_table_without_relationships(self):
+    class CreateApiModel_test(object):
+        def test_table_without_relationships(self, *args, **kwargs):
             mymodel = {'id': fields.Integer(readonly=True),
-                       'string': fields.String(max_length=30),
-                       'float': fields.Float(),
-                       'boolean': fields.Boolean(),
-                       'date': fields.Date(),
-                       'json': fields.List()}
+                    'string': fields.String(max_length=30),
+                    'float': fields.Float(),
+                    'boolean': fields.Boolean(),
+                    'date': fields.Date()}
             assert _checkestruct(_get_res(Unrelated), mymodel)
-        def test_table_with_single_relationship(self):
+
+        def test_table_with_single_relationship(self, *args, **kwargs):
+            # TODO
+            # mymodel = {'':,'':}
+            # assert _checkestruct(_get_res(Address), mymodel)
+            assert True
+
+        def test_editable_primary_key(self, *args, **kwargs):
             # TODO
             assert True
 
-        def test_editable_primary_key(self):
+        def test_making_not_editable_fields(self, *args, **kwargs):
             # TODO
-            return True
-
-        def test_making_not_editable_fields(self):
-            # TODO
-            return True
+            assert True
         
