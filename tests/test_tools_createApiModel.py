@@ -3,8 +3,16 @@ from flask_restx import fields
 SQLALCHEMY_AVAILABLE = True
 try:
 
-    from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey,\
-        Integer, String
+    from sqlalchemy import (
+        Boolean,
+        Column,
+        Date,
+        DateTime,
+        Float,
+        ForeignKey,
+        Integer,
+        String,
+    )
     from sqlalchemy.orm import declarative_base, relationship
 
     from flask_restx.tools import _get_res
@@ -17,7 +25,7 @@ if SQLALCHEMY_AVAILABLE:
     Base = declarative_base()
 
     class Unrelated(Base):
-        __tablename__ = 'unrelated_table'
+        __tablename__ = "unrelated_table"
         id = Column(Integer, primary_key=True)
         string = Column(String(30))
         float = Column(Float())
@@ -42,8 +50,7 @@ if SQLALCHEMY_AVAILABLE:
         __tablename__ = "address"
         id = Column(Integer, primary_key=True)
         email_address = Column(String, nullable=False)
-        user_id = Column(Integer, ForeignKey(
-            "user_account.id"), nullable=False)
+        user_id = Column(Integer, ForeignKey("user_account.id"), nullable=False)
         user = relationship("User", back_populates="addresses")
 
         def __repr__(self):
@@ -63,11 +70,13 @@ if SQLALCHEMY_AVAILABLE:
 
     class CreateApiModel_test(object):
         def test_table_without_relationships(self, *args, **kwargs):
-            mymodel = {'id': fields.Integer(readonly=True),
-                    'string': fields.String(max_length=30),
-                    'float': fields.Float(),
-                    'boolean': fields.Boolean(),
-                    'date': fields.Date()}
+            mymodel = {
+                "id": fields.Integer(readonly=True),
+                "string": fields.String(max_length=30),
+                "float": fields.Float(),
+                "boolean": fields.Boolean(),
+                "date": fields.Date(),
+            }
             assert _checkestruct(_get_res(Unrelated), mymodel)
 
         def test_table_with_single_relationship(self, *args, **kwargs):
