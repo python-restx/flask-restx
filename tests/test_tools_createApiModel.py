@@ -1,4 +1,12 @@
+# codign:utf-8
+from pathlib import Path
+from sys import path
+
+p = Path(__file__).parent.parent.resolve()
+path.insert(0,str(p))
+
 from flask_restx import fields
+from flask_restx.tools import _get_res
 
 SQLALCHEMY_AVAILABLE = True
 try:
@@ -14,9 +22,8 @@ try:
         String,
     )
     from sqlalchemy.orm import declarative_base, relationship
-
-    from flask_restx.tools import _get_res
 except ImportError:
+    print("ERROR")
     SQLALCHEMY_AVAILABLE = False
 
 

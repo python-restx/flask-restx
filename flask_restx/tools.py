@@ -1,9 +1,9 @@
 # coding:utf-8
 __all__ = ["createApiModel", "_get_res"]
 from sqlalchemy.inspection import inspect
-from flask_restx import fields
+from . import fields
 from sqlalchemy import types
-from flask_restx import Model
+from .model import Model
 
 _not_allowed = ["TypeEngine", "TypeDecorator", "UserDefinedType", "PickleType"]
 conversion = {
