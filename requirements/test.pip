@@ -10,3 +10,4 @@ pytest-profiling==1.7.0
 tzlocal
 invoke==1.7.3
 twine==3.8.0
+Flask-SQLAlchemy==3.0.2
