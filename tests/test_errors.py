@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
 import logging
 
@@ -456,7 +453,7 @@ class ErrorsTest(object):
 
         @api.errorhandler(BadRequest)
         def handle_bad_request(error):
-          return {"message": str(error), "value": "test"}, 400
+            return {"message": str(error), "value": "test"}, 400
 
         got_request_exception.connect(record, app)
         try:
@@ -680,7 +677,7 @@ class ErrorsTest(object):
         returned to client, even if PROPAGATE_EXCEPTIONS is set."""
         app.config["PROPAGATE_EXCEPTIONS"] = True
         api = restx.Api(app)
-        namespace = restx.Namespace('test_namespace')
+        namespace = restx.Namespace("test_namespace")
         api.add_namespace(namespace)
 
         @namespace.route("/test/", endpoint="test")
