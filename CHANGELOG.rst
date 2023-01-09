@@ -25,6 +25,18 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.0.3:
+1.0.3
+-----
+
+.. _bug_fixes-1.0.3
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fix failing pypy python setup in github actions.
+
 .. _section-1.0.2:
 1.0.2
 -----
