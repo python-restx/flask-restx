@@ -228,7 +228,7 @@ class Api(object):
         self.license = kwargs.get("license", self.license)
         self.license_url = kwargs.get("license_url", self.license_url)
         self.url_scheme = kwargs.get("url_scheme", self.url_scheme)
-        self._add_specs = kwargs.get("add_specs", True)
+        self._add_specs = kwargs.get("add_specs", True if self._doc else False)
 
         # If app is a blueprint, defer the initialization
         try:
