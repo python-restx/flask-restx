@@ -36,6 +36,7 @@ Bug Fixes
 ::
 
    * Fix failing pypy python setup in github actions
+   * Fix compatibility with upcoming release of Flask 2.3+. (#485) [jdieter]
 
 .. _section-1.0.2:
 1.0.2
