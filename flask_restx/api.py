@@ -229,6 +229,8 @@ class Api(object):
         self.license_url = kwargs.get("license_url", self.license_url)
         self.url_scheme = kwargs.get("url_scheme", self.url_scheme)
         self._add_specs = kwargs.get("add_specs", True)
+        self._register_specs(app)
+        self._register_doc(app)
 
         # If app is a blueprint, defer the initialization
         try:
@@ -245,9 +247,6 @@ class Api(object):
 
         :param flask.Flask app: The flask application object
         """
-        self._register_specs(self.blueprint or app)
-        self._register_doc(self.blueprint or app)
-
         app.handle_exception = partial(self.error_router, app.handle_exception)
         app.handle_user_exception = partial(
             self.error_router, app.handle_user_exception
@@ -686,7 +685,7 @@ class Api(object):
         # client if a handler is configured for the exception.
         if (
             not isinstance(e, HTTPException)
-            and current_app.propagate_exceptions
+            and current_app.config.get("PROPAGATE_EXCEPTIONS", False)
             and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
 
