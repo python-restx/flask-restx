@@ -368,7 +368,6 @@ class PayloadTest(object):
         @api.route("/empty/")
         class Payload(restx.Resource):
             def post(self):
-
                 return {}
 
         response = client.post(

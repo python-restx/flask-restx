@@ -688,7 +688,6 @@ class Api(object):
             and current_app.config.get("PROPAGATE_EXCEPTIONS", False)
             and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
-
             exc_type, exc_value, tb = sys.exc_info()
             if exc_value is e:
                 raise
