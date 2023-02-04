@@ -25,11 +25,23 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
-.. _section-1.0.4:
-1.0.4
+.. _section-1.0.7:
+1.0.7
 -----
 
-.. _bug_fixes-1.0.4
+.. _bug_fixes-1.0.7
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Update Black to 2023 version [peter_doggart]
+
+.. _section-1.0.5:
+1.0.5
+-----
+
+.. _bug_fixes-1.0.5
 Bug Fixes
 ~~~~~~~~~
 

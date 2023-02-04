@@ -164,7 +164,6 @@ class ErrorsTest(object):
     def test_blunder_in_errorhandler_is_not_suppressed_in_logs(
         self, app, client, caplog
     ):
-
         api = restx.Api(app)
 
         class CustomException(RuntimeError):

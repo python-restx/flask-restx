@@ -2197,6 +2197,7 @@ class SwaggerTest(object):
         This tests that the swagger.json document will not be written with duplicate object keys
         due to the coercion of dict keys to string. The last @api.response should win.
         """
+
         # Note the use of a strings '404' and '200' in class decorators as opposed to ints in method decorators.
         @api.response("404", "Not Found")
         class BaseResource(restx.Resource):
