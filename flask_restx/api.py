@@ -685,7 +685,10 @@ class Api(object):
         # client if a handler is configured for the exception.
         if (
             not isinstance(e, HTTPException)
-            and current_app.config.get("PROPAGATE_EXCEPTIONS", False)
+            and (
+                current_app.config.get("PROPAGATE_EXCEPTIONS")
+                or (current_app.testing or current_app.debug)
+            )
             and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
             exc_type, exc_value, tb = sys.exc_info()
