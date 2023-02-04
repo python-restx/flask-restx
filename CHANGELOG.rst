@@ -35,7 +35,8 @@ Bug Fixes
 
 ::
 
-   * Update Black to 2023 version [peter_doggart]
+   * Update Black to 2023 version [peter-doggart]
+   * Fix minor bug introduced in 1.0.5 that changed the behaviour of how flask-restx propagates exceptions. (#512) [peter-doggart]
 
 .. _section-1.0.5:
 1.0.5
