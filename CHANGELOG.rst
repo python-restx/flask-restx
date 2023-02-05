@@ -37,6 +37,8 @@ Bug Fixes
 
    * Update Black to 2023 version [peter-doggart]
    * Fix minor bug introduced in 1.0.5 that changed the behaviour of how flask-restx propagates exceptions. (#512) [peter-doggart]
+   * Update PyPi classifer to Production/Stable. [peter-doggart]
+   * Add support for Python 3.11 (requires update to invoke ^2.0.0) [peter-doggart]
 
 .. _section-1.0.5:
 1.0.5
