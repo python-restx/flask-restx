@@ -214,7 +214,7 @@ def build_request_body_parameters_schema(body_params):
 
     properties = {}
     for param in body_params:
-        if body_params[0]["name"] is not None:
+        if param["name"] is not None:
             properties[param["name"]] = {"type": param.get("type", "string")}
 
     return {
