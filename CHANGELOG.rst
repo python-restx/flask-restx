@@ -35,6 +35,19 @@ Bug Fixes
 
 ::
 
+   * Update Swagger-UI to latest version to fix several security vulnerabiltiies. [peter-doggart]
+   * Add a warning to the docs that nested Blueprints are not supported. [peter-doggart]
+
+.. _section-1.0.6:
+1.0.6
+-----
+
+.. _bug_fixes-1.0.6
+Bug Fixes
+~~~~~~~~~
+
+::
+
    * Update Black to 2023 version [peter-doggart]
    * Fix minor bug introduced in 1.0.5 that changed the behaviour of how flask-restx propagates exceptions. (#512) [peter-doggart]
    * Update PyPi classifer to Production/Stable. [peter-doggart]
