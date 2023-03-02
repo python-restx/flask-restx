@@ -38,7 +38,7 @@ and expose its documentation properly using `Swagger`_.
 Compatibility
 =============
 
-Flask-RESTX requires Python 2.7 or 3.4+.
+Flask-RESTX requires Python 3.7+.
 
 On Flask Compatibility
 ======================
@@ -189,7 +189,8 @@ Contributors
 
 Flask-RESTX is brought to you by @python-restx. Since early 2019 @SteadBytes,
 @a-luna, @j5awry, @ziirish volunteered to help @python-restx keep the project up
-and running.
+and running, they did so for a long time! Since the beginning of 2023, the project
+is maintained by @peter-doggart with help from @ziirish.
 Of course everyone is welcome to contribute and we will be happy to review your
 PR's or answer to your issues.
 

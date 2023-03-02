@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import flask_restx as restx
 
 
@@ -202,9 +199,20 @@ class PayloadTest(object):
         """It should perform validation with inheritance (allOf/$ref)"""
         api = restx.Api(app, validate=True)
 
-        fields = api.model("Parent", {"name": restx.fields.String(required=True),})
+        fields = api.model(
+            "Parent",
+            {
+                "name": restx.fields.String(required=True),
+            },
+        )
 
-        child_fields = api.inherit("Child", fields, {"age": restx.fields.Integer,})
+        child_fields = api.inherit(
+            "Child",
+            fields,
+            {
+                "age": restx.fields.Integer,
+            },
+        )
 
         @api.route("/validation/")
         class Inheritance(restx.Resource):
@@ -212,9 +220,23 @@ class PayloadTest(object):
             def post(self):
                 return {}
 
-        client.post_json("/validation/", {"name": "John Doe", "age": 15,})
+        client.post_json(
+            "/validation/",
+            {
+                "name": "John Doe",
+                "age": 15,
+            },
+        )
 
-        self.assert_errors(client, "/validation/", {"age": "15",}, "name", "age")
+        self.assert_errors(
+            client,
+            "/validation/",
+            {
+                "age": "15",
+            },
+            "name",
+            "age",
+        )
 
     def test_validation_on_list(self, app, client):
         """It should perform validation on lists"""
@@ -346,7 +368,6 @@ class PayloadTest(object):
         @api.route("/empty/")
         class Payload(restx.Resource):
             def post(self):
-
                 return {}
 
         response = client.post(

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
 import logging
 
@@ -167,7 +164,6 @@ class ErrorsTest(object):
     def test_blunder_in_errorhandler_is_not_suppressed_in_logs(
         self, app, client, caplog
     ):
-
         api = restx.Api(app)
 
         class CustomException(RuntimeError):
@@ -329,6 +325,48 @@ class ErrorsTest(object):
         with pytest.raises(Exception):
             client.get("/api/test/")
 
+    def test_default_errorhandler_with_propagate_not_set_but_testing(self, app, client):
+        blueprint = Blueprint("api", __name__, url_prefix="/api")
+        api = restx.Api(blueprint)
+
+        @api.route("/test/")
+        class TestResource(restx.Resource):
+            def get(self):
+                raise Exception("error")
+
+        app.register_blueprint(blueprint)
+
+        app.config["PROPAGATE_EXCEPTIONS"] = None
+        app.testing = True
+
+        # From the Flask docs:
+        # PROPAGATE_EXCEPTIONS
+        # Exceptions are re-raised rather than being handled by the app’s error handlers.
+        # If not set, this is implicitly true if TESTING or DEBUG is enabled.
+        with pytest.raises(Exception):
+            client.get("/api/test/")
+
+    def test_default_errorhandler_with_propagate_not_set_but_debug(self, app, client):
+        blueprint = Blueprint("api", __name__, url_prefix="/api")
+        api = restx.Api(blueprint)
+
+        @api.route("/test/")
+        class TestResource(restx.Resource):
+            def get(self):
+                raise Exception("error")
+
+        app.register_blueprint(blueprint)
+
+        app.config["PROPAGATE_EXCEPTIONS"] = None
+        app.debug = True
+
+        # From the Flask docs:
+        # PROPAGATE_EXCEPTIONS
+        # Exceptions are re-raised rather than being handled by the app’s error handlers.
+        # If not set, this is implicitly true if TESTING or DEBUG is enabled.
+        with pytest.raises(Exception):
+            client.get("/api/test/")
+
     def test_custom_default_errorhandler(self, app, client):
         api = restx.Api(app)
 
@@ -456,7 +494,7 @@ class ErrorsTest(object):
 
         @api.errorhandler(BadRequest)
         def handle_bad_request(error):
-          return {"message": str(error), "value": "test"}, 400
+            return {"message": str(error), "value": "test"}, 400
 
         got_request_exception.connect(record, app)
         try:
@@ -680,7 +718,7 @@ class ErrorsTest(object):
         returned to client, even if PROPAGATE_EXCEPTIONS is set."""
         app.config["PROPAGATE_EXCEPTIONS"] = True
         api = restx.Api(app)
-        namespace = restx.Namespace('test_namespace')
+        namespace = restx.Namespace("test_namespace")
         api.add_namespace(namespace)
 
         @namespace.route("/test/", endpoint="test")

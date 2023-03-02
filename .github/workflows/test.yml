@@ -10,52 +10,18 @@ on:
     - cron: "0 1 * * *"
   workflow_dispatch:
 jobs:
-  checks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ".[dev]"
-      - name: Audit Python packages for known vulnerabilities
-        run: |
-          if ! RES=$(ossaudit --installed --config setup.cfg); then
-            RES="${RES//'%'/'%25'}"
-            RES="${RES//$'\n'/'%0A'}"
-            RES="${RES//$'\r'/'%0D'}"
-            echo "::error ::${RES}"
-            exit 1
-          fi
-          echo ${RES}
-      - name: Format with black
-        run: |
-          if ! RES=$(black --check $(git diff --name-only --diff-filter=AM master -- "*.py") 2>&1); then
-            RES="${RES//'%'/'%25'}"
-            RES="${RES//$'\n'/'%0A'}"
-            RES="${RES//$'\r'/'%0D'}"
-            echo "::error ::${RES}"
-            exit 1
-          fi
-          echo ${RES}
   unit-tests:
-    needs: checks
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, pypy2, pypy3]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "pypy3.8"]
     steps:
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -72,16 +38,16 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Set up Python 3.8
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.8"
       - name: Checkout ${{ github.base_ref }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.base_ref}}
           path: base
       - name: Checkout ${{ github.ref }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref}}
           path: ref

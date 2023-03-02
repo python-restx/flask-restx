@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from datetime import date, datetime
 from decimal import Decimal
@@ -123,7 +120,7 @@ class StringTestMixin(object):
 
 
 class RawFieldTest(BaseFieldTestMixin, FieldTestCase):
-    """ Test Raw field AND some common behaviors"""
+    """Test Raw field AND some common behaviors"""
 
     field_class = fields.Raw
 
@@ -234,7 +231,12 @@ class StringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         assert field.__schema__ == {"type": "string"}
 
     def test_discriminator_output(self, api):
-        model = api.model("Test", {"name": fields.String(discriminator=True),})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.String(discriminator=True),
+            },
+        )
 
         data = api.marshal({}, model)
         assert data == {"name": "Test"}
@@ -251,7 +253,13 @@ class StringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         with pytest.raises(ValueError):
             api.marshal(object(), model)
 
-    @pytest.mark.parametrize("value,expected", [("string", "string"), (42, "42"),])
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            ("string", "string"),
+            (42, "42"),
+        ],
+    )
     def test_values(self, value, expected):
         self.assert_field(fields.String(), value, expected)
 
@@ -271,7 +279,14 @@ class IntegerFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
         self.assert_field(field, None, 42)
 
     @pytest.mark.parametrize(
-        "value,expected", [(0, 0), (42, 42), ("42", 42), (None, None), (66.6, 66),]
+        "value,expected",
+        [
+            (0, 0),
+            (42, 42),
+            ("42", 42),
+            (None, None),
+            (66.6, 66),
+        ],
     )
     def test_value(self, value, expected):
         self.assert_field(fields.Integer(), value, expected)
@@ -340,7 +355,12 @@ class FloatFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
         assert field.format(None) == 0.5
 
     @pytest.mark.parametrize(
-        "value,expected", [("-3.13", -3.13), (str(-3.13), -3.13), (3, 3.0),]
+        "value,expected",
+        [
+            ("-3.13", -3.13),
+            (str(-3.13), -3.13),
+            (3, 3.0),
+        ],
     )
     def test_value(self, value, expected):
         self.assert_field(fields.Float(), value, expected)
@@ -414,7 +434,13 @@ class ArbitraryFieldTest(BaseFieldTestMixin, NumberTestMixin, FieldTestCase):
         field = fields.Arbitrary(default=0.5)
         assert field.__schema__ == {"type": "number", "default": 0.5}
 
-    @pytest.mark.parametrize("value,expected", [(PI_STR, PI_STR), (PI, PI_STR),])
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (PI_STR, PI_STR),
+            (PI, PI_STR),
+        ],
+    )
     def test_value(self, value, expected):
         self.assert_field(fields.Arbitrary(), value, expected)
 
@@ -1141,7 +1167,12 @@ class ClassNameFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         assert field.__schema__ == {"type": "string"}
 
     def test_default_output_classname(self, api):
-        model = api.model("Test", {"name": fields.ClassName(),})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.ClassName(),
+            },
+        )
 
         class FakeClass(object):
             pass
@@ -1150,7 +1181,12 @@ class ClassNameFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         assert data == {"name": "FakeClass"}
 
     def test_output_dash(self, api):
-        model = api.model("Test", {"name": fields.ClassName(dash=True),})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.ClassName(dash=True),
+            },
+        )
 
         class FakeClass(object):
             pass
@@ -1159,7 +1195,12 @@ class ClassNameFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
         assert data == {"name": "fake_class"}
 
     def test_with_dict(self, api):
-        model = api.model("Test", {"name": fields.ClassName(),})
+        model = api.model(
+            "Test",
+            {
+                "name": fields.ClassName(),
+            },
+        )
 
         data = api.marshal({}, model)
         assert data == {"name": "object"}
@@ -1167,11 +1208,28 @@ class ClassNameFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
 
 class PolymorphTest(FieldTestCase):
     def test_polymorph_field(self, api):
-        parent = api.model("Person", {"name": fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -1183,7 +1241,12 @@ class PolymorphTest(FieldTestCase):
 
         mapping = {Child1: child1, Child2: child2}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         def data(cls):
             return api.marshal({"owner": cls()}, thing)
@@ -1193,9 +1256,19 @@ class PolymorphTest(FieldTestCase):
         assert data(Child2) == {"owner": {"name": "child2", "extra2": "extra2"}}
 
     def test_polymorph_field_no_common_ancestor(self, api):
-        child1 = api.model("Child1", {"extra1": fields.String,})
+        child1 = api.model(
+            "Child1",
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.model("Child2", {"extra2": fields.String,})
+        child2 = api.model(
+            "Child2",
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             pass
@@ -1209,11 +1282,28 @@ class PolymorphTest(FieldTestCase):
             fields.Polymorph(mapping)
 
     def test_polymorph_field_unknown_class(self, api):
-        parent = api.model("Person", {"name": fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -1225,7 +1315,12 @@ class PolymorphTest(FieldTestCase):
 
         mapping = {Child1: child1, Child2: child2}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         with pytest.raises(ValueError):
             api.marshal({"owner": object()}, thing)
@@ -1234,9 +1329,20 @@ class PolymorphTest(FieldTestCase):
         """
         Regression test for https://github.com/noirbizarre/flask-restx/pull/691
         """
-        parent = api.model("Parent", {"name": fields.String,})
+        parent = api.model(
+            "Parent",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child = api.inherit("Child", parent, {"extra": fields.String,})
+        child = api.inherit(
+            "Child",
+            parent,
+            {
+                "extra": fields.String,
+            },
+        )
 
         class Parent(object):
             name = "parent"
@@ -1246,16 +1352,38 @@ class PolymorphTest(FieldTestCase):
 
         mapping = {Parent: parent, Child: child}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         api.marshal({"owner": Child()}, thing)
 
     def test_polymorph_field_required_default(self, api):
-        parent = api.model("Person", {"name": fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -1281,11 +1409,28 @@ class PolymorphTest(FieldTestCase):
         assert data == {"owner": {"name": "default"}}
 
     def test_polymorph_field_not_required(self, api):
-        parent = api.model("Person", {"name": fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -1297,7 +1442,12 @@ class PolymorphTest(FieldTestCase):
 
         mapping = {Child1: child1, Child2: child2}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         data = api.marshal({}, thing)
 
@@ -1306,12 +1456,27 @@ class PolymorphTest(FieldTestCase):
     def test_polymorph_with_discriminator(self, api):
         parent = api.model(
             "Person",
-            {"name": fields.String, "model": fields.String(discriminator=True),},
+            {
+                "name": fields.String,
+                "model": fields.String(discriminator=True),
+            },
         )
 
-        child1 = api.inherit("Child1", parent, {"extra1": fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": fields.String,
+            },
+        )
 
         class Child1(object):
             name = "child1"
@@ -1323,7 +1488,12 @@ class PolymorphTest(FieldTestCase):
 
         mapping = {Child1: child1, Child2: child2}
 
-        thing = api.model("Thing", {"owner": fields.Polymorph(mapping),})
+        thing = api.model(
+            "Thing",
+            {
+                "owner": fields.Polymorph(mapping),
+            },
+        )
 
         def data(cls):
             return api.marshal({"owner": cls()}, thing)
@@ -1393,19 +1563,19 @@ class FieldsHelpersTest(object):
         assert fields.get_value("value", obj) == "hi"
 
     def test_get_value_int_indexable_list(self):
-        assert fields.get_value('bar.0', {'bar': [42]}) == 42
+        assert fields.get_value("bar.0", {"bar": [42]}) == 42
 
     def test_get_value_int_indexable_list_with_str(self):
-        assert fields.get_value('bar.abc', {'bar': [42]}) is None
+        assert fields.get_value("bar.abc", {"bar": [42]}) is None
 
     def test_get_value_int_indexable_nested_list(self):
-        assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42
+        assert fields.get_value("bar.0.val", {"bar": [{"val": 42}]}) == 42
 
     def test_get_value_int_indexable_tuple_with_str(self):
-        assert fields.get_value('bar.abc', {'bar': (42, 43)}) is None
+        assert fields.get_value("bar.abc", {"bar": (42, 43)}) is None
 
     def test_get_value_int_indexable_tuple(self):
-        assert fields.get_value('bar.0', {'bar': (42, 43)}) == 42
+        assert fields.get_value("bar.0", {"bar": (42, 43)}) == 42
 
     def test_get_value_int_indexable_nested_tuple(self):
-        assert fields.get_value('bar.0.val', {'bar': [{'val': 42}]}) == 42
+        assert fields.get_value("bar.0.val", {"bar": [{"val": 42}]}) == 42

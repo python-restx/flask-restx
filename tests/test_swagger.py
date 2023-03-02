@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import pytest
 
 from textwrap import dedent
@@ -194,7 +191,12 @@ class SwaggerTest(object):
 
     def test_specs_endpoint_tags_tuple(self, app, client):
         restx.Api(
-            app, tags=[("tag-1", "Tag 1"), ("tag-2", "Tag 2"), ("tag-3", "Tag 3"),]
+            app,
+            tags=[
+                ("tag-1", "Tag 1"),
+                ("tag-2", "Tag 2"),
+                ("tag-3", "Tag 3"),
+            ],
         )
 
         data = client.get_specs("")
@@ -345,7 +347,11 @@ class SwaggerTest(object):
         assert "parameters" not in op
         assert "summary" not in op
         assert "description" not in op
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
 
         assert url_for("api.test") == "/api/ns/"
 
@@ -364,7 +370,11 @@ class SwaggerTest(object):
         assert "get" in paths["/test/"]
         op = paths["/test/"]["get"]
         assert op["tags"] == ["default"]
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
 
         assert len(data["tags"]) == 1
         tag = data["tags"][0]
@@ -388,7 +398,11 @@ class SwaggerTest(object):
         assert "get" in paths["/test/"]
         op = paths["/test/"]["get"]
         assert op["tags"] == ["site"]
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
 
         assert len(data["tags"]) == 1
         tag = data["tags"][0]
@@ -414,7 +428,11 @@ class SwaggerTest(object):
         assert "get" in paths["/ns/"]
         op = paths["/ns/"]["get"]
         assert op["tags"] == ["ns"]
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
         assert "parameters" not in op
 
         assert len(data["tags"]) == 1
@@ -443,7 +461,11 @@ class SwaggerTest(object):
         assert "get" in paths["/ns/"]
         op = paths["/ns/"]["get"]
         assert op["tags"] == ["ns"]
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
 
         assert len(data["tags"]) == 1
         tag = data["tags"][-1]
@@ -1028,7 +1050,11 @@ class SwaggerTest(object):
             "/name/<int:age>/",
             endpoint="by-name",
             doc={
-                "get": {"params": {"q": "A query string",}},
+                "get": {
+                    "params": {
+                        "q": "A query string",
+                    }
+                },
                 "params": {"age": "An age"},
             },
         )
@@ -1083,14 +1109,38 @@ class SwaggerTest(object):
         class NativeTypesResource(restx.Resource):
             @api.doc(
                 params={
-                    "int": {"type": int, "in": "query",},
-                    "float": {"type": float, "in": "query",},
-                    "bool": {"type": bool, "in": "query",},
-                    "str": {"type": str, "in": "query",},
-                    "int-array": {"type": [int], "in": "query",},
-                    "float-array": {"type": [float], "in": "query",},
-                    "bool-array": {"type": [bool], "in": "query",},
-                    "str-array": {"type": [str], "in": "query",},
+                    "int": {
+                        "type": int,
+                        "in": "query",
+                    },
+                    "float": {
+                        "type": float,
+                        "in": "query",
+                    },
+                    "bool": {
+                        "type": bool,
+                        "in": "query",
+                    },
+                    "str": {
+                        "type": str,
+                        "in": "query",
+                    },
+                    "int-array": {
+                        "type": [int],
+                        "in": "query",
+                    },
+                    "float-array": {
+                        "type": [float],
+                        "in": "query",
+                    },
+                    "bool-array": {
+                        "type": [bool],
+                        "in": "query",
+                    },
+                    "str-array": {
+                        "type": [str],
+                        "in": "query",
+                    },
                 }
             )
             def get(self, age):
@@ -1117,12 +1167,20 @@ class SwaggerTest(object):
         assert parameters["bool-array"]["items"]["type"] == "boolean"
 
     def test_response_on_method(self, api, client):
-        api.model("ErrorModel", {"message": restx.fields.String,})
+        api.model(
+            "ErrorModel",
+            {
+                "message": restx.fields.String,
+            },
+        )
 
         @api.route("/test/")
         class ByNameResource(restx.Resource):
             @api.doc(
-                responses={404: "Not found", 405: ("Some message", "ErrorModel"),}
+                responses={
+                    404: "Not found",
+                    405: ("Some message", "ErrorModel"),
+                }
             )
             def get(self):
                 return {}
@@ -1134,10 +1192,14 @@ class SwaggerTest(object):
         op = paths["/test/"]["get"]
         assert op["tags"] == ["default"]
         assert op["responses"] == {
-            "404": {"description": "Not found",},
+            "404": {
+                "description": "Not found",
+            },
             "405": {
                 "description": "Some message",
-                "schema": {"$ref": "#/definitions/ErrorModel",},
+                "schema": {
+                    "$ref": "#/definitions/ErrorModel",
+                },
             },
         }
 
@@ -1155,7 +1217,11 @@ class SwaggerTest(object):
         paths = data["paths"]
 
         op = paths["/test/"]["get"]
-        assert op["responses"] == {"200": {"description": "Success",}}
+        assert op["responses"] == {
+            "200": {
+                "description": "Success",
+            }
+        }
 
     def test_api_response_multiple(self, api, client):
         @api.route("/test/")
@@ -1170,12 +1236,21 @@ class SwaggerTest(object):
 
         op = paths["/test/"]["get"]
         assert op["responses"] == {
-            "200": {"description": "Success",},
-            "400": {"description": "Validation error",},
+            "200": {
+                "description": "Success",
+            },
+            "400": {
+                "description": "Validation error",
+            },
         }
 
     def test_api_response_with_model(self, api, client):
-        model = api.model("SomeModel", {"message": restx.fields.String,})
+        model = api.model(
+            "SomeModel",
+            {
+                "message": restx.fields.String,
+            },
+        )
 
         @api.route("/test/")
         class TestResource(restx.Resource):
@@ -1190,7 +1265,9 @@ class SwaggerTest(object):
         assert op["responses"] == {
             "200": {
                 "description": "Success",
-                "schema": {"$ref": "#/definitions/SomeModel",},
+                "schema": {
+                    "$ref": "#/definitions/SomeModel",
+                },
             }
         }
 
@@ -1207,7 +1284,11 @@ class SwaggerTest(object):
         paths = data["paths"]
 
         op = paths["/test/"]["get"]
-        assert op["responses"] == {"default": {"description": "Error",}}
+        assert op["responses"] == {
+            "default": {
+                "description": "Error",
+            }
+        }
 
     def test_api_header(self, api, client):
         @api.route("/test/")
@@ -1505,7 +1586,12 @@ class SwaggerTest(object):
         )
 
     def test_model_as_nested_dict(self, api, client):
-        address_fields = api.model("Address", {"road": restx.fields.String,})
+        address_fields = api.model(
+            "Address",
+            {
+                "road": restx.fields.String,
+            },
+        )
 
         fields = api.model("Person", {"address": restx.fields.Nested(address_fields)})
 
@@ -1524,13 +1610,17 @@ class SwaggerTest(object):
         assert "definitions" in data
         assert "Person" in data["definitions"]
         assert data["definitions"]["Person"] == {
-            "properties": {"address": {"$ref": "#/definitions/Address"},},
+            "properties": {
+                "address": {"$ref": "#/definitions/Address"},
+            },
             "type": "object",
         }
 
         assert "Address" in data["definitions"]
         assert data["definitions"]["Address"] == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
@@ -1543,7 +1633,12 @@ class SwaggerTest(object):
         )
 
     def test_model_as_nested_dict_with_details(self, api, client):
-        address_fields = api.model("Address", {"road": restx.fields.String,})
+        address_fields = api.model(
+            "Address",
+            {
+                "road": restx.fields.String,
+            },
+        )
 
         fields = api.model(
             "Person",
@@ -1581,7 +1676,9 @@ class SwaggerTest(object):
 
         assert "Address" in data["definitions"]
         assert data["definitions"]["Address"] == {
-            "properties": {"road": {"type": "string"},},
+            "properties": {
+                "road": {"type": "string"},
+            },
             "type": "object",
         }
 
@@ -1818,7 +1915,10 @@ class SwaggerTest(object):
         assert path["get"]["responses"] == {
             "201": {
                 "description": "Some details",
-                "schema": {"type": "array", "items": {"$ref": "#/definitions/Person"},},
+                "schema": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/Person"},
+                },
             }
         }
 
@@ -1857,7 +1957,12 @@ class SwaggerTest(object):
         }
 
     def test_model_as_nested_dict_with_list(self, api, client):
-        address = api.model("Address", {"road": restx.fields.String,})
+        address = api.model(
+            "Address",
+            {
+                "road": restx.fields.String,
+            },
+        )
 
         person = api.model(
             "Person",
@@ -2016,7 +2121,10 @@ class SwaggerTest(object):
         assert "definitions" in data
         assert "Person" in data["definitions"]
         assert data["definitions"]["Person"] == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "discriminator": "name",
             "required": ["name"],
             "type": "object",
@@ -2042,7 +2150,10 @@ class SwaggerTest(object):
         assert "definitions" in data
         assert "Person" in data["definitions"]
         assert data["definitions"]["Person"] == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "discriminator": "name",
             "required": ["name"],
             "type": "object",
@@ -2058,19 +2169,22 @@ class SwaggerTest(object):
         client.get_specs(status=500)
 
     def test_recursive_model(self, api, client):
-        fields = api.model('Person', {
-            'name': restx.fields.String,
-            'age': restx.fields.Integer,
-            'birthdate': restx.fields.DateTime,
-        })
+        fields = api.model(
+            "Person",
+            {
+                "name": restx.fields.String,
+                "age": restx.fields.Integer,
+                "birthdate": restx.fields.DateTime,
+            },
+        )
 
         fields["children"] = restx.fields.List(
             restx.fields.Nested(fields),
             default=[],
         )
 
-        @api.route('/recursive-model/')
-        @api.doc(get={'model': fields})
+        @api.route("/recursive-model/")
+        @api.doc(get={"model": fields})
         class ModelAsDict(restx.Resource):
             @api.marshal_with(fields)
             def get(self):
@@ -2083,13 +2197,19 @@ class SwaggerTest(object):
         This tests that the swagger.json document will not be written with duplicate object keys
         due to the coercion of dict keys to string. The last @api.response should win.
         """
+
         # Note the use of a strings '404' and '200' in class decorators as opposed to ints in method decorators.
         @api.response("404", "Not Found")
         class BaseResource(restx.Resource):
             def get(self):
                 pass
 
-        model = api.model("SomeModel", {"message": restx.fields.String,})
+        model = api.model(
+            "SomeModel",
+            {
+                "message": restx.fields.String,
+            },
+        )
 
         @api.route("/test/")
         @api.response("200", "Success")
@@ -2110,7 +2230,9 @@ class SwaggerTest(object):
                 "description": "Success on method",
                 "schema": {"$ref": "#/definitions/SomeModel"},
             },
-            "404": {"description": "Not Found on method",},
+            "404": {
+                "description": "Not Found on method",
+            },
         }
 
     def test_clone(self, api, client):
@@ -2123,7 +2245,13 @@ class SwaggerTest(object):
             },
         )
 
-        child = api.clone("Child", parent, {"extra": restx.fields.String,})
+        child = api.clone(
+            "Child",
+            parent,
+            {
+                "extra": restx.fields.String,
+            },
+        )
 
         @api.route("/extend/")
         class ModelAsDict(restx.Resource):
@@ -2151,10 +2279,20 @@ class SwaggerTest(object):
 
     def test_inherit(self, api, client):
         parent = api.model(
-            "Person", {"name": restx.fields.String, "age": restx.fields.Integer,}
+            "Person",
+            {
+                "name": restx.fields.String,
+                "age": restx.fields.Integer,
+            },
         )
 
-        child = api.inherit("Child", parent, {"extra": restx.fields.String,})
+        child = api.inherit(
+            "Child",
+            parent,
+            {
+                "extra": restx.fields.String,
+            },
+        )
 
         @api.route("/inherit/")
         class ModelAsDict(restx.Resource):
@@ -2176,7 +2314,10 @@ class SwaggerTest(object):
         assert "Person" in data["definitions"]
         assert "Child" in data["definitions"]
         assert data["definitions"]["Person"] == {
-            "properties": {"name": {"type": "string"}, "age": {"type": "integer"},},
+            "properties": {
+                "name": {"type": "string"},
+                "age": {"type": "integer"},
+            },
             "type": "object",
         }
         assert data["definitions"]["Child"] == {
@@ -2203,10 +2344,20 @@ class SwaggerTest(object):
 
     def test_inherit_inline(self, api, client):
         parent = api.model(
-            "Person", {"name": restx.fields.String, "age": restx.fields.Integer,}
+            "Person",
+            {
+                "name": restx.fields.String,
+                "age": restx.fields.Integer,
+            },
         )
 
-        child = api.inherit("Child", parent, {"extra": restx.fields.String,})
+        child = api.inherit(
+            "Child",
+            parent,
+            {
+                "extra": restx.fields.String,
+            },
+        )
 
         output = api.model(
             "Output",
@@ -2221,10 +2372,22 @@ class SwaggerTest(object):
             @api.marshal_with(output)
             def get(self):
                 return {
-                    "child": {"name": "John", "age": 42, "extra": "test",},
+                    "child": {
+                        "name": "John",
+                        "age": 42,
+                        "extra": "test",
+                    },
                     "children": [
-                        {"name": "John", "age": 42, "extra": "test",},
-                        {"name": "Doe", "age": 33, "extra": "test2",},
+                        {
+                            "name": "John",
+                            "age": 42,
+                            "extra": "test",
+                        },
+                        {
+                            "name": "Doe",
+                            "age": 33,
+                            "extra": "test2",
+                        },
                     ],
                 }
 
@@ -2236,10 +2399,22 @@ class SwaggerTest(object):
 
         data = client.get_json("/inherit/")
         assert data == {
-            "child": {"name": "John", "age": 42, "extra": "test",},
+            "child": {
+                "name": "John",
+                "age": 42,
+                "extra": "test",
+            },
             "children": [
-                {"name": "John", "age": 42, "extra": "test",},
-                {"name": "Doe", "age": 33, "extra": "test2",},
+                {
+                    "name": "John",
+                    "age": 42,
+                    "extra": "test",
+                },
+                {
+                    "name": "Doe",
+                    "age": 33,
+                    "extra": "test2",
+                },
             ],
         }
 
@@ -2251,12 +2426,28 @@ class SwaggerTest(object):
             pass
 
         parent = api.model(
-            "Person", {"name": restx.fields.String, "age": restx.fields.Integer,}
+            "Person",
+            {
+                "name": restx.fields.String,
+                "age": restx.fields.Integer,
+            },
         )
 
-        child1 = api.inherit("Child1", parent, {"extra1": restx.fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": restx.fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": restx.fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": restx.fields.String,
+            },
+        )
 
         mapping = {
             Child1: child1,
@@ -2293,11 +2484,28 @@ class SwaggerTest(object):
             name = "Child2"
             extra2 = "extra2"
 
-        parent = api.model("Person", {"name": restx.fields.String,})
+        parent = api.model(
+            "Person",
+            {
+                "name": restx.fields.String,
+            },
+        )
 
-        child1 = api.inherit("Child1", parent, {"extra1": restx.fields.String,})
+        child1 = api.inherit(
+            "Child1",
+            parent,
+            {
+                "extra1": restx.fields.String,
+            },
+        )
 
-        child2 = api.inherit("Child2", parent, {"extra2": restx.fields.String,})
+        child2 = api.inherit(
+            "Child2",
+            parent,
+            {
+                "extra2": restx.fields.String,
+            },
+        )
 
         mapping = {
             Child1: child1,
@@ -2330,8 +2538,14 @@ class SwaggerTest(object):
         data = client.get_json("/polymorph/")
         assert data == {
             "children": [
-                {"name": "Child1", "extra1": "extra1",},
-                {"name": "Child2", "extra2": "extra2",},
+                {
+                    "name": "Child1",
+                    "extra1": "extra1",
+                },
+                {
+                    "name": "Child2",
+                    "extra2": "extra2",
+                },
             ]
         }
 
@@ -2456,7 +2670,10 @@ class SwaggerTest(object):
             "name": "payload",
             "in": "body",
             "required": True,
-            "schema": {"type": "array", "items": {"$ref": "#/definitions/Person"},},
+            "schema": {
+                "type": "array",
+                "items": {"$ref": "#/definitions/Person"},
+            },
         }
 
     def test_both_model_and_parser_from_expect(self, api, client):
@@ -2527,7 +2744,10 @@ class SwaggerTest(object):
             "name": "payload",
             "in": "body",
             "required": True,
-            "schema": {"type": "array", "items": {"type": "string"},},
+            "schema": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
         }
 
     def test_body_model_list(self, api, client):
@@ -2566,7 +2786,10 @@ class SwaggerTest(object):
             "name": "payload",
             "in": "body",
             "required": True,
-            "schema": {"type": "array", "items": {"$ref": "#/definitions/Person"},},
+            "schema": {
+                "type": "array",
+                "items": {"$ref": "#/definitions/Person"},
+            },
         }
 
     def test_expect_model_with_description(self, api, client):
@@ -3096,7 +3319,8 @@ class SwaggerTest(object):
 
     def test_multiple_routes_with_doc_unique_operationIds(self, api, client):
         @api.route(
-            "/foo/bar", doc={"description": "I should be treated separately"},
+            "/foo/bar",
+            doc={"description": "I should be treated separately"},
         )
         @api.route("/bar")
         class TestResource(restx.Resource):
@@ -3282,7 +3506,11 @@ class SwaggerDeprecatedTest(object):
         from flask_restx import fields
 
         api.model(
-            "SomeModel", {"param": fields.String, "count": fields.Integer,},
+            "SomeModel",
+            {
+                "param": fields.String,
+                "count": fields.Integer,
+            },
         )
 
         @api.route("/with-parser/", endpoint="with-parser")
@@ -3309,7 +3537,11 @@ class SwaggerDeprecatedTest(object):
         from flask_restx import fields
 
         api.model(
-            "SomeModel", {"param": fields.String, "count": fields.Integer,},
+            "SomeModel",
+            {
+                "param": fields.String,
+                "count": fields.Integer,
+            },
         )
 
         @api.route("/with-parser/", endpoint="with-parser")
