@@ -112,7 +112,7 @@ See :ref:`swaggerui` for a complete documentation on the automatic documentation
 
 .. note ::
     Initializing the :class:`~Api` object always registers the root endpoint ``/`` 
-    even if the :ref:`swaggerui` path is changed. If you which to use the root 
+    even if the :ref:`swaggerui` path is changed. If you wish to use the root 
     endpoint ``/`` for other purposes, you must register it before initializing 
     the :class:`~Api` object.
 
