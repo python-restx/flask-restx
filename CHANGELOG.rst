@@ -37,6 +37,7 @@ Bug Fixes
 
    * Update Swagger-UI to latest version to fix several security vulnerabiltiies. [peter-doggart]
    * Add a warning to the docs that nested Blueprints are not supported. [peter-doggart]
+   * Add a note to the docs that flask-restx always registers the root (/) path. [peter-doggart]
 
 .. _section-1.0.6:
 1.0.6

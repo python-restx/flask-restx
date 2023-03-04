@@ -110,6 +110,12 @@ You can also use the automatic documentation on you API root (by default).
 In this case: http://127.0.0.1:5000/.
 See :ref:`swaggerui` for a complete documentation on the automatic documentation.
 
+.. note ::
+    Initializing the :class:`~Api` object always registers the root endpoint ``/`` 
+    even if the :ref:`swaggerui` path is changed. If you which to use the root 
+    endpoint ``/`` for other purposes, you must register it before initializing 
+    the :class:`~Api` object.
+
 
 Resourceful Routing
 -------------------
