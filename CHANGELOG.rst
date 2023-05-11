@@ -30,7 +30,11 @@ on the Changelog!
 -----
 .. _bug_fixes-1.2.0
 Bug Fixes
-Fixing issue #177 to allow file list uploads, whilst other arugments are present. 
+~~~~~~~~~
+
+::
+
+   * Fixing issue #177 to allow file list uploads, whilst other arugments are present. 
 
 .. _section-1.1.0:
 1.1.0
