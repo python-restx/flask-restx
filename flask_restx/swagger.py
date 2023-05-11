@@ -504,6 +504,9 @@ class Swagger(object):
         if all_params and any(p["in"] == "formData" for p in all_params):
             if any(p["type"] == "file" for p in all_params):
                 operation["consumes"] = ["multipart/form-data"]
+            elif any(p["type"] == "array" and p["collectionFormat"] == "multi" for p in all_params
+                     if "collectionFormat" in p):
+                operation["consumes"] = ["multipart/form-data"]
             else:
                 operation["consumes"] = [
                     "application/x-www-form-urlencoded",
