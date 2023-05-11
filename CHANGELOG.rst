@@ -25,6 +25,13 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.2.0:
+1.2.0
+-----
+.._bug_fixes-1.2.0
+Bug Fixes
+Fixing issue #177 to allow file list uploads, whilst other arugments are present. 
+
 .. _section-1.1.0:
 1.1.0
 -----
