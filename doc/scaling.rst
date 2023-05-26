@@ -152,8 +152,7 @@ Use With Blueprints
 -------------------
 
 See :doc:`flask:blueprints` in the Flask documentation for what blueprints are and why you should use them.
-Here's an example of how to link an :class:`Api` up to a :class:`~flask.Blueprint`. Nested Blueprints are
-not supported. 
+Here's an example of how to link an :class:`Api` up to a :class:`~flask.Blueprint`.
 
 .. code-block:: python
 

@@ -43,6 +43,30 @@ class APITest(object):
             assert url == "http://api.localhost/api/"
             assert api.base_url == "http://api.localhost/api/"
 
+    def test_root_endpoint_with_nested_blueprint(self, app):
+        blueprint = Blueprint("api", __name__, url_prefix="/api")
+        blueprint2 = Blueprint("v1", __name__, url_prefix="/v1")
+        blueprint.register_blueprint(blueprint2)
+        api = restx.Api(blueprint2, version="1.0")
+        app.register_blueprint(blueprint)
+
+        with app.test_request_context():
+            url = url_for("api.v1.root")
+            assert url == "/api/v1/"
+            assert api.base_url == "http://localhost/api/v1/"
+
+    def test_root_endpoint_with_nested_blueprint_with_subdomain(self, app):
+        blueprint = Blueprint("api", __name__, subdomain="api", url_prefix="/api")
+        blueprint2 = Blueprint("v1", __name__, url_prefix="/v1")
+        blueprint.register_blueprint(blueprint2)
+        api = restx.Api(blueprint2, version="1.0")
+        app.register_blueprint(blueprint)
+
+        with app.test_request_context():
+            url = url_for("api.v1.root")
+            assert url == "http://api.localhost/api/v1/"
+            assert api.base_url == "http://api.localhost/api/v1/"
+
     def test_parser(self):
         api = restx.Api()
         assert isinstance(api.parser(), restx.reqparse.RequestParser)
