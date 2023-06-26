@@ -229,6 +229,8 @@ class Api(object):
         self.license_url = kwargs.get("license_url", self.license_url)
         self.url_scheme = kwargs.get("url_scheme", self.url_scheme)
         self._add_specs = kwargs.get("add_specs", True)
+        self._register_specs(app)
+        self._register_doc(app)
 
         # If app is a blueprint, defer the initialization
         try:
@@ -245,9 +247,6 @@ class Api(object):
 
         :param flask.Flask app: The flask application object
         """
-        self._register_specs(self.blueprint or app)
-        self._register_doc(self.blueprint or app)
-
         app.handle_exception = partial(self.error_router, app.handle_exception)
         app.handle_user_exception = partial(
             self.error_router, app.handle_user_exception
@@ -674,6 +673,18 @@ class Api(object):
                 return original_handler(f)
         return original_handler(e)
 
+    def _propagate_exceptions(self):
+        """
+        Returns the value of the ``PROPAGATE_EXCEPTIONS`` configuration
+        value in case it's set, otherwise return true if app.debug or
+        app.testing is set. This method was deprecated in Flask 2.3 but
+        we still need it for our error handlers.
+        """
+        rv = current_app.config.get("PROPAGATE_EXCEPTIONS")
+        if rv is not None:
+            return rv
+        return current_app.testing or current_app.debug
+
     def handle_error(self, e):
         """
         Error handler for the API transforms a raised exception into a Flask response,
@@ -686,10 +697,9 @@ class Api(object):
         # client if a handler is configured for the exception.
         if (
             not isinstance(e, HTTPException)
-            and current_app.propagate_exceptions
+            and self._propagate_exceptions()
             and not isinstance(e, tuple(self._own_and_child_error_handlers.keys()))
         ):
-
             exc_type, exc_value, tb = sys.exc_info()
             if exc_value is e:
                 raise

@@ -25,6 +25,48 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.1.0:
+1.1.0
+-----
+
+.. _bug_fixes-1.1.0
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Update Swagger-UI to latest version to fix several security vulnerabiltiies. [peter-doggart]
+   * Add a warning to the docs that nested Blueprints are not supported. [peter-doggart]
+   * Add a note to the docs that flask-restx always registers the root (/) path. [peter-doggart]
+
+.. _section-1.0.6:
+1.0.6
+-----
+
+.. _bug_fixes-1.0.6
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Update Black to 2023 version [peter-doggart]
+   * Fix minor bug introduced in 1.0.5 that changed the behaviour of how flask-restx propagates exceptions. (#512) [peter-doggart]
+   * Update PyPi classifer to Production/Stable. [peter-doggart]
+   * Add support for Python 3.11 (requires update to invoke ^2.0.0) [peter-doggart]
+
+.. _section-1.0.5:
+1.0.5
+-----
+
+.. _bug_fixes-1.0.5
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fix failing pypy python setup in github actions
+   * Fix compatibility with upcoming release of Flask 2.3+. (#485) [jdieter]
+
 .. _section-1.0.2:
 1.0.2
 -----
