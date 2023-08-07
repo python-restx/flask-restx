@@ -108,7 +108,7 @@ class APITest(object):
         api = restx.Api(app)
 
         with app.test_request_context(
-            "/foo", headers={"Accept": "application/xml; q=.5"}
+            "/foo", headers={"Accept": "application/xml; q=0.5"}
         ):
             assert api.mediatypes_method()(mocker.Mock()) == [
                 "application/xml",
@@ -119,7 +119,8 @@ class APITest(object):
         api = restx.Api(app)
 
         with app.test_request_context(
-            "/foo", headers={"Accept": "application/json; q=1, application/xml; q=.5"}
+            "/foo",
+            headers={"Accept": "application/json; q=1.0, application/xml; q=0.5"},
         ):
             assert api.mediatypes() == ["application/json", "application/xml"]
 
