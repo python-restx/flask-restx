@@ -232,7 +232,7 @@ use :class:`~fields.Wildcard` ::
     >>> '{"Jane": "68", "bob": "42", "John": "12"}'
 
 The name you give to your :class:`~fields.Wildcard` acts as a real glob as
-shown bellow ::
+shown below ::
 
     >>> from flask_restx import fields, marshal
     >>> import json
