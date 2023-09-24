@@ -38,7 +38,7 @@ and expose its documentation properly using `Swagger`_.
 Compatibility
 =============
 
-Flask-RESTX requires Python 3.7+.
+Flask-RESTX requires Python 3.8+.
 
 On Flask Compatibility
 ======================
