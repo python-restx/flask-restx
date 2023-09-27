@@ -3489,7 +3489,7 @@ class SwaggerDeprecatedTest(object):
     def test_build_request_body_parameters_schema(self):
         parser = restx.reqparse.RequestParser()
         parser.add_argument("test", type=int, location="headers")
-        parser.add_argument("test1", type=int, location="json")
+        parser.add_argument("test1", type=int, help="Test 1 parameter", choices=[0, 1], location="json")
         parser.add_argument("test2", location="json")
 
         body_params = [p for p in parser.__schema__ if p["in"] == "body"]
@@ -3500,8 +3500,12 @@ class SwaggerDeprecatedTest(object):
         assert result["in"] == "body"
         assert result["schema"]["type"] == "object"
         assert result["schema"]["properties"]["test1"]["type"] == "integer"
+        assert result["schema"]["properties"]["test1"]["description"] == "Test 1 parameter"
+        assert result["schema"]["properties"]["test1"]["enum"] == [0, 1]
         assert result["schema"]["properties"]["test2"]["type"] == "string"
-
+        assert result["schema"]["properties"]["test2"]["description"] is None
+        assert result["schema"]["properties"]["test2"]["enum"] is None
+    
     def test_expect_unused_model(self, app, api, client):
         from flask_restx import fields
 
