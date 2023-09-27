@@ -134,6 +134,7 @@ class Raw(object):
     :param bool readonly: Is the field read only ? (for documentation purpose)
     :param example: An optional data example (for documentation purpose)
     :param callable mask: An optional mask function to be applied to output
+    :param schema_format: An optional JSON/Swagger schema format
     """
 
     #: The JSON/Swagger schema type
@@ -153,6 +154,7 @@ class Raw(object):
         readonly=None,
         example=None,
         mask=None,
+        schema_format=None,
         **kwargs
     ):
         self.attribute = attribute
@@ -163,6 +165,8 @@ class Raw(object):
         self.readonly = readonly
         self.example = example if example is not None else self.__schema_example__
         self.mask = mask
+        if schema_format is not None:
+            self.__schema_format__ = schema_format
 
     def format(self, value):
         """
