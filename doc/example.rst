@@ -102,7 +102,16 @@ Here is a full example of a `TodoMVC <https://todomvc.com/>`_ API.
         app.run(debug=True)
 
 
+Running the example, you can access the api through a cli. 
+Following is an example how one can use it to add a new task to the todo-list.
+
+.. code-block:: bash
+
+  curl http://localhost:5000/todos/ -H "Content-Type: application/json" -d '{"task": "Remember the milk"}' -X POST
+
 
 You can find other examples in the `github repository examples folder`_.
-
+  
 .. _github repository examples folder: https://github.com/python-restx/flask-restx/tree/master/examples
+
+
