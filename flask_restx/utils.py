@@ -1,4 +1,6 @@
 import re
+import warnings
+import typing
 
 from collections import OrderedDict
 from copy import deepcopy
@@ -18,6 +20,10 @@ __all__ = (
     "not_none_sorted",
     "unpack",
 )
+
+
+class FlaskCompatibilityWarning(DeprecationWarning):
+    pass
 
 
 def merge(first, second):
@@ -118,3 +124,43 @@ def unpack(response, default_code=HTTPStatus.OK):
         return data, code or default_code, headers
     else:
         raise ValueError("Too many response values")
+
+
+def to_view_name(view_func: typing.Callable) -> str:
+    """Helper that returns the default endpoint for a given
+    function. This always is the function name.
+
+    Note: copy of simple flask internal helper
+    """
+    assert view_func is not None, "expected view func if endpoint is not provided."
+    return view_func.__name__
+
+
+def import_check_view_func():
+    """
+    Resolve import flask _endpoint_from_view_func.
+
+    Show warning if function cannot be found and provide copy of last known implementation.
+
+    Note: This helper method exists because reoccurring problem with flask function, but
+    actual method body remaining the same in each flask version.
+    """
+    import importlib.metadata
+
+    flask_version = importlib.metadata.version("flask").split(".")
+    try:
+        if flask_version[0] == "1":
+            from flask.helpers import _endpoint_from_view_func
+        elif flask_version[0] == "2":
+            from flask.scaffold import _endpoint_from_view_func
+        elif flask_version[0] == "3":
+            from flask.sansio.scaffold import _endpoint_from_view_func
+        else:
+            warnings.simplefilter("once", FlaskCompatibilityWarning)
+            _endpoint_from_view_func = None
+    except ImportError:
+        warnings.simplefilter("once", FlaskCompatibilityWarning)
+        _endpoint_from_view_func = None
+    if _endpoint_from_view_func is None:
+        _endpoint_from_view_func = to_view_name
+    return _endpoint_from_view_func

@@ -98,3 +98,17 @@ class UnpackTest(object):
     def test_too_many_values(self):
         with pytest.raises(ValueError):
             utils.unpack((None, None, None, None))
+
+
+class ToViewNameTest(object):
+    def test_none(self):
+        with pytest.raises(AssertionError):
+            _ = utils.to_view_name(None)
+
+    def test_name(self):
+        assert self.test_none == self.test_none.__name__
+
+
+class ImportCheckViewFuncTest(object):
+    def test_callable(self):
+        assert callable(utils.import_check_view_func())
