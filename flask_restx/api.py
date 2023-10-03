@@ -732,7 +732,7 @@ class Api(object):
                 elif e.response is not None:
                     code = HTTPStatus(e.response.status_code)
                 if include_message_in_response:
-                    default_data = {"message": getattr(e, "description", code.phrase)}
+                    default_data = {"message": e.description or code.phrase}
                 headers = e.get_response().headers
             elif self._default_error_handler:
                 result = self._default_error_handler(e)
