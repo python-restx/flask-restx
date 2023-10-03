@@ -726,7 +726,11 @@ class Api(object):
             got_request_exception.send(current_app._get_current_object(), exception=e)
 
             if isinstance(e, HTTPException):
-                code = HTTPStatus(e.code)
+                code = None
+                if e.code is not None:
+                    code = HTTPStatus(e.code)
+                elif e.response is not None:
+                    code = HTTPStatus(e.response.status_code)
                 if include_message_in_response:
                     default_data = {"message": getattr(e, "description", code.phrase)}
                 headers = e.get_response().headers

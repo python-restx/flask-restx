@@ -6,6 +6,7 @@ import pytest
 from flask import Blueprint, abort
 from flask.signals import got_request_exception
 
+from werkzeug import Response
 from werkzeug.exceptions import HTTPException, BadRequest, NotFound, Aborter
 from werkzeug.http import quote_etag, unquote_etag
 
@@ -644,6 +645,16 @@ class ErrorsTest(object):
         response = api.handle_error(exception)
         assert response.status_code == 500
         assert json.loads(response.data.decode()) == {"foo": "bar"}
+
+    def test_handle_error_http_exception_code(self, app):
+        api = restx.Api(app)
+        http_exception = HTTPException(response=Response(status=401))
+
+        response = api.handle_error(http_exception)
+        assert response.status_code == 401
+        # assert json.loads(response.data.decode()) == {
+        #     "message": BadRequest.description,
+        # }
 
     def test_errorhandler_swagger_doc(self, app, client):
         api = restx.Api(app)
