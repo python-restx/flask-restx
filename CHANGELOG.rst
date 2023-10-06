@@ -35,6 +35,7 @@ Bug Fixes
 ::
 
    * Fixing test as HTTP Header MIMEAccept expects quality-factor number in form of `X.X` (#547) [chipndell]
+   * Fix wrong status code and message on responses when handling `HTTPExceptions` (#569) [lkk7]
 
 
 .. _enhancements-1.2.0:
