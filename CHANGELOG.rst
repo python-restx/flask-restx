@@ -35,6 +35,7 @@ Bug Fixes
 ::
 
    * Fixing test as HTTP Header MIMEAccept expects quality-factor number in form of `X.X` (#547) [chipndell]
+   * Fixing werkzeug 3 deprecated version import. Import is replaced by new style version check with importlib (#573) [Ryu-CZ]
 
 
 .. _enhancements-1.2.0:

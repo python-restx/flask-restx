@@ -26,7 +26,7 @@ def import_werkzeug_response():
     `BaseResponse` was renamed in version 2.* to `Response`"""
     import importlib.metadata
 
-    werkzeug_major = int(importlib.metadata.version("werkzeug").split()[0])
+    werkzeug_major = int(importlib.metadata.version("werkzeug").split(".")[0])
     if werkzeug_major < 2:
         from werkzeug.wrappers import BaseResponse
 
