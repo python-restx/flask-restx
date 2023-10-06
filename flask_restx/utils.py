@@ -19,6 +19,7 @@ __all__ = (
     "not_none",
     "not_none_sorted",
     "unpack",
+    "import_check_view_func",
 )
 
 
