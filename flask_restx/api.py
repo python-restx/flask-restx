@@ -32,20 +32,13 @@ from werkzeug.exceptions import (
     InternalServerError,
 )
 
-from werkzeug import __version__ as werkzeug_version
-
-if werkzeug_version.split(".")[0] >= "2":
-    from werkzeug.wrappers import Response as BaseResponse
-else:
-    from werkzeug.wrappers import BaseResponse
-
 from . import apidoc
 from .mask import ParseError, MaskError
 from .namespace import Namespace
 from .postman import PostmanCollectionV1
 from .resource import Resource
 from .swagger import Swagger
-from .utils import default_id, camel_to_dash, unpack
+from .utils import default_id, camel_to_dash, unpack, BaseResponse
 from .representations import output_json
 from ._http import HTTPStatus
 
