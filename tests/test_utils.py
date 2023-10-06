@@ -47,6 +47,11 @@ class MergeTestCase(object):
         assert utils.merge(a, b) == b
 
 
+class UnpackImportResponse(object):
+    def test_import_werkzeug_response(self):
+        assert utils.import_werkzeug_response() != None
+
+
 class CamelToDashTestCase(object):
     def test_no_transform(self):
         assert utils.camel_to_dash("test") == "test"
