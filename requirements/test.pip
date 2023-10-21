@@ -4,7 +4,7 @@ mock==3.0.5
 pytest==7.0.1
 pytest-benchmark==3.4.1
 pytest-cov==4.0.0
-pytest-flask==1.2.0
+git+https://github.com/peter-doggart/pytest-flask-temp.git@remove-request-ctx#egg=pytest-flask
 pytest-mock==3.6.1
 pytest-profiling==1.7.0
 tzlocal
