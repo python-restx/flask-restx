@@ -35,6 +35,7 @@ Bug Fixes
 ::
 
    * Fixing test as HTTP Header MIMEAccept expects quality-factor number in form of `X.X` (#547) [chipndell]
+   * Introduce temporary restrictions on some package versions. (`flask<3.0.0`, `werkzeug<3.0.0`, `jsonschema<=4.17.3`) [peter-doggart]
 
 
 .. _enhancements-1.2.0:
