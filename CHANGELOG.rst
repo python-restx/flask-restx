@@ -25,6 +25,18 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.2.1:
+1.2.1
+-----
+.. _bug_fixes-1.2.1
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fixing flask 3.0+ compatibility of `ModuleNotFoundError: No module named 'flask.scaffold'` Import error. (#567) [Ryu-CZ]
+
+
 .. _section-1.2.0:
 1.2.0
 -----
