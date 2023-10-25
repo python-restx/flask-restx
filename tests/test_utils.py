@@ -106,7 +106,7 @@ class ToViewNameTest(object):
             _ = utils.to_view_name(None)
 
     def test_name(self):
-        assert self.test_none == self.test_none.__name__
+        assert utils.to_view_name(self.test_none) == self.test_none.__name__
 
 
 class ImportCheckViewFuncTest(object):
