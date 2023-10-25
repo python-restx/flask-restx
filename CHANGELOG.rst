@@ -25,18 +25,6 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
-.. _section-1.2.1:
-1.2.1
------
-.. _bug_fixes-1.2.1
-Bug Fixes
-~~~~~~~~~
-
-::
-
-   * Fixing flask 3.0+ compatibility of `flask.scaffold import _endpoint_from_view_func` Import error. (#565) [Ryu-CZ]
-
-
 .. _section-1.2.0:
 1.2.0
 -----
@@ -47,7 +35,6 @@ Bug Fixes
 ::
 
    * Fixing test as HTTP Header MIMEAccept expects quality-factor number in form of `X.X` (#547) [chipndell]
-
    * Introduce temporary restrictions on some package versions. (`flask<3.0.0`, `werkzeug<3.0.0`, `jsonschema<=4.17.3`) [peter-doggart]
 
 
