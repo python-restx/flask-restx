@@ -68,3 +68,8 @@ node_modules
 
 # Jet Brains
 .idea
+
+# VS code & pipenv ignore
+Pipfile
+Pipfile.lock
+.vscode/settings.json
