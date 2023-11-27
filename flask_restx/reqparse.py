@@ -308,7 +308,9 @@ class Argument(object):
             param["items"] = {"type": param["type"]}
             param["type"] = "array"
             param["collectionFormat"] = "csv"
-        if self.choices:
+        if param["collectionFormat"] == "csv" or param["collectionFormat"] == "multi":
+            param["items"]["enum"] = self.choices
+        else:
             param["enum"] = self.choices
         return param
 
