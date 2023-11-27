@@ -25,6 +25,20 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.2.1:
+1.2.1
+-----
+
+.. _enhancements-1.2.1:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Updated OpenAPI schema for enums from 2.0 to 3.0
+
+
 .. _section-1.2.0:
 1.2.0
 -----
