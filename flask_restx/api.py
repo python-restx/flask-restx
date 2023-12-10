@@ -34,7 +34,13 @@ from .namespace import Namespace
 from .postman import PostmanCollectionV1
 from .resource import Resource
 from .swagger import Swagger
-from .utils import default_id, camel_to_dash, unpack, import_check_view_func, BaseResponse
+from .utils import (
+    default_id,
+    camel_to_dash,
+    unpack,
+    import_check_view_func,
+    BaseResponse,
+)
 from .representations import output_json
 from ._http import HTTPStatus
 

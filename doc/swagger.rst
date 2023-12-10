@@ -757,7 +757,7 @@ Documenting authorizations
 You can use the ``authorizations`` keyword argument to document authorization information.
 See `Swagger Authentication documentation <https://swagger.io/docs/specification/2-0/authentication/>`_
 for configuration details.
-    - ``authorizations`` is a Python dictionary representation of the Swagger ``securityDefinitions`` configuration.
+- ``authorizations`` is a Python dictionary representation of the Swagger ``securityDefinitions`` configuration.
 
 .. code-block:: python
 

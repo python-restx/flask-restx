@@ -42,6 +42,7 @@ def import_werkzeug_response():
 
 BaseResponse = import_werkzeug_response()
 
+
 class FlaskCompatibilityWarning(DeprecationWarning):
     pass
 
