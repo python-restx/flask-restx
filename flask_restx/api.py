@@ -14,10 +14,6 @@ from types import MethodType
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
 
-try:
-    from flask.helpers import _endpoint_from_view_func
-except ImportError:
-    from flask.scaffold import _endpoint_from_view_func
 from flask.signals import got_request_exception
 
 from jsonschema import RefResolver
@@ -38,9 +34,12 @@ from .namespace import Namespace
 from .postman import PostmanCollectionV1
 from .resource import Resource
 from .swagger import Swagger
-from .utils import default_id, camel_to_dash, unpack, BaseResponse
+from .utils import default_id, camel_to_dash, unpack, import_check_view_func, BaseResponse
 from .representations import output_json
 from ._http import HTTPStatus
+
+endpoint_from_view_func = import_check_view_func()
+
 
 RE_RULES = re.compile("(<.*>)")
 
@@ -843,7 +842,7 @@ class Api(object):
             rule = blueprint_setup.url_prefix + rule
         options.setdefault("subdomain", blueprint_setup.subdomain)
         if endpoint is None:
-            endpoint = _endpoint_from_view_func(view_func)
+            endpoint = endpoint_from_view_func(view_func)
         defaults = blueprint_setup.url_defaults
         if "defaults" in options:
             defaults = dict(defaults, **options.pop("defaults"))
