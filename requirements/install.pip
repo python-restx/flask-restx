@@ -1,6 +1,6 @@
 aniso8601>=0.82
-jsonschema<=4.17.3
-Flask>=0.8, !=2.0.0, <3.0.0
-werkzeug!=2.0.0, <3.0.0
+jsonschema
+Flask>=0.8, !=2.0.0
+werkzeug!=2.0.0
 pytz
 importlib_resources

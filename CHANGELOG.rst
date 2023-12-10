@@ -25,10 +25,10 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
-.. _section-1.2.1:
-1.2.1
+.. _section-1.3.0:
+1.3.0
 -----
-.. _bug_fixes-1.2.1
+.. _bug_fixes-1.3.0
 Bug Fixes
 ~~~~~~~~~
 
@@ -37,7 +37,12 @@ Bug Fixes
    * Fixing werkzeug 3 deprecated version import. Import is replaced by new style version check with importlib (#573) [Ryu-CZ]
    * Fixing flask 3.0+ compatibility of `ModuleNotFoundError: No module named 'flask.scaffold'` Import error. (#567) [Ryu-CZ]
    * Fix wrong status code and message on responses when handling `HTTPExceptions` (#569) [lkk7]
-
+   * Add flask 2 and flask 3 to testing matrix. [foarsitter]
+   * Update internally pinned pytest-flask to 1.3.0 for Flask >3.0.0 support. [peter-doggart]
+   * Python 3.12 support. [foarsitter]
+   * Fix wrong status code and message on responses when handling HTTPExceptions. [ikk7]
+   * Update changelog Flask version table. [peter-doggart]
+   * Remove temporary package version restrictions for flask < 3.0.0, werkzeug and jsonschema (jsonschema future deprecation warning remains. See #553). [peter-doggart]
 
 .. _section-1.2.0:
 1.2.0
