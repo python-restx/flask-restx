@@ -38,7 +38,7 @@ Bug Fixes
    * Fixing flask 3.0+ compatibility of `ModuleNotFoundError: No module named 'flask.scaffold'` Import error. (#567) [Ryu-CZ]
    * Fix wrong status code and message on responses when handling `HTTPExceptions` (#569) [lkk7]
    * Add flask 2 and flask 3 to testing matrix. [foarsitter]
-   * Update internally pinned pytest-flask to 1.3.0 for Flask >3.0.0 support. [peter-doggart]
+   * Update internally pinned pytest-flask to 1.3.0 for Flask >=3.0.0 support. [peter-doggart]
    * Python 3.12 support. [foarsitter]
    * Fix wrong status code and message on responses when handling HTTPExceptions. [ikk7]
    * Update changelog Flask version table. [peter-doggart]

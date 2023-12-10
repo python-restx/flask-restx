@@ -66,10 +66,10 @@ Flask and Werkzeug moved to versions 2.0 in March 2020. This caused a breaking c
       - < 3.0.0
       - pinned in Flask-RESTX.
     * - >= 1.3.0
-      - >= 2.0.0 (Flask > 3.0.0 support)
+      - >= 2.0.0 (Flask >= 3.0.0 support)
       - unpinned, import statements wrapped for compatibility
     * - trunk branch in Github
-      - >= 2.0.0 (Flask > 3.0.0 support)
+      - >= 2.0.0 (Flask >= 3.0.0 support)
       - unpinned, will address issues faster than releases.
 
 Installation
