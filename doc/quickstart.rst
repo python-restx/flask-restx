@@ -212,7 +212,8 @@ Each one will be routed to your :class:`~Resource`:
 
     # or
 
-    @api.route('/hello', '/world')
+    @api.route('/hello')
+    @api.route('/world')
     class HelloWorld(Resource):
         pass
 
