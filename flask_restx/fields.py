@@ -6,6 +6,7 @@ from calendar import timegm
 from datetime import date, datetime
 from decimal import Decimal, ROUND_HALF_EVEN
 from email.utils import formatdate
+from enum import Enum
 
 from urllib.parse import urlparse, urlunparse
 
@@ -428,6 +429,8 @@ class String(StringMixin, Raw):
 
     def __init__(self, *args, **kwargs):
         self.enum = kwargs.pop("enum", None)
+        if inspect.isclass(self.enum) and issubclass(self.enum, Enum):
+            self.enum = [e.value for e in self.enum]
         self.discriminator = kwargs.pop("discriminator", None)
         super(String, self).__init__(*args, **kwargs)
         self.required = self.discriminator or self.required
