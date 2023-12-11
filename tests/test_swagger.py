@@ -3154,6 +3154,36 @@ class SwaggerTest(object):
         assert "produces" in post_operation
         assert post_operation["produces"] == ["application/octet-stream"]
 
+    def test_consumes_method(self, api, client):
+        @api.route("/test/", endpoint="test")
+        class TestResource(restx.Resource):
+            def get(self):
+                pass
+
+            @api.consumes(["text/plain; encoding=utf-8"])
+            def put(self):
+                pass
+
+            @api.doc(consumes=["text/plain"])
+            def post(self):
+                pass
+
+        data = client.get_specs()
+
+        assert "consumes" in data
+        assert data["consumes"] == ["application/json"]
+
+        get_operation = data["paths"]["/test/"]["get"]
+        assert "consumes" not in get_operation
+
+        put_operation = data["paths"]["/test/"]["put"]
+        assert "consumes" in put_operation
+        assert put_operation["consumes"] == ["text/plain; encoding=utf-8"]
+
+        post_operation = data["paths"]["/test/"]["post"]
+        assert "consumes" in post_operation
+        assert post_operation["consumes"] == ["text/plain"]
+
     def test_deprecated_resource(self, api, client):
         @api.deprecated
         @api.route("/test/", endpoint="test")

@@ -501,7 +501,9 @@ class Swagger(object):
         # Handle form exceptions:
         doc_params = list(doc.get("params", {}).values())
         all_params = doc_params + (operation["parameters"] or [])
-        if all_params and any(p["in"] == "formData" for p in all_params):
+        if "consumes" in doc[method]:
+            operation["consumes"] = doc[method]["consumes"]
+        elif all_params and any(p["in"] == "formData" for p in all_params):
             if any(p["type"] == "file" for p in all_params):
                 operation["consumes"] = ["multipart/form-data"]
             else:
