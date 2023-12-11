@@ -323,6 +323,9 @@ class List(Raw):
         if isinstance(value, set):
             value = list(value)
 
+        if not isinstance(value, list) and hasattr(value, "__iter__"):
+            value = [i for i in value]
+ 
         is_nested = isinstance(self.container, Nested) or type(self.container) is Raw
 
         def is_attr(val):
