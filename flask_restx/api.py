@@ -709,6 +709,8 @@ class Api(object):
         )
         default_data = {}
 
+        result = None
+
         headers = Headers()
 
         for typecheck, handler in self._own_and_child_error_handlers.items():
@@ -747,7 +749,7 @@ class Api(object):
         if include_message_in_response:
             default_data["message"] = default_data.get("message", str(e))
 
-        data = getattr(e, "data", default_data)
+        data = getattr(result, "data", default_data)
         fallback_mediatype = None
 
         if code >= HTTPStatus.INTERNAL_SERVER_ERROR:
