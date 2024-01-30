@@ -25,6 +25,18 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.3.1:
+1.3.1
+-----
+.. _bug_fixes-1.3.1
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Add jinja test for potentially undefined variable in `swagger-ui.html`. Compatibility with jinja's StrictUndefined mode. (#565) [sloschert]
+  
+
 .. _section-1.3.0:
 1.3.0
 -----
