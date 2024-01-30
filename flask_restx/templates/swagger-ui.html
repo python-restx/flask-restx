@@ -51,7 +51,7 @@
         window.onload = function() {
             const ui = window.ui = new SwaggerUIBundle({
                 url: "{{ specs_url }}",
-                {% if config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
+                {% if config.SWAGGER_UI_OAUTH_CLIENT_ID is defined and config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
                 oauth2RedirectUrl: "{{ url_for('restx_doc.static', filename='oauth2-redirect.html', _external=True) }}",
                 {%- endif %}
                 validatorUrl: "{{ config.SWAGGER_VALIDATOR_URL }}" || null,
@@ -71,7 +71,7 @@
                 docExpansion: "{{ config.SWAGGER_UI_DOC_EXPANSION | default('none') }}"
             })
 
-            {% if config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
+            {% if config.SWAGGER_UI_OAUTH_CLIENT_ID is defined and config.SWAGGER_UI_OAUTH_CLIENT_ID  -%}
             ui.initOAuth({
                 clientId: "{{ config.SWAGGER_UI_OAUTH_CLIENT_ID }}",
                 realm: "{{ config.SWAGGER_UI_OAUTH_REALM }}",
