@@ -16,8 +16,6 @@ from flask import make_response as original_flask_make_response
 
 from flask.signals import got_request_exception
 
-from jsonschema import RefResolver
-
 from werkzeug.utils import cached_property
 from werkzeug.datastructures import Headers
 from werkzeug.exceptions import (
@@ -162,7 +160,6 @@ class Api(object):
         )
         self._schema = None
         self.models = {}
-        self._refresolver = None
         self.format_checker = format_checker
         self.namespaces = []
         self.default_swagger_filename = default_swagger_filename
@@ -821,12 +818,6 @@ class Api(object):
     def payload(self):
         """Store the input payload in the current request context"""
         return request.get_json()
-
-    @property
-    def refresolver(self):
-        if not self._refresolver:
-            self._refresolver = RefResolver.from_schema(self.__schema__)
-        return self._refresolver
 
     @staticmethod
     def _blueprint_setup_add_url_rule_patch(

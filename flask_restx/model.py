@@ -16,7 +16,6 @@ from jsonschema.exceptions import ValidationError
 from .utils import not_none
 from ._http import HTTPStatus
 
-
 RE_REQUIRED = re.compile(r"u?\'(?P<name>.*)\' is a required property", re.I | re.U)
 
 
@@ -88,10 +87,10 @@ class ModelBase(object):
         model.__parents__ = parents[:-1]
         return model
 
-    def validate(self, data, resolver=None, format_checker=None):
-        validator = Draft4Validator(
-            self.__schema__, resolver=resolver, format_checker=format_checker
-        )
+    def validate(self, data, format_checker=None, definitions=None):
+        schema = self.__schema__
+        schema["definitions"] = definitions or {}
+        validator = Draft4Validator(schema, format_checker=format_checker)
         try:
             validator.validate(data)
         except ValidationError:
