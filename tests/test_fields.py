@@ -1506,6 +1506,15 @@ class PolymorphTest(FieldTestCase):
             "owner": {"name": "child2", "model": "Child2", "extra2": "extra2"}
         }
 
+        assert data(Child1) == {
+            "owner": {"name": "child1", "model": "Child1", "extra1": "extra1"}
+        }
+
+        assert data(Child2) == {
+            "owner": {"name": "child2", "model": "Child2", "extra2": "extra2"}
+        }
+
+
 
 class CustomFieldTest(FieldTestCase):
     def test_custom_field(self):

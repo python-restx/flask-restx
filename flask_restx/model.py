@@ -167,7 +167,7 @@ class RawModel(ModelBase):
 
         return not_none(definition)
 
-    @cached_property
+    @property
     def resolved(self):
         """
         Resolve real fields before submitting them to marshal
