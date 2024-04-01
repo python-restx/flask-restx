@@ -532,7 +532,7 @@ class Api(object):
         """
         The Swagger specifications relative url (ie. `swagger.json`). If
         the spec_url_scheme attribute is set, then the full url is provided instead
-        (e.g. http://localhost/swaggger.json).
+        (e.g. http://localhost/swagger.json).
 
         :rtype: str
         """
