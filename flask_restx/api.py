@@ -820,7 +820,7 @@ class Api(object):
     @property
     def payload(self):
         """Store the input payload in the current request context"""
-        return request.get_json()
+        return request.get_json(force=True)
 
     @property
     def refresolver(self):
