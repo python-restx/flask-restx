@@ -124,6 +124,11 @@ def extract_path_params(path):
             param["type"] = PATH_TYPES[converter]
         elif converter in current_app.url_map.converters:
             param["type"] = "string"
+
+            converterObj = current_app.url_map.converters[converter]
+            hasSchema = hasattr(converterObj, '__restx_schema__')
+            if hasSchema and isinstance(converterObj.__restx_schema__, dict):
+                param.update(converterObj.__restx_schema__)
         else:
             raise ValueError("Unsupported type converter: %s" % converter)
         params[variable] = param
