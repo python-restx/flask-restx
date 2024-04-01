@@ -177,6 +177,10 @@ class RawFieldTest(BaseFieldTestMixin, FieldTestCase):
         field = fields.Raw()
         assert field.output("bar.value", foo) == 42
 
+    def test_format(self):
+        field = fields.Raw(schema_format="something")
+        assert field.__schema_format__ == "something"
+
 
 class StringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
     field_class = fields.String
