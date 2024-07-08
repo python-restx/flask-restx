@@ -11,6 +11,7 @@ from werkzeug.datastructures import MultiDict, FileStorage
 from werkzeug import exceptions
 
 from .errors import abort, SpecsError
+from .fields import List
 from .marshalling import marshal
 from .model import Model
 from ._http import HTTPStatus
@@ -167,6 +168,8 @@ class Argument(object):
 
         elif isinstance(self.type, Model) and isinstance(value, dict):
             return marshal(value, self.type)
+        elif isinstance(self.type, List) and isinstance(value, list):
+            return value
 
         # and check if we're expecting a filestorage and haven't overridden `type`
         # (required because the below instantiation isn't valid for FileStorage)

@@ -214,7 +214,11 @@ def build_request_body_parameters_schema(body_params):
 
     properties = {}
     for param in body_params:
-        properties[param["name"]] = {"type": param.get("type", "string")}
+        ptype = param.get("type", "string")
+        if ptype == "array":
+            properties[param["name"]] = {"type": "array", "items": param.get("type", "string")}
+        else:
+            properties[param["name"]] = {"type": param.get("type", "string")}
 
     return {
         "name": "payload",
