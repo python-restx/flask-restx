@@ -333,9 +333,11 @@ class List(Raw):
         return [
             self.container.output(
                 idx,
-                val
-                if (isinstance(val, dict) or is_attr(val)) and not is_nested
-                else value,
+                (
+                    val
+                    if (isinstance(val, dict) or is_attr(val)) and not is_nested
+                    else value
+                ),
             )
             for idx, val in enumerate(value)
         ]
