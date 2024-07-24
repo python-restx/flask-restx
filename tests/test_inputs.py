@@ -653,7 +653,7 @@ class EmailTest(object):
     @pytest.mark.parametrize(
         "value",
         [
-            "coucou@not-found.fr",
+            "coucou@not-found.test",
             "me@localhost",
             "me@127.0.0.1",
             "me@127.1.2.3",

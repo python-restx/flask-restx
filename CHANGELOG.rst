@@ -25,6 +25,60 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.3.1:
+1.3.1
+-----
+.. _bug_fixes-1.3.1
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Add python version requirement on setup.py (#586) [jason-the-j]
+
+
+.. _section-1.3.0:
+1.3.0
+-----
+.. _bug_fixes-1.3.0
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fixing werkzeug 3 deprecated version import. Import is replaced by new style version check with importlib (#573) [Ryu-CZ]
+   * Fixing flask 3.0+ compatibility of `ModuleNotFoundError: No module named 'flask.scaffold'` Import error. (#567) [Ryu-CZ]
+   * Fix wrong status code and message on responses when handling `HTTPExceptions` (#569) [lkk7]
+   * Add flask 2 and flask 3 to testing matrix. [foarsitter]
+   * Update internally pinned pytest-flask to 1.3.0 for Flask >=3.0.0 support. [peter-doggart]
+   * Python 3.12 support. [foarsitter]
+   * Fix wrong status code and message on responses when handling HTTPExceptions. [ikk7]
+   * Update changelog Flask version table. [peter-doggart]
+   * Remove temporary package version restrictions for flask < 3.0.0, werkzeug and jsonschema (jsonschema future deprecation warning remains. See #553). [peter-doggart]
+
+.. _section-1.2.0:
+1.2.0
+-----
+.. _bug_fixes-1.2.0
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Fixing test as HTTP Header MIMEAccept expects quality-factor number in form of `X.X` (#547) [chipndell]
+   * Introduce temporary restrictions on some package versions. (`flask<3.0.0`, `werkzeug<3.0.0`, `jsonschema<=4.17.3`) [peter-doggart]
+
+
+.. _enhancements-1.2.0:
+
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Drop support for python 3.7
+
+
 .. _section-1.1.0:
 1.1.0
 -----

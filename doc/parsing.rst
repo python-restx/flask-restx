@@ -85,7 +85,7 @@ And your args will look like this :
     args = parser.parse_args()
     args['name']    # ['bob', 'sue', 'joe']
 
-If you expect a coma separated list, use the ``action='split'``:
+If you expect a comma-separated list, use the ``action='split'``:
 
 .. code-block:: python
 

@@ -14,10 +14,6 @@ from types import MethodType
 from flask import url_for, request, current_app
 from flask import make_response as original_flask_make_response
 
-try:
-    from flask.helpers import _endpoint_from_view_func
-except ImportError:
-    from flask.scaffold import _endpoint_from_view_func
 from flask.signals import got_request_exception
 
 from jsonschema import RefResolver
@@ -32,22 +28,24 @@ from werkzeug.exceptions import (
     InternalServerError,
 )
 
-from werkzeug import __version__ as werkzeug_version
-
-if werkzeug_version.split(".")[0] >= "2":
-    from werkzeug.wrappers import Response as BaseResponse
-else:
-    from werkzeug.wrappers import BaseResponse
-
 from . import apidoc
 from .mask import ParseError, MaskError
 from .namespace import Namespace
 from .postman import PostmanCollectionV1
 from .resource import Resource
 from .swagger import Swagger
-from .utils import default_id, camel_to_dash, unpack
+from .utils import (
+    default_id,
+    camel_to_dash,
+    unpack,
+    import_check_view_func,
+    BaseResponse,
+)
 from .representations import output_json
 from ._http import HTTPStatus
+
+endpoint_from_view_func = import_check_view_func()
+
 
 RE_RULES = re.compile("(<.*>)")
 
@@ -726,9 +724,13 @@ class Api(object):
             got_request_exception.send(current_app._get_current_object(), exception=e)
 
             if isinstance(e, HTTPException):
-                code = HTTPStatus(e.code)
+                code = None
+                if e.code is not None:
+                    code = HTTPStatus(e.code)
+                elif e.response is not None:
+                    code = HTTPStatus(e.response.status_code)
                 if include_message_in_response:
-                    default_data = {"message": getattr(e, "description", code.phrase)}
+                    default_data = {"message": e.description or code.phrase}
                 headers = e.get_response().headers
             elif self._default_error_handler:
                 result = self._default_error_handler(e)
@@ -850,7 +852,7 @@ class Api(object):
             rule = blueprint_setup.url_prefix + rule
         options.setdefault("subdomain", blueprint_setup.subdomain)
         if endpoint is None:
-            endpoint = _endpoint_from_view_func(view_func)
+            endpoint = endpoint_from_view_func(view_func)
         defaults = blueprint_setup.url_defaults
         if "defaults" in options:
             defaults = dict(defaults, **options.pop("defaults"))
