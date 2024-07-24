@@ -160,7 +160,7 @@ def parse_docstring(obj):
     raw = getdoc(obj)
     summary = raw.strip(" \n").split("\n")[0].split(".")[0] if raw else None
     raises = {}
-    details = raw.replace(summary, "").lstrip(". \n").strip(" \n") if raw else None
+    details = raw.lstrip(summary).lstrip(". \n").strip(" \n") if raw else None
     for match in RE_RAISES.finditer(raw or ""):
         raises[match.group("name")] = match.group("description")
         if details:
