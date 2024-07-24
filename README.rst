@@ -38,7 +38,7 @@ and expose its documentation properly using `Swagger`_.
 Compatibility
 =============
 
-Flask-RESTX requires Python 3.7+.
+Flask-RESTX requires Python 3.8+.
 
 On Flask Compatibility
 ======================
@@ -60,10 +60,16 @@ Flask and Werkzeug moved to versions 2.0 in March 2020. This caused a breaking c
       - < 2.0.0
       - pinned in Flask-RESTX.
     * - >= 0.5.0
-      - All (For Now)
+      - < 3.0.0
+      - unpinned, import statements wrapped for compatibility
+    * - == 1.2.0
+      - < 3.0.0
+      - pinned in Flask-RESTX.
+    * - >= 1.3.0
+      - >= 2.0.0 (Flask >= 3.0.0 support)
       - unpinned, import statements wrapped for compatibility
     * - trunk branch in Github
-      - All (and updated more often)
+      - >= 2.0.0 (Flask >= 3.0.0 support)
       - unpinned, will address issues faster than releases.
 
 Installation
