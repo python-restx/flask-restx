@@ -125,9 +125,11 @@ def benchmark(
         "--benchmark-max-time={0}".format(max_time),
         "--benchmark-autosave" if save else None,
         "--benchmark-compare" if compare else None,
-        "--benchmark-histogram=histograms/{0:%Y%m%d-%H%M%S}".format(ts)
-        if histogram
-        else None,
+        (
+            "--benchmark-histogram=histograms/{0:%Y%m%d-%H%M%S}".format(ts)
+            if histogram
+            else None
+        ),
         "--benchmark-cprofile=tottime" if profile else None,
     )
     cmd = "pytest tests/benchmarks {0}".format(kwargs)
