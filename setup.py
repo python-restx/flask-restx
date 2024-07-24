@@ -111,5 +111,5 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: BSD License",
     ],
-    python_requires=">=3.8"
+    python_requires=">=3.8",
 )
