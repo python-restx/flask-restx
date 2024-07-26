@@ -52,8 +52,12 @@
             const ui = window.ui = new SwaggerUIBundle({
                 url: "{{ specs_url }}",
                 {% if config.SWAGGER_UI_OAUTH_CLIENT_ID -%}
-                oauth2RedirectUrl: "{{ url_for('restx_doc.static', filename='oauth2-redirect.html', _external=True) }}",
-                {%- endif %}
+                  {% if config.SWAGGER_UI_OAUTH_REDIRECT_URL -%}
+                    oauth2RedirectUrl: "{{ config.SWAGGER_UI_OAUTH_REDIRECT_URL }}",
+                  {% else -%}
+                    oauth2RedirectUrl: "{{ url_for('restx_doc.static', filename='oauth2-redirect.html', _external=True) }}",
+                  {% endif -%}
+                {% endif -%}
                 validatorUrl: "{{ config.SWAGGER_VALIDATOR_URL }}" || null,
                 dom_id: "#swagger-ui",
                 presets: [
