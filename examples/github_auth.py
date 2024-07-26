@@ -1,3 +1,11 @@
+# Example GitHub OAuth application
+#
+# With the flask-restx project checked out locally, run as follows from the project's root:
+# SWAGGER_UI_OAUTH_REDIRECT_URL="xxx" FLASK_APP=examples/github_auth.py FLASK_ENV=development SWAGGER_UI_OAUTH_CLIENT_ID=xxx PYTHONPATH=. flask run
+#
+# Ensure that SWAGGER_UI_OAUTH_REDIRECT_URL and SWAGGER_UI_OAUTH_CLIENT_ID match your GitHub app's OAuth settings.
+#
+
 from flask import Flask
 from flask_restx import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -6,6 +14,7 @@ import os
 app = Flask(__name__)
 
 app.config["SWAGGER_UI_OAUTH_REDIRECT_URL"] = os.environ.get("SWAGGER_UI_OAUTH_REDIRECT_URL")
+app.config["SWAGGER_UI_OAUTH_CLIENT_ID"] = os.environ.get("SWAGGER_UI_OAUTH_CLIENT_ID")
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
