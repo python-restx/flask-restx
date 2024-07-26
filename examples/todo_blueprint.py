@@ -3,7 +3,12 @@ from flask_restx import Api, Resource, fields
 
 api_v1 = Blueprint("api", __name__, url_prefix="/api/1")
 
-api = Api(api_v1, version="1.0", title="Todo API", description="A simple TODO API",)
+api = Api(
+    api_v1,
+    version="1.0",
+    title="Todo API",
+    description="A simple TODO API",
+)
 
 ns = api.namespace("todos", description="TODO operations")
 

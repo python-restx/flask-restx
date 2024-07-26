@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import pytest
 
 from flask_restx import utils
@@ -48,6 +45,11 @@ class MergeTestCase(object):
             "nested_a_b": {"b": "b only", "ab": "keep"},
         }
         assert utils.merge(a, b) == b
+
+
+class UnpackImportResponse(object):
+    def test_import_werkzeug_response(self):
+        assert utils.import_werkzeug_response() != None
 
 
 class CamelToDashTestCase(object):
@@ -101,3 +103,17 @@ class UnpackTest(object):
     def test_too_many_values(self):
         with pytest.raises(ValueError):
             utils.unpack((None, None, None, None))
+
+
+class ToViewNameTest(object):
+    def test_none(self):
+        with pytest.raises(AssertionError):
+            _ = utils.to_view_name(None)
+
+    def test_name(self):
+        assert utils.to_view_name(self.test_none) == self.test_none.__name__
+
+
+class ImportCheckViewFuncTest(object):
+    def test_callable(self):
+        assert callable(utils.import_check_view_func())

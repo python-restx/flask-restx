@@ -38,7 +38,7 @@ It looks for two arguments in the :attr:`flask.Request.values` dict: an integer 
 .. note ::
 
     The default argument type is a unicode string.
-    This will be ``str`` in python3 and ``unicode`` in python2.
+    This will be ``str``.
 
 If you specify the ``help`` value,
 it will be rendered as the error message when a type error is raised while parsing it.
@@ -85,7 +85,7 @@ And your args will look like this :
     args = parser.parse_args()
     args['name']    # ['bob', 'sue', 'joe']
 
-If you expect a coma separated list, use the ``action='split'``:
+If you expect a comma-separated list, use the ``action='split'``:
 
 .. code-block:: python
 

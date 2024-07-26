@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 import json
 
 from os.path import join, dirname
@@ -10,7 +7,7 @@ from werkzeug.datastructures import FileStorage
 
 import flask_restx as restx
 
-from six.moves.urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse
 
 
 with open(join(dirname(__file__), "postman-v1.schema.json")) as f:
@@ -29,7 +26,10 @@ class PostmanTest(object):
 
     def test_export_infos(self, app):
         api = restx.Api(
-            app, version="1.0", title="My API", description="This is a testing API",
+            app,
+            version="1.0",
+            title="My API",
+            description="This is a testing API",
         )
 
         data = api.as_postman()

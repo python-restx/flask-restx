@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import flask
 import pytest
-import six
 
 from json import dumps, JSONEncoder
 
@@ -112,7 +108,7 @@ class APITest(object):
         api = restx.Api(app)
 
         with app.test_request_context(
-            "/foo", headers={"Accept": "application/xml; q=.5"}
+            "/foo", headers={"Accept": "application/xml; q=0.5"}
         ):
             assert api.mediatypes_method()(mocker.Mock()) == [
                 "application/xml",
@@ -123,7 +119,8 @@ class APITest(object):
         api = restx.Api(app)
 
         with app.test_request_context(
-            "/foo", headers={"Accept": "application/json; q=1, application/xml; q=.5"}
+            "/foo",
+            headers={"Accept": "application/json; q=1.0, application/xml; q=0.5"},
         ):
             assert api.mediatypes() == ["application/json", "application/xml"]
 
@@ -255,7 +252,7 @@ class APITest(object):
 
     def test_resource_text_plain(self, app):
         def text(data, code, headers=None):
-            return flask.make_response(six.text_type(data))
+            return flask.make_response(str(data))
 
         class Foo(restx.Resource):
             representations = {
@@ -379,7 +376,8 @@ class APITest(object):
 
         resp = client.get("/api")
         assert resp.status_code == 302
-        assert resp.headers["Location"] == "http://localhost/"
+        # FIXME: The behavior changed somewhere between Flask 2.0.3 and 2.2.x
+        assert resp.headers["Location"].endswith("/")
 
     def test_calling_owns_endpoint_before_api_init(self):
         api = restx.Api()

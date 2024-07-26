@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
 import os
 import sys
 
@@ -103,7 +100,10 @@ def demo(ctx):
 def test(ctx, profile=False):
     """Run tests suite"""
     header(test.__doc__)
-    kwargs = build_args("--benchmark-skip", "--profile" if profile else None,)
+    kwargs = build_args(
+        "--benchmark-skip",
+        "--profile" if profile else None,
+    )
     with ctx.cd(ROOT):
         ctx.run("pytest {0}".format(kwargs), pty=True)
 
@@ -125,9 +125,11 @@ def benchmark(
         "--benchmark-max-time={0}".format(max_time),
         "--benchmark-autosave" if save else None,
         "--benchmark-compare" if compare else None,
-        "--benchmark-histogram=histograms/{0:%Y%m%d-%H%M%S}".format(ts)
-        if histogram
-        else None,
+        (
+            "--benchmark-histogram=histograms/{0:%Y%m%d-%H%M%S}".format(ts)
+            if histogram
+            else None
+        ),
         "--benchmark-cprofile=tottime" if profile else None,
     )
     cmd = "pytest tests/benchmarks {0}".format(kwargs)

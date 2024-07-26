@@ -4,7 +4,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
-api = Api(app, version="1.0", title="TodoMVC API", description="A simple TodoMVC API",)
+api = Api(
+    app,
+    version="1.0",
+    title="TodoMVC API",
+    description="A simple TodoMVC API",
+)
 
 ns = api.namespace("todos", description="TODO operations")
 
@@ -44,10 +49,10 @@ class TodoDAO(object):
         self.todos.remove(todo)
 
 
-DAO = TodoDAO()
-DAO.create({"task": "Build an API"})
-DAO.create({"task": "?????"})
-DAO.create({"task": "profit!"})
+todo_dao = TodoDAO()
+todo_dao.create({"task": "Build an API"})
+todo_dao.create({"task": "?????"})
+todo_dao.create({"task": "profit!"})
 
 
 @ns.route("/")
@@ -58,14 +63,14 @@ class TodoList(Resource):
     @ns.marshal_list_with(todo)
     def get(self):
         """List all tasks"""
-        return DAO.todos
+        return todo_dao.todos
 
     @ns.doc("create_todo")
     @ns.expect(todo)
     @ns.marshal_with(todo, code=201)
     def post(self):
         """Create a new task"""
-        return DAO.create(api.payload), 201
+        return todo_dao.create(api.payload), 201
 
 
 @ns.route("/<int:id>")
@@ -78,20 +83,20 @@ class Todo(Resource):
     @ns.marshal_with(todo)
     def get(self, id):
         """Fetch a given resource"""
-        return DAO.get(id)
+        return todo_dao.get(id)
 
     @ns.doc("delete_todo")
     @ns.response(204, "Todo deleted")
     def delete(self, id):
         """Delete a task given its identifier"""
-        DAO.delete(id)
+        todo_dao.delete(id)
         return "", 204
 
     @ns.expect(todo)
     @ns.marshal_with(todo)
     def put(self, id):
         """Update a task given its identifier"""
-        return DAO.update(id, api.payload)
+        return todo_dao.update(id, api.payload)
 
 
 if __name__ == "__main__":

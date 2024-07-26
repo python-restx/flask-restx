@@ -1,21 +1,16 @@
-# -*- coding: utf-8 -*-
 """
 This module give access to OpenAPI specifications schemas
 and allows to validate specs against them.
 
 .. versionadded:: 0.12.1
 """
-from __future__ import unicode_literals
 
 import io
 import json
-import pkg_resources
 
-try:
-    from collections.abc import Mapping
-except ImportError:
-    # TODO Remove this to drop Python2 support
-    from collections import Mapping
+import importlib_resources
+
+from collections.abc import Mapping
 from jsonschema import Draft4Validator
 
 from flask_restx import errors
@@ -63,8 +58,9 @@ class LazySchema(Mapping):
 
     def _load(self):
         if not self._schema:
-            filename = pkg_resources.resource_filename(__name__, self.filename)
-            with io.open(filename) as infile:
+            ref = importlib_resources.files(__name__) / self.filename
+
+            with io.open(ref) as infile:
                 self._schema = json.load(infile)
 
     def __getitem__(self, key):
