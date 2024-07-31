@@ -541,9 +541,10 @@ class DateTime(MinMaxMixin, Raw):
     __schema_type__ = "string"
     __schema_format__ = "date-time"
 
-    def __init__(self, dt_format="iso8601", **kwargs):
+    def __init__(self, dt_format="iso8601", dt_custom_format=None, **kwargs):
         super(DateTime, self).__init__(**kwargs)
         self.dt_format = dt_format
+        self.dt_custom_format = dt_custom_format
 
     def parse(self, value):
         if value is None:
@@ -565,7 +566,9 @@ class DateTime(MinMaxMixin, Raw):
     def format(self, value):
         try:
             value = self.parse(value)
-            if self.dt_format == "iso8601":
+            if self.dt_custom_format:
+                return self.format_custom(value, self.dt_custom_format)
+            elif self.dt_format == "iso8601":
                 return self.format_iso8601(value)
             elif self.dt_format == "rfc822":
                 return self.format_rfc822(value)
@@ -591,6 +594,15 @@ class DateTime(MinMaxMixin, Raw):
         :return: A ISO 8601 formatted date string
         """
         return dt.isoformat()
+
+    def format_custom(self, dt, format):
+        """
+        Turn a datetime object into date format specified by user.
+
+        :param datetime dt: The datetime to transform
+        :return: Formatted date string
+        """
+        return dt.strftime(format)
 
     def _for_schema(self, name):
         value = self.parse(self._v(name))
