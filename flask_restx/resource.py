@@ -65,9 +65,17 @@ class Resource(MethodView):
         if collection:
             data = data if isinstance(data, list) else [data]
             for obj in data:
-                expect.validate(obj, self.api.refresolver, self.api.format_checker)
+                expect.validate(
+                    obj,
+                    self.api.format_checker,
+                    definitions=self.api.__schema__["definitions"],
+                )
         else:
-            expect.validate(data, self.api.refresolver, self.api.format_checker)
+            expect.validate(
+                data,
+                self.api.format_checker,
+                definitions=self.api.__schema__["definitions"],
+            )
 
     def validate_payload(self, func):
         """Perform a payload validation on expected model if necessary"""
