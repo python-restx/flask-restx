@@ -28,6 +28,16 @@ You can document a class or a method:
         def post(self, id):
             api.abort(403)
 
+If you want a finer control, nested dicts could also be used:
+
+.. code-block:: python
+
+    @api.route('/my-resource/<id>', endpoint='my-resource')
+    @api.doc(params={'id': {'description': 'An ID', 'required': False, 'default': ''}})
+    class MyResource(Resource):
+        def get(self, id):
+            return {}
+
 
 Automatically documented models
 -------------------------------
