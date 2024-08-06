@@ -21,6 +21,19 @@ def output_json(data, code, headers=None):
     # see https://github.com/mitsuhiko/flask/pull/1262
     dumped = dumps(data, **settings) + "\n"
 
+    return output_from_dumped(code, dumped, headers)
+
+
+def output_yaml(data, code, headers=None):
+    """Makes a Flask response with a YAML encoded body"""
+    import yaml
+
+    settings = current_app.config.get("RESTX_YAML", {})
+    dumped = yaml.dump(data, **settings) + "\n"
+    return output_from_dumped(code, dumped, headers)
+
+
+def output_from_dumped(code, dumped, headers):
     resp = make_response(dumped, code)
     resp.headers.extend(headers or {})
     return resp
