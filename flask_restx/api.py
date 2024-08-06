@@ -181,6 +181,7 @@ class Api(object):
         self.resources = []
         self.app = None
         self.blueprint = None
+        self._blueprint_name = None
         # must come after self.app initialisation to prevent __getattr__ recursion
         # in self._configure_namespace_logger
         self.default_namespace = self.namespace(
@@ -523,9 +524,28 @@ class Api(object):
 
     def endpoint(self, name):
         if self.blueprint:
-            return "{0}.{1}".format(self.blueprint.name, name)
+            if self._blueprint_name is None:
+                self._blueprint_name = self._get_blueprint_name()
+            return "{0}.{1}".format(self._blueprint_name, name)
         else:
             return name
+
+    def _get_blueprint_name(self):
+        """
+        Get full blueprint name from the current_app.blueprints dict,
+        which contains full names for nested blueprints.
+
+        :rtype: str
+        """
+        return next(
+            (
+                name
+                for name, bp in current_app.blueprints.items()
+                if bp == self.blueprint
+            ),
+            # Fallback option when blueprint is not yet registered to the app.
+            self.blueprint.name,
+        )
 
     @property
     def specs_url(self):
