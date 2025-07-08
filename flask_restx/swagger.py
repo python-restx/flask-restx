@@ -486,7 +486,7 @@ class Swagger(object):
     def serialize_operation(self, doc, method):
         operation = {
             "responses": self.responses_for(doc, method) or None,
-            "summary": doc[method]["docstring"]["summary"],
+            "summary": self.summary_for( doc, method) or None,
             "description": self.description_for(doc, method) or None,
             "operationId": self.operation_id_for(doc, method),
             "parameters": self.parameters_for(doc[method]) or None,
@@ -522,6 +522,18 @@ class Swagger(object):
             (k if k.startswith("x-") else "x-{0}".format(k), v)
             for k, v in doc[method].get("vendor", {}).items()
         )
+
+    def summary_for(self, doc, method):
+        """Extract the summay metadata and fallback on the whole docstring"""
+        parts = []
+        if "summary" in doc:
+            parts.append(doc["summary"] or "")
+        if method in doc and "summary" in doc[method]:
+            parts.append(doc[method]["summary"])
+        if doc[method]["docstring"]["summary"]:
+            parts.append(doc[method]["docstring"]["summary"])
+
+        return "\n".join(parts).strip()
 
     def description_for(self, doc, method):
         """Extract the description metadata and fallback on the whole docstring"""
