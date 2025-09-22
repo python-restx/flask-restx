@@ -35,7 +35,7 @@ Bug Fixes
 ::
 
    * Add python version requirement on setup.py (#586) [jason-the-j]
-
+   * Add a thread lock to avoid concurrent schema construction. (#545) [peter-doggart]
 
 .. _section-1.3.0:
 1.3.0

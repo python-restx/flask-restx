@@ -2,6 +2,7 @@ import difflib
 import inspect
 from itertools import chain
 import logging
+import threading
 import operator
 import re
 import sys
@@ -161,6 +162,7 @@ class Api(object):
             }
         )
         self._schema = None
+        self._schema_lock = threading.Lock()
         self.models = {}
         self._refresolver = None
         self.format_checker = format_checker
@@ -567,14 +569,17 @@ class Api(object):
         :returns dict: the schema as a serializable dict
         """
         if not self._schema:
-            try:
-                self._schema = Swagger(self).as_dict()
-            except Exception:
-                # Log the source exception for debugging purpose
-                # and return an error message
-                msg = "Unable to render schema"
-                log.exception(msg)  # This will provide a full traceback
-                return {"error": msg}
+            # Guard schema initialization to avoid concurrent construction on first access
+            with self._schema_lock:
+                if not self._schema:
+                    try:
+                        self._schema = Swagger(self).as_dict()
+                    except Exception:
+                        # Log the source exception for debugging purpose
+                        # and return an error message
+                        msg = "Unable to render schema"
+                        log.exception(msg)  # This will provide a full traceback
+                        return {"error": msg}
         return self._schema
 
     @property
