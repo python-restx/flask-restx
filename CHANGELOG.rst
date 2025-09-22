@@ -35,7 +35,7 @@ Bug Fixes
 ::
 
    * Add python version requirement on setup.py (#586) [jason-the-j]
-
+   * Fix Nested field schema generation for nullable fields. (#638) [peter-doggart]
 
 .. _section-1.3.0:
 1.3.0
