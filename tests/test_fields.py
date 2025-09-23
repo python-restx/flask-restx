@@ -881,6 +881,17 @@ class NestedFieldTest(FieldTestCase):
         assert field.allow_null
         assert field.__schema__ == {"$ref": "#/definitions/NestedModel"}
 
+    def test_with_nullable_schema(self, api):
+        nested_fields = api.model("NestedModel", {"name": fields.String})
+        field = fields.Nested(nested_fields, nullable=True)
+        # Should allow null in schema via anyOf
+        assert field.__schema__ == {
+            "anyOf": [
+                {"$ref": "#/definitions/NestedModel"},
+                {"type": "null"},
+            ]
+        }
+
     def test_with_skip_none(self, api):
         nested_fields = api.model("NestedModel", {"name": fields.String})
         field = fields.Nested(nested_fields, skip_none=True)
