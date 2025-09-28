@@ -334,14 +334,10 @@ class APITest(object):
         assert data == expected
 
     def test_use_custom_jsonencoder(self, app, client):
-        class CabageEncoder(JSONEncoder):
-            def default(self, obj):
-                return "cabbage"
+        def default(obj):
+            return "cabbage"
 
-        class TestConfig(object):
-            RESTX_JSON = {"cls": CabageEncoder}
-
-        app.config.from_object(TestConfig)
+        app.json.default = default
         api = restx.Api(app)
 
         class Cabbage(restx.Resource):

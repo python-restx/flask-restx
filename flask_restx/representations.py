@@ -1,9 +1,5 @@
-try:
-    from ujson import dumps
-except ImportError:
-    from json import dumps
-
 from flask import make_response, current_app
+from flask.json import dumps
 
 
 def output_json(data, code, headers=None):
