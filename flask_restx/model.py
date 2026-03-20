@@ -217,7 +217,7 @@ class RawModel(ModelBase):
 
         # Recursively copy parent fields if necessary
         for parent in self.__parents__:
-            resolved.update(parent.resolved)
+            resolved.update(copy.deepcopy(parent.resolved))
 
         # Handle discriminator
         candidates = [f for f in resolved.values() if getattr(f, "discriminator", None)]
