@@ -3,4 +3,3 @@ jsonschema
 referencing
 Flask>=0.8, !=2.0.0
 werkzeug!=2.0.0
-importlib_resources
