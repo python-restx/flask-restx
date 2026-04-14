@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "pypy3.10", "pypy3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "pypy3.11"]
         flask: ["<3.0.0", ">=3.0.0"]
         exclude:
           - python-version: "3.13"
@@ -36,18 +36,12 @@ jobs:
           # PyPy: pin rpds-py before resolving jsonschema/referencing so pip picks manylinux wheels
           # (sdists use maturin; builds are fragile on PyPy). CPython does not need this.
           case "${{ matrix.python-version }}" in
-            pypy3.10) pip install 'rpds-py<0.28' ;;
             pypy3.11) pip install 'rpds-py<0.30' 'readme-renderer>=35,<42' ;;
           esac
           pip install "flask${{ matrix.flask }}"
           pip install ".[test]"
       - name: Test with inv
-        run: |
-          if [ "${{ matrix.python-version }}" = "pypy3.10" ]; then
-            inv cover
-          else
-            inv cover qa
-          fi
+        run: inv cover qa
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:
