@@ -693,7 +693,7 @@ class DateFieldTest(BaseFieldTestMixin, FieldTestCase):
 
 
 class FormatedStringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
-    field_class = partial(fields.FormattedString, "Hello {name}")
+    field_class = staticmethod(partial(fields.FormattedString, "Hello {name}"))
 
     def test_defaults(self):
         field = fields.FormattedString("Hello {name}")
@@ -731,7 +731,7 @@ class FormatedStringFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase
 
 
 class UrlFieldTest(StringTestMixin, BaseFieldTestMixin, FieldTestCase):
-    field_class = partial(fields.Url, "endpoint")
+    field_class = staticmethod(partial(fields.Url, "endpoint"))
 
     def test_defaults(self):
         field = fields.Url("endpoint")
@@ -931,7 +931,7 @@ class NestedFieldTest(FieldTestCase):
 
 
 class ListFieldTest(BaseFieldTestMixin, FieldTestCase):
-    field_class = partial(fields.List, fields.String)
+    field_class = staticmethod(partial(fields.List, fields.String))
 
     def test_defaults(self):
         field = fields.List(fields.String)
@@ -1025,7 +1025,7 @@ class ListFieldTest(BaseFieldTestMixin, FieldTestCase):
 
 
 class WildcardFieldTest(BaseFieldTestMixin, FieldTestCase):
-    field_class = partial(fields.Wildcard, fields.String)
+    field_class = staticmethod(partial(fields.Wildcard, fields.String))
 
     def test_types(self):
         with pytest.raises(fields.MarshallingError):

@@ -17,7 +17,6 @@ from jsonschema.exceptions import ValidationError
 from .utils import not_none
 from ._http import HTTPStatus
 
-
 RE_REQUIRED = re.compile(r"u?\'(?P<name>.*)\' is a required property", re.I | re.U)
 
 

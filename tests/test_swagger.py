@@ -1451,23 +1451,17 @@ class SwaggerTest(object):
 
         description = lambda m: data["paths"]["/description/"][m]["description"]  # noqa
 
-        assert description("get") == dedent(
-            """\
+        assert description("get") == dedent("""\
             Parent description.
-            Some details"""
-        )
+            Some details""")
 
-        assert description("post") == dedent(
-            """\
+        assert description("post") == dedent("""\
             Parent description.
-            Extra description"""
-        )
+            Extra description""")
 
-        assert description("delete") == dedent(
-            """\
+        assert description("delete") == dedent("""\
             Parent description.
-            A delete operation"""
-        )
+            A delete operation""")
 
         assert description("put") == "Parent description."
         assert "description" not in data["paths"]["/descriptionless/"]["get"]

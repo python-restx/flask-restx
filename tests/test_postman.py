@@ -9,7 +9,6 @@ import flask_restx as restx
 
 from urllib.parse import parse_qs, urlparse
 
-
 with open(join(dirname(__file__), "postman-v1.schema.json")) as f:
     schema = json.load(f)
 

@@ -4,7 +4,7 @@ vcs = git
 commit = true
 tag = true
 push = true
-tests = tox -e py39
+tests = tox -e py310
 clean =
     inv clean
 files =

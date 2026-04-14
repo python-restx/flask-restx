@@ -25,6 +25,28 @@ Releases prior to 0.3.0 were “best effort” filled out, but are missing
 some info. If you see your contribution missing info, please open a PR
 on the Changelog!
 
+.. _section-1.3.3:
+1.3.3
+-----
+.. _enhancements-1.3.3
+Enhancements
+~~~~~~~~~~~~
+
+::
+
+   * Drop support for Python 3.9 (EOL); require Python 3.10 or newer. [python-restx]
+   * Declare and test support for Python 3.13 and 3.14 (CPython). [python-restx]
+   * Expand GitHub Actions and tox coverage: PyPy 3.11 with both Flask 2.x and Flask 3.x; exclude Flask 2 on 3.13/3.14 where unsupported. [python-restx]
+   * Refresh test and release tooling (pytest, pytest-benchmark, pytest-profiling, twine) for newer interpreters. GitHub Actions pre-installs compatible ``rpds-py`` (and ``readme-renderer`` for PyPy 3.11) for PyPy jobs; tox pins ``rpds-py`` for local PyPy envs. [python-restx]
+
+.. _bug_fixes-1.3.3
+Bug Fixes
+~~~~~~~~~
+
+::
+
+   * Adjust field tests for Python 3.14 (``staticmethod`` around ``functools.partial`` used as a class attribute). [python-restx]
+
 .. _section-1.3.1:
 1.3.1
 -----
