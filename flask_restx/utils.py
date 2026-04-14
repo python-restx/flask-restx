@@ -7,7 +7,6 @@ from copy import deepcopy
 
 from ._http import HTTPStatus
 
-
 FIRST_CAP_RE = re.compile("(.)([A-Z][a-z]+)")
 ALL_CAP_RE = re.compile("([a-z0-9])([A-Z])")
 

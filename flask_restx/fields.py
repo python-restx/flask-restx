@@ -22,7 +22,6 @@ from .errors import RestError
 from .marshalling import marshal
 from .utils import camel_to_dash, not_none
 
-
 __all__ = (
     "Raw",
     "String",
@@ -880,10 +879,10 @@ class Wildcard(Raw):
                     # complexity to O(n)
                     if ordered:
                         # Get first element if respecting order
-                        (objkey, val) = self._flat.pop(0)
+                        objkey, val = self._flat.pop(0)
                     else:
                         # Previous default retained
-                        (objkey, val) = self._flat.pop()
+                        objkey, val = self._flat.pop()
                     if (
                         objkey not in self._cache
                         and objkey not in self.exclude
