@@ -10,3 +10,7 @@ pytest-profiling==1.8.1
 invoke==2.2.0
 twine==6.2.0;platform_python_implementation!="PyPy"
 setuptools
+# PyPy + jsonschema/referencing: keep rpds-py on versions that publish wheels. Newer
+# rpds-py sdists need maturin/PyO3 (PyPy 3.11+ only), which breaks CI on PyPy 3.10.
+rpds-py<0.28;platform_python_implementation=="PyPy" and python_version<"3.11"
+rpds-py<0.30;platform_python_implementation=="PyPy" and python_version>="3.11"
