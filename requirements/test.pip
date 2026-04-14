@@ -8,9 +8,6 @@ pytest-flask==1.3.0
 pytest-mock==3.6.1
 pytest-profiling==1.8.1
 invoke==2.2.0
-twine==6.2.0;platform_python_implementation!="PyPy"
+# Omit on PyPy 3.10 only: Twine pulls keyring/SecretStorage/cryptography without usable wheels there.
+twine==6.2.0;platform_python_implementation!="PyPy" or python_version>="3.11"
 setuptools
-# PyPy + jsonschema/referencing: keep rpds-py on versions that publish wheels. Newer
-# rpds-py sdists need maturin/PyO3 (PyPy 3.11+ only), which breaks CI on PyPy 3.10.
-rpds-py<0.28;platform_python_implementation=="PyPy" and python_version<"3.11"
-rpds-py<0.30;platform_python_implementation=="PyPy" and python_version>="3.11"

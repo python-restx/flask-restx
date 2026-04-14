@@ -33,10 +33,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          # PyPy: pin rpds-py before resolving jsonschema/referencing so pip picks manylinux wheels
+          # (sdists use maturin; builds are fragile on PyPy). CPython does not need this.
+          case "${{ matrix.python-version }}" in
+            pypy3.10) pip install 'rpds-py<0.28' ;;
+            pypy3.11) pip install 'rpds-py<0.30' 'readme-renderer>=35,<42' ;;
+          esac
           pip install "flask${{ matrix.flask }}"
           pip install ".[test]"
       - name: Test with inv
-        run: inv cover qa
+        run: |
+          if [ "${{ matrix.python-version }}" = "pypy3.10" ]; then
+            inv cover
+          else
+            inv cover qa
+          fi
       - name: Codecov
         uses: codecov/codecov-action@v1
         with:

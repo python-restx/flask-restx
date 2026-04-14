@@ -37,7 +37,7 @@ Enhancements
    * Drop support for Python 3.9 (EOL); require Python 3.10 or newer. [python-restx]
    * Declare and test support for Python 3.13 and 3.14 (CPython). [python-restx]
    * Expand GitHub Actions and tox coverage: PyPy 3.10 and 3.11 with both Flask 2.x and Flask 3.x; exclude Flask 2 on 3.13/3.14 where unsupported. [python-restx]
-   * Refresh test and release tooling (pytest, pytest-benchmark, pytest-profiling, twine) for newer interpreters; constrain transitive ``rpds-py`` on PyPy via test extras so CI and tox resolve installable wheels. [python-restx]
+   * Refresh test and release tooling (pytest, pytest-benchmark, pytest-profiling, twine) for newer interpreters; GitHub Actions pre-installs compatible ``rpds-py`` (and ``readme-renderer`` for PyPy 3.11 + Twine) for PyPy jobs; tox pins ``rpds-py`` for local PyPy envs. [python-restx]
 
 .. _bug_fixes-1.3.3
 Bug Fixes
