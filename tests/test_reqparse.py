@@ -18,6 +18,11 @@ class ReqParseTest(object):
         parser = api.parser()
         assert isinstance(parser, RequestParser)
 
+    def test_api_shortcut_kwargs(self, app):
+        api = Api(app)
+        parser = api.parser(trim=True)
+        assert parser.trim == True
+
     def test_parse_model(self, app):
         model = Model("Todo", {"task": fields.String(required=True)})
 

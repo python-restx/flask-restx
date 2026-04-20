@@ -230,9 +230,9 @@ class Namespace(object):
             expect.append(param)
         return self.doc(**params)
 
-    def parser(self):
+    def parser(self, **kwargs):
         """Instanciate a :class:`~RequestParser`"""
-        return RequestParser()
+        return RequestParser(**kwargs)
 
     def as_list(self, field):
         """Allow to specify nested lists for documentation"""
