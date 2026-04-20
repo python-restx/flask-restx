@@ -5,10 +5,9 @@ and allows to validate specs against them.
 .. versionadded:: 0.12.1
 """
 
+import importlib.resources
 import io
 import json
-
-import importlib_resources
 
 from collections.abc import Mapping
 from jsonschema import Draft4Validator
@@ -58,7 +57,7 @@ class LazySchema(Mapping):
 
     def _load(self):
         if not self._schema:
-            ref = importlib_resources.files(__name__) / self.filename
+            ref = importlib.resources.files(__name__) / self.filename
 
             with io.open(ref) as infile:
                 self._schema = json.load(infile)
