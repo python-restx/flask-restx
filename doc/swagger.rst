@@ -1031,6 +1031,31 @@ you can register a custom view function with the :meth:`~Api.documentation` deco
     def custom_ui():
         return apidoc.ui_for(api)
 
+Preauthorization for ApiKey
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can specify a way to fetch a preauthorized ``apiKey`` by setting the
+``config.SWAGGER_PREAUTHORIZEAPIKEY`` with a function returning ``False`` or
+preauthorization informations.
+
+.. code-block:: python
+
+    authorizations = {
+        'apikey': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'X-API'
+        }
+    }
+    api = Api(app, security=['apikey'], authorizations=authorizations)
+
+    def pre_auth():
+        if 'apikey' in session:
+            return ('X-API', session['apikey'])
+        return False
+
+    app.config.SWAGGER_PREAUTHORIZEAPIKEY = pre_auth
+
 Configuring "Try it Out"
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
