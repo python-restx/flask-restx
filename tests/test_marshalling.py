@@ -84,6 +84,15 @@ class MarshallingTest(object):
         output = marshal(marshal_dict, model, skip_none=True)
         assert output == {"foo": "bar"}
 
+    def test_marshal_wildcard_none_str(self):
+        wild = fields.Wildcard(fields.String)
+        model = OrderedDict([("*", wild)])
+        marshal_dict = OrderedDict(
+            [("a", "None"), ("b", "tata")]
+        )
+        output = marshal(marshal_dict, model)
+        assert output == {"a": "None", "b": "tata"}
+
     def test_marshal_wildcard_with_skip_none(self):
         wild = fields.Wildcard(fields.String)
         model = OrderedDict([("foo", fields.Raw), ("*", wild)])
