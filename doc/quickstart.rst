@@ -310,7 +310,7 @@ you use the ``fields`` module to describe the structure of your response.
             # This field will not be sent in the response
             self.status = 'active'
 
-    @api.route('/todo')
+    @api.route('/todo', endpoint='todo_ep')
     class Todo(Resource):
         @api.marshal_with(model)
         def get(self, **kwargs):
