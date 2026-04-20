@@ -7,7 +7,7 @@ from flask import request
 from flask.views import http_method_funcs
 
 from ._http import HTTPStatus
-from .errors import abort
+from .errors import abort, ValidationError
 from .marshalling import marshal, marshal_with
 from .model import Model, OrderedModel, SchemaModel
 from .reqparse import RequestParser
@@ -15,7 +15,7 @@ from .utils import merge
 
 # Container for each route applied to a Resource using @ns.route decorator
 ResourceRoute = namedtuple("ResourceRoute", "resource urls route_doc kwargs")
-
+DOC_IDS = [] # List all document ids used.
 
 class Namespace(object):
     """
@@ -129,6 +129,9 @@ class Namespace(object):
     def doc(self, shortcut=None, **kwargs):
         """A decorator to add some api documentation to the decorated object"""
         if isinstance(shortcut, str):
+            if shortcut in DOC_IDS:
+                raise ValidationError("Doc description already in use by another method!")
+            DOC_IDS.append(shortcut)
             kwargs["id"] = shortcut
         show = shortcut if isinstance(shortcut, bool) else True
 
