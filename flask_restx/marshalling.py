@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from functools import wraps
 
-from flask import request, current_app, has_app_context
+from flask import request, current_app, has_app_context, has_request_context
 
 from .mask import Mask, apply as apply_mask
 from .utils import unpack
@@ -245,7 +245,7 @@ class marshal_with(object):
         def wrapper(*args, **kwargs):
             resp = f(*args, **kwargs)
             mask = self.mask
-            if has_app_context():
+            if has_app_context() and has_request_context():
                 mask_header = current_app.config["RESTX_MASK_HEADER"]
                 mask = request.headers.get(mask_header) or mask
             if isinstance(resp, tuple):
