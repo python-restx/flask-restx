@@ -326,6 +326,10 @@ class Namespace(object):
         header.update(kwargs)
         return self.doc(headers={name: header})
 
+    def consumes(self, mimetypes):
+        """A decorator to specify the MIME types the API can consume"""
+        return self.doc(consumes=mimetypes)
+
     def produces(self, mimetypes):
         """A decorator to specify the MIME types the API can produce"""
         return self.doc(produces=mimetypes)
