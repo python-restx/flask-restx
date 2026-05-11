@@ -39,6 +39,7 @@ __all__ = (
     "ClassName",
     "Polymorph",
     "Wildcard",
+    "StringEnum",
     "StringMixin",
     "MinMaxMixin",
     "NumberMixin",
@@ -465,6 +466,16 @@ class String(StringMixin, Raw):
         if enum and schema["example"] is None:
             schema["example"] = enum[0]
         return schema
+
+
+class StringEnum(String):
+
+    def __init__(self, enum, **kwargs):
+        kwargs['enum'] = [e.value for e in enum]
+        super().__init__(**kwargs)
+
+    def format(self, value):
+        return super().format(value.value)
 
 
 class Integer(NumberMixin, Raw):
