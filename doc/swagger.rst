@@ -1053,6 +1053,35 @@ supporting the same values as the ``supportedSubmitMethods`` `Swagger UI paramet
 
     api = Api(app)
 
+Preauthorizing apiKey
+~~~~~~~~~~~~~~~~~~~~~
+
+The ``flask_restx.Api`` class has a ``apikey_preauthorization`` decorator
+allowing to register a function returning wether or not preauthorization
+should be enabled.
+
+Expected returned values for this function are ``False`` or a tuple
+``(Authorization_name, Auth_key)``
+
+
+.. code-block:: python
+
+    authorizations = {
+        'apikey': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'X-API'
+        }
+    }
+    api = Api(app, security=['X-API'],authorizations=authorizations)
+
+    @api.apikey_preauthorization
+    def check_preauth():
+        if 'APIKEY' in session:
+            return ('X-API', session['APIKEY'])
+        return False
+
+
 Disabling the documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
