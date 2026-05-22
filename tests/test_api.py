@@ -271,6 +271,36 @@ class APITest(object):
         with app.test_request_context():
             assert url_for("test_resource") == "/api_test/test/"
 
+    def test_ns_path_no_double_slash(self, app):
+        # add_namespace(ns, path=...) used to do a naive `path + url` join,
+        # so passing path="/" produced rules like "//foo" (see #74), and
+        # "/api/" similarly produced "/api//foo". Normalise the join so
+        # neither shape leaks into the URL map.
+        api = restx.Api()
+
+        ns_root = restx.Namespace("ns_root")
+
+        @ns_root.route("/foo", endpoint="ns_root_foo")
+        class FooRoot(restx.Resource):
+            pass
+
+        ns_trailing = restx.Namespace("ns_trailing")
+
+        @ns_trailing.route("/foo", endpoint="ns_trailing_foo")
+        class FooTrailing(restx.Resource):
+            pass
+
+        api.add_namespace(ns_root, path="/")
+        api.add_namespace(ns_trailing, path="/api/")
+        api.init_app(app)
+
+        rule_paths = sorted(str(r) for r in app.url_map.iter_rules())
+        for r in rule_paths:
+            assert "//" not in r, f"rule has double slash: {r!r}"
+        with app.test_request_context():
+            assert url_for("ns_root_foo") == "/foo"
+            assert url_for("ns_trailing_foo") == "/api/foo"
+
     def test_multiple_ns_with_authorizations(self, app):
         api = restx.Api()
         a1 = {"apikey": {"type": "apiKey", "in": "header", "name": "X-API"}}
