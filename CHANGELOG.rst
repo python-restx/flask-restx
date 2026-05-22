@@ -46,6 +46,7 @@ Bug Fixes
 ::
 
    * Adjust field tests for Python 3.14 (``staticmethod`` around ``functools.partial`` used as a class attribute). [python-restx]
+   * ``Api.init_app(app, version=...)`` now overrides the version supplied to ``Api()`` (#119) [jbbqqf]
 
 .. _section-1.3.1:
 1.3.1

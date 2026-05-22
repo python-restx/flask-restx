@@ -97,6 +97,18 @@ class APITest(object):
         assert "specs" not in api.endpoints
         assert "specs" not in app.view_functions
 
+    def test_init_app_overrides_version(self, app):
+        # init_app() should propagate the version kwarg the same way it
+        # already propagates title/description (see #119). Prior to the
+        # fix, the version supplied to init_app() was silently dropped,
+        # so the Swagger "info.version" kept the constructor's value.
+        api = restx.Api(version="1.0")
+        api.init_app(app, version="2.5")
+        assert api.version == "2.5"
+        with app.test_client() as client:
+            spec = client.get("/swagger.json").get_json()
+            assert spec["info"]["version"] == "2.5"
+
     def test_specs_endpoint_not_found_if_not_added(self, app, client):
         api = restx.Api()
         api.init_app(app, add_specs=False)

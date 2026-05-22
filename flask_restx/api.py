@@ -208,6 +208,7 @@ class Api(object):
         >>> api.init_app(app)
 
         :param flask.Flask app: the Flask application object
+        :param str version: The API version (used in Swagger documentation)
         :param str title: The API title (used in Swagger documentation)
         :param str description: The API description (used in Swagger documentation)
         :param str terms_url: The API terms page URL (used in Swagger documentation)
@@ -219,6 +220,9 @@ class Api(object):
             reverse proxy.
         """
         self.app = app
+        # version is set in __init__ but used to be dropped here, leaving the
+        # Swagger info.version stuck on the constructor's default — see #119.
+        self.version = kwargs.get("version", self.version)
         self.title = kwargs.get("title", self.title)
         self.description = kwargs.get("description", self.description)
         self.terms_url = kwargs.get("terms_url", self.terms_url)
