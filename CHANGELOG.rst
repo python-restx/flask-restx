@@ -46,6 +46,7 @@ Bug Fixes
 ::
 
    * Adjust field tests for Python 3.14 (``staticmethod`` around ``functools.partial`` used as a class attribute). [python-restx]
+   * ``Api.add_namespace(ns, path='/')`` (or any path ending in ``/``) no longer produces double-slash rules in the URL map (#74) [jbbqqf]
 
 .. _section-1.3.1:
 1.3.1

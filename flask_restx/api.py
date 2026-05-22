@@ -485,6 +485,11 @@ class Api(object):
 
     def ns_urls(self, ns, urls):
         path = self.get_ns_path(ns) or ns.path
+        # Naive `path + url` would produce double slashes when path ends
+        # in "/" (or is just "/") and url starts with "/". This is the
+        # documented usage for mounting a namespace at the API root
+        # (#74), so normalise the join instead of rejecting it.
+        path = path.rstrip("/")
         return [path + url for url in urls]
 
     def add_namespace(self, ns, path=None):
