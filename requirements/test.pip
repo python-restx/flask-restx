@@ -1,5 +1,6 @@
 blinker
 Faker==2.0.0
+Flask-SQLAlchemy==3.0.2
 mock==3.0.5
 pytest==8.4.2
 pytest-benchmark==5.2.3
@@ -9,4 +10,5 @@ pytest-mock==3.6.1
 pytest-profiling==1.8.1
 invoke==2.2.0
 twine==6.2.0
+tzlocal
 setuptools
