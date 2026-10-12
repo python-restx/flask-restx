@@ -46,6 +46,7 @@ Bug Fixes
 ::
 
    * Adjust field tests for Python 3.14 (``staticmethod`` around ``functools.partial`` used as a class attribute). [python-restx]
+   * Keep later wildcard keys when a mapped value is null or an empty list (#409, #283) [Cherith1222]
 
 .. _section-1.3.1:
 1.3.1
