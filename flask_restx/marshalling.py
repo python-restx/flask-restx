@@ -82,11 +82,9 @@ def marshal(data, fields, envelope=None, skip_none=False, mask=None, ordered=Fal
 
                     key = field.key or dkey
                     _append(key, value)
-                    while True:
+                    while not field._exhausted:
                         value = field.output(dkey, data, ordered=ordered)
-                        if value is None or value == field.container.format(
-                            field.default
-                        ):
+                        if field._exhausted:
                             break
                         key = field.key
                         _append(key, value)

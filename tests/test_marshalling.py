@@ -93,6 +93,51 @@ class MarshallingTest(object):
         output = marshal(marshal_dict, model, skip_none=True)
         assert output == {"baz": "biz"}
 
+    def test_marshal_wildcard_keeps_null_and_later_keys(self):
+        # A null value used to end the scan, dropping every key not yet visited.
+        wild = fields.Wildcard(fields.String)
+        model = {"*": wild}
+        data = {"a": 1, "b": "2", "c": None, "d": 20, "e": "e"}
+        assert marshal(data, model) == {
+            "a": "1",
+            "b": "2",
+            "c": None,
+            "d": "20",
+            "e": "e",
+        }
+        assert marshal(data, model, skip_none=True) == {
+            "a": "1",
+            "b": "2",
+            "d": "20",
+            "e": "e",
+        }
+        ordered = marshal(data, model, ordered=True)
+        assert list(ordered) == ["a", "b", "c", "d", "e"]
+
+    def test_marshal_wildcard_keeps_empty_lists(self):
+        # List.format(None) is [], so an empty list compared equal to the
+        # "no more keys" sentinel and stopped the scan.
+        wild = fields.Wildcard(fields.List(fields.String))
+        model = {"*": wild}
+        data = {"a": ["1"], "b": [], "c": ["3"]}
+        assert marshal(data, model) == {"a": ["1"], "b": [], "c": ["3"]}
+
+        nested = {"id": fields.String(), "name": fields.String()}
+        wild_list = fields.Wildcard(fields.List(fields.Nested(nested)))
+        payload = {
+            "listMap": {
+                "key7": [{"id": "1", "name": "Guido"}],
+                "key8": [],
+                "key9": [{"id": "3", "name": "Linus"}],
+            }
+        }
+        output = marshal(payload, {"listMap": fields.Nested({"*": wild_list})})
+        assert output["listMap"] == {
+            "key7": [{"id": "1", "name": "Guido"}],
+            "key8": [],
+            "key9": [{"id": "3", "name": "Linus"}],
+        }
+
     def test_marshal_decorator(self):
         model = OrderedDict([("foo", fields.Raw)])
 

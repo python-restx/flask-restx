@@ -819,9 +819,13 @@ class Wildcard(Raw):
     _obj = None
     _cache = set()
     _last = None
+    # True once output() has no further matching key. A mapped value of
+    # None or [] is still a real value and must not set this.
+    _exhausted = False
 
     def __init__(self, cls_or_instance, **kwargs):
         super(Wildcard, self).__init__(**kwargs)
+        self._exhausted = False
         error_msg = "The type of the wildcard elements must be a subclass of fields.Raw"
         if isinstance(cls_or_instance, type):
             if not issubclass(cls_or_instance, Raw):
@@ -866,9 +870,11 @@ class Wildcard(Raw):
         self._obj = None
         self._cache = set()
         self._last = None
+        self._exhausted = False
 
     def output(self, key, obj, ordered=False):
         value = None
+        found = False
         reg = fnmatch.translate(key)
 
         if self._flatten(obj):
@@ -889,12 +895,16 @@ class Wildcard(Raw):
                         and re.match(reg, objkey, re.IGNORECASE)
                     ):
                         value = val
+                        found = True
                         self._cache.add(objkey)
                         self._last = objkey
                         break
                 except IndexError:
                     break
 
+        # None and [] are valid mapped values. Only "no remaining key"
+        # ends the wildcard scan (see marshalling.marshal).
+        self._exhausted = not found
         if value is None:
             if self.default is not None:
                 return self.container.format(self.default)
