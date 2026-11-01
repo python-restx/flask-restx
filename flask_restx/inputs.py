@@ -180,7 +180,7 @@ class URL(object):
                 self.error(value, "Custom port is not allowed")
             else:
                 port = int(data["port"])
-                if not 0 < port < 65535:
+                if not 0 < port <= 65535:
                     self.error(value, "Port is out of range")
         if data["domain"]:
             if self.domains and data["domain"] not in self.domains:
