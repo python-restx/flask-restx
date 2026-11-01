@@ -316,11 +316,23 @@ class URLTest(object):
             "http://example.com:80",
             "http://example.com:8080",
             "http://www.example.com:8000/test",
+            "http://example.com:65535",
         ],
     )
     def test_allow_port(self, url):
         validator = inputs.URL(port=True)
         assert validator(url) == url
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "http://example.com:65536",
+            "http://example.com:0",
+        ],
+    )
+    def test_reject_out_of_range_port(self, url):
+        validator = inputs.URL(port=True)
+        self.assert_bad_url(validator, url, "Port is out of range")
 
     @pytest.mark.parametrize(
         "url",
