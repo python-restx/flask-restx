@@ -247,8 +247,11 @@ class Namespace(object):
 
         :param bool as_list: Indicate that the return type is a list (for the documentation)
         :param int code: Optionally give the expected HTTP response code if its different from 200
+        :param dict headers: Response headers to document
 
         """
+        marshal_kwargs = kwargs.copy()
+        marshal_kwargs.pop("headers", None)
 
         def wrapper(func):
             doc = {
@@ -264,7 +267,7 @@ class Namespace(object):
                 ),  # Mask values can't be determined outside app context
             }
             func.__apidoc__ = merge(getattr(func, "__apidoc__", {}), doc)
-            return marshal_with(fields, ordered=self.ordered, **kwargs)(func)
+            return marshal_with(fields, ordered=self.ordered, **marshal_kwargs)(func)
 
         return wrapper
 

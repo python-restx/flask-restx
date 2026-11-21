@@ -618,6 +618,10 @@ just use the `@api.response` `headers` parameter.
             pass
 
 
+Response-specific headers can also be documented with the ``headers`` parameter of
+``@api.marshal_with()`` and ``@api.marshal_list_with()``. This only documents the
+headers; return a response tuple to set their actual HTTP values.
+
 Documenting expected/request headers is done through the `@api.expect` decorator
 
 .. code-block:: python

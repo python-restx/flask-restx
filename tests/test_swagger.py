@@ -1342,6 +1342,60 @@ class SwaggerTest(object):
             "description": "An header",
         }
 
+    @pytest.mark.parametrize("decorator_name", ["marshal_with", "marshal_list_with"])
+    def test_marshal_decorator_with_headers(self, api, client, decorator_name):
+        person = api.model("Person", {"name": restx.fields.String})
+        data = {"name": "Jane Doe", "extra": "not marshalled"}
+        expected = {"name": "Jane Doe"}
+        schema = {"$ref": "#/definitions/Person"}
+        if decorator_name == "marshal_list_with":
+            data = [data]
+            expected = [expected]
+            schema = {"type": "array", "items": schema}
+
+        decorator = getattr(api, decorator_name)(
+            person,
+            code=201,
+            description="Created",
+            envelope="data",
+            headers={
+                "X-Header": "A response header",
+                "X-Count": {"type": int, "description": "A count"},
+            },
+        )
+
+        @api.route("/test/")
+        class TestResource(restx.Resource):
+            @api.response(400, "Validation")
+            @decorator
+            def get(self):
+                return data, 201, {"X-Header": "actual value"}
+
+            @decorator
+            def post(self):
+                return data, 201, {"X-Header": "actual value"}
+
+        specs = client.get_specs()
+        for method in ("get", "post"):
+            responses = specs["paths"]["/test/"][method]["responses"]
+            assert responses["201"] == {
+                "description": "Created",
+                "schema": {"properties": {"data": schema}},
+                "headers": {
+                    "X-Header": {"type": "string", "description": "A response header"},
+                    "X-Count": {"type": "integer", "description": "A count"},
+                },
+            }
+            response = getattr(client, method)("/test/")
+            assert response.status_code == 201
+            assert response.get_json() == {"data": expected}
+            assert response.headers["X-Header"] == "actual value"
+            assert "X-Count" not in response.headers
+
+        assert specs["paths"]["/test/"]["get"]["responses"]["400"] == {
+            "description": "Validation"
+        }
+
     def test_api_and_response_header(self, api, client):
         @api.route("/test/")
         @api.header("X-HEADER", "A class header")
