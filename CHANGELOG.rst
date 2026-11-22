@@ -46,6 +46,7 @@ Bug Fixes
 ::
 
    * Adjust field tests for Python 3.14 (``staticmethod`` around ``functools.partial`` used as a class attribute). [python-restx]
+   * Support response-header documentation on marshalling decorators (#601). [2836048681]
 
 .. _section-1.3.1:
 1.3.1
